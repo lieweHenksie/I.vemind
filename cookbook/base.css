@@ -1,0 +1,197 @@
+/* ─────────────────────────────────────────────────────────────
+   cookbook/base.css — the reset + the default look of a story.
+
+   The one shared soul, LINKED (not copied) by every piece:
+     <link rel="stylesheet" href="../../cookbook/theme.css">
+     <link rel="stylesheet" href="../../cookbook/base.css">
+   Story-specific styles go in the piece's own <name>.css, which
+   loads after this and wins.
+   ───────────────────────────────────────────────────────────── */
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  background: var(--bg);
+  color: var(--white);
+  font-family: var(--font-story);
+  font-size: 18px;
+  line-height: var(--leading);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  min-height: 100vh;
+  padding: 4rem 1.5rem 12rem;
+}
+
+/* The column the story lives in. position/z-index keep the prose above any
+   fixed background layer a piece adds (a clouds video, a particle canvas). */
+.piece {
+  max-width: var(--measure);
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+p { margin-bottom: 1.6em; }
+
+img {
+  max-width: 100%;
+  display: block;
+  margin: 2.5rem 0;
+  opacity: 0.7;
+}
+
+a { color: var(--amber); text-underline-offset: 3px; }
+a:hover { color: var(--white); }
+
+hr {
+  border: none;
+  border-top: 1px solid var(--amber-dim);
+  margin: 3rem 0;
+  opacity: 0.3;
+}
+
+/* ── Story typography ─────────────────────────────────────────
+   The machine layer (mono, amber) frames; the human layer (serif)
+   speaks. Neither fully wins. */
+.piece-header { margin-bottom: 4rem; padding-top: 3rem; }
+
+.piece-label {
+  font-family: var(--font-machine);
+  font-size: 0.75rem;
+  color: var(--amber-dim);
+  letter-spacing: 0.08em;
+  margin-bottom: 1.5rem;
+}
+
+.piece-title {
+  font-family: var(--font-machine);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--amber);
+  letter-spacing: 0.04em;
+  margin-bottom: 0.75rem;
+}
+
+.piece-subtitle {
+  font-family: var(--font-story);
+  font-style: italic;
+  font-size: 0.95rem;
+  color: var(--stone);
+  line-height: 1.5;
+}
+
+section { margin-bottom: 2rem; }
+
+/* A line that stands alone — a beat, a turn, a held breath. */
+.standalone { font-style: italic; color: var(--amber); margin: 2rem 0; }
+
+/* Spoken words, set off from the narration. */
+.dialogue {
+  padding-left: 1.5rem;
+  border-left: 2px solid var(--amber-dim);
+  color: var(--stone);
+  font-style: italic;
+}
+
+/* A line the whole story pivots on. */
+.key-line {
+  font-size: 1.05rem;
+  color: var(--amber);
+  line-height: 1.6;
+  margin: 2.5rem 0;
+}
+
+/* The last line. */
+.final-line { margin-top: 3rem; color: var(--stone); font-style: italic; }
+
+/* A stand-in for an asset not yet delivered — an empty frame with a caption.
+   cyborge-code leaves these wherever a NEED is unmet, so the page still reads. */
+.placeholder {
+  border: 1px solid var(--amber-dim);
+  padding: 3rem 2rem;
+  text-align: center;
+  opacity: 0.3;
+  margin: 2.5rem 0;
+}
+.placeholder figcaption {
+  font-family: var(--font-machine);
+  font-size: 0.7rem;
+  color: var(--stone);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+/* ── Machinery ────────────────────────────────────────────────
+   Styles for the elements the cookbook JS recipes expect. If a piece
+   copies loader.js / flash.js / particles.js / reveal.js, it inherits
+   these for free. */
+
+/* loader.js — the boot screen. */
+#loader {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  background: var(--bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.8s ease;
+}
+.loader-inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+}
+#loader-status {
+  font-family: var(--font-machine);
+  font-size: 0.75rem;
+  color: var(--amber-dim);
+  letter-spacing: 0.1em;
+  min-width: 22ch;
+  text-align: center;
+}
+#start-btn {
+  font-family: var(--font-machine);
+  font-size: 0.75rem;
+  color: var(--amber);
+  background: none;
+  border: 1px solid var(--amber-dim);
+  padding: 0.75rem 2.5rem;
+  letter-spacing: 0.15em;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease, color 0.2s, border-color 0.2s;
+}
+#start-btn.visible { opacity: 1; pointer-events: all; }
+#start-btn:hover { color: var(--white); border-color: var(--amber); }
+
+/* flash.js — the full-screen wash (lightning, a cut to white). */
+#flash-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* particles.js — the agent canvas. Behind prose by default; a piece can lift
+   it above the text (z-index: 2) when agents should crawl over the words. */
+.particle-canvas {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+/* reveal.js — stagger()/onReveal() toggle .is-revealed on [data-reveal]
+   elements. Anything marked data-reveal starts hidden and rises into place. */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+[data-reveal].is-revealed { opacity: 1; transform: none; }

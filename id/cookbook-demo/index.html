@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>cookbook demo — cyBorge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../cookbook/theme.css">
+  <link rel="stylesheet" href="../../cookbook/base.css">
+  <link rel="stylesheet" href="demo.css">
+</head>
+<body>
+
+  <div id="loader">
+    <div class="loader-inner">
+      <p id="loader-status">cyBorge: [initialising]</p>
+      <button id="start-btn">[ start story ]</button>
+    </div>
+  </div>
+
+  <div id="flash-overlay"></div>
+  <canvas class="particle-canvas"></canvas>
+
+  <article class="piece">
+
+    <header class="piece-header">
+      <p class="piece-label">cyBorge: [self-test]</p>
+      <h1 class="piece-title">Cookbook Demo</h1>
+      <p class="piece-subtitle">proof the recipes compose without Azibo — nothing here imports a runtime</p>
+    </header>
+
+    <section>
+      <p data-reveal>A layer of sound came up when you pressed start. That was <em>audio.js</em>.</p>
+      <p data-reveal>These lines rose into place as you reached them. That was <em>reveal.js</em>.</p>
+      <p data-reveal>Little agents are drifting down and settling at the bottom of the screen. That is <em>particles.js</em>.</p>
+      <p class="standalone" data-reveal>Keep scrolling to the mark. Something will break.</p>
+    </section>
+
+    <div class="mark" data-mark>— strike —</div>
+
+    <section>
+      <p data-reveal>That was <em>flash.js</em>. Every file this page loaded is a copy that lives in its own <code>lib/</code>.</p>
+      <p class="final-line" data-reveal>cyBorge: [test passed] :)</p>
+    </section>
+
+  </article>
+
+  <script src="lib/audio.js"></script>
+  <script src="lib/reveal.js"></script>
+  <script src="lib/flash.js"></script>
+  <script src="lib/particles.js"></script>
+  <script src="lib/loader.js"></script>
+  <script src="demo.js"></script>
+</body>
+</html>

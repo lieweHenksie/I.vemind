@@ -1,0 +1,28 @@
+{
+  "essay": "mycelium/essays/essay-1.md",
+  "bpm": 120,
+  "_comment": "The song's SHAPE. Edit this, then: python3 tools/song/compose.py agar-lab. A section is {bars, layers} (instrumental) | {voice, layers} (a voice line) | {voice, split:[[bars,layers],…]} (the voice fires once and rings out while the music drops/changes mid-line; the split bars should sum ~ that line's rendered bars). Instruments are names from cookbook/strudel/palette.json.",
+  "sections": [
+    {"bars": 4, "layers": ["bass"], "label": "intro"},
+    {"bars": 4, "layers": ["bass", "kick"]},
+    {"bars": 2, "layers": ["bass", "kick", "hats"]},
+    {"bars": 2, "layers": ["bass", "kick", "hats", "arp"]},
+    {"voice": 0, "layers": ["kick", "hats", "bass", "arp"]},
+    {"voice": 1, "layers": ["kick", "hats", "clap", "bass", "arp", "pad"]},
+    {"voice": 2, "layers": ["bass"], "label": "dialogue — bare"},
+    {"voice": 3, "layers": ["bass", "kick"]},
+    {"voice": 4, "layers": ["kick", "hats", "clap", "bass", "arpFast", "pad"], "label": "swords"},
+    {"voice": 5, "split": [[3, ["kick", "hats", "clap", "bass", "arp", "pad", "lead", "solo"]], [2, ["bass"]], [3, ["kick", "hats", "bass", "subHard", "solo"]]], "label": "slug — mid-drop"},
+    {"bars": 2, "layers": ["bass", "wash"], "label": "breakdown"},
+    {"bars": 2, "layers": ["bass", "riser", "wash"], "label": "rise"},
+    {"bars": 2, "layers": ["impact", "kick", "subHard"], "label": "HARDCORE drop"},
+    {"bars": 6, "layers": ["kick", "hats", "clap", "subHard", "arpFast", "solo"], "label": "hardcore"},
+    {"bars": 4, "layers": ["kick", "hats", "clap", "bass", "arpFast", "lead"], "label": "climax"},
+    {"voice": 6, "layers": ["kick", "hats", "bass", "arp"], "label": "club Cuomo"},
+    {"voice": 7, "split": [[5, ["kick", "hats", "clap", "bass", "arpFast", "pad"]], [4, ["bass", "wash"]], [4, ["kick", "hats", "bass", "arp", "solo"]]], "label": "night blurs — mid-drop"},
+    {"voice": 8, "layers": ["kick", "hats", "bass", "arp", "pad"], "label": "waiter"},
+    {"voice": 9, "split": [[6, ["kick", "hats", "clap", "bass", "arp", "pad", "solo"]], [3, ["bass"]], [3, ["kick", "hats", "clap", "bass", "subHard", "lead", "solo"]]], "label": "his name — mid-drop"},
+    {"voice": 10, "layers": ["kick", "hats", "clap", "bass", "arpFast", "pad", "lead", "solo"], "label": "Brilliant!"},
+    {"bars": 8, "layers": ["bass", "lead"], "label": "outro"}
+  ]
+}

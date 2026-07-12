@@ -1,0 +1,17 @@
+/* demo.css — story-specific only. The generic look is in cookbook/base.css. */
+
+/* Lift the agent canvas above the prose so it's plainly visible in this test. */
+.particle-canvas { z-index: 2; }
+
+/* The scroll mark where the flash fires — pushed down so you have to travel to it. */
+.mark {
+  text-align: center;
+  letter-spacing: 0.4em;
+  color: var(--amber-dim);
+  font-family: var(--font-machine);
+  font-size: 0.8rem;
+  margin: 70vh 0;
+}
+
+em { color: var(--amber); font-style: italic; }
+code { font-family: var(--font-machine); font-size: 0.85em; color: var(--moss); }

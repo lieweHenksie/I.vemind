@@ -1,0 +1,17 @@
+{
+  "bass":      "note(\"a1 a1 e2 g1 a1 a1 c2 e2\").s(\"sawtooth\").lpf(sine.range(250,900).slow(8)).lpq(8).gain(0.8)",
+  "kick":      "note(\"a1 ~ ~ ~ a1 ~ ~ ~\").s(\"sine\").attack(0.001).decay(0.28).sustain(0).gain(1)",
+  "hats":      "s(\"white*8\").decay(0.02).sustain(0).hpf(8000).gain(0.22)",
+  "clap":      "s(\"~ white ~ white\").decay(0.09).sustain(0).hpf(1400).gain(0.4).room(0.35)",
+  "arp":       "note(\"[a3 e4 c4 e4 g4 e4 c4 b3]*2\").s(\"triangle\").lpf(1600).delay(0.5).delaytime(0.375).delayfeedback(0.35).room(0.6).gain(0.45)",
+  "arp2":      "note(\"[e4 a4 c5 b4 a4 e4 c4 a3]*2\").s(\"triangle\").lpf(1800).delay(0.5).delaytime(0.375).delayfeedback(0.35).room(0.6).gain(0.4)",
+  "arpFast":   "note(\"[a3 c4 e4 g4 a4 g4 e4 c4]*4\").s(\"square\").lpf(2200).delay(0.4).delaytime(0.1875).delayfeedback(0.3).room(0.5).gain(0.28)",
+  "pad":       "note(\"<[a3,c4,e4] [f3,a3,c4] [c3,e3,g3] [e3,g3,b3]>\").s(\"sawtooth\").attack(0.8).release(1.5).lpf(700).gain(0.3).room(0.85)",
+  "bridgePad": "note(\"<[d4,f4,a4] [c4,e4,g4] [f3,a3,c4] [g3,b3,d4]>\").s(\"sawtooth\").attack(0.8).release(1.5).lpf(850).gain(0.32).room(0.85)",
+  "lead":      "note(\"<a4 c5 b4 e4>\").s(\"triangle\").lpf(1300).release(0.3).room(0.7).gain(0.5)",
+  "solo":      "note(\"<[a4 c5 e5 d5 c5 b4 a4 e4] [g4 a4 b4 c5 e5 d5 b4 a4]>\").s(\"triangle\").lpf(2400).delay(0.4).delaytime(0.375).delayfeedback(0.4).room(0.5).gain(0.5)",
+  "wash":      "s(\"white\").lpf(500).gain(0.12).room(0.9)",
+  "riser":     "s(\"white\").lpf(saw.range(300,8000).slow(8)).gain(0.18).room(0.7)",
+  "impact":    "note(\"a0\").s(\"sine\").attack(0.001).decay(1.6).sustain(0).gain(1).room(0.85)",
+  "subHard":   "note(\"a0 a0 e1 a0 g0 a0 e1 g0\").s(\"sawtooth\").shape(0.45).lpf(600).lpq(4).gain(0.78)"
+}

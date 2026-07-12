@@ -1,0 +1,3 @@
+# dev-only, large, regenerable — never commit
+.venv/
+models/

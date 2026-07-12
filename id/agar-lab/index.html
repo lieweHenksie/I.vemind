@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>agar-lab — cyBorge</title>
+
+  <!-- Strudel, no build step. One script tag. Pinned; bump the version freely. -->
+  <script src="https://unpkg.com/@strudel/web@1.0.3"></script>
+
+  <style>
+    :root {
+      --bg: #0a0d08; --stone: #8b8680; --moss: #4a7c59;
+      --amber: #d4a843; --rust: #8b4a2a;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh; background: var(--bg); color: var(--stone);
+      font-family: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+      display: flex; flex-direction: column; gap: 1rem;
+      padding: clamp(1rem, 4vw, 3rem); line-height: 1.5;
+    }
+    header h1 { color: var(--amber); font-size: 1.1rem; margin: 0 0 .25rem; font-weight: 500; }
+    header p  { margin: 0; font-size: .8rem; opacity: .72; }
+    header .soul { color: var(--moss); }
+    #code {
+      width: 100%; min-height: 52vh; resize: vertical;
+      background: #070a06; color: #cdbb8f; border: 1px solid #23281c; border-radius: 6px;
+      font: inherit; font-size: .9rem; padding: 1rem; tab-size: 2; line-height: 1.65;
+      caret-color: var(--amber); white-space: pre; overflow-wrap: normal; overflow-x: auto;
+    }
+    #code:focus { outline: none; border-color: var(--moss); }
+    .controls { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
+    button {
+      background: transparent; color: var(--amber); border: 1px solid var(--amber);
+      font: inherit; font-size: .9rem; padding: .5rem 1.1rem; border-radius: 4px; cursor: pointer;
+    }
+    button:hover { background: var(--amber); color: var(--bg); }
+    button.stop { color: var(--rust); border-color: var(--rust); }
+    button.stop:hover { background: var(--rust); color: var(--bg); }
+    #status { font-size: .82rem; opacity: .8; margin-left: .4rem; }
+    #status.err { color: var(--rust); opacity: 1; }
+    kbd { border: 1px solid #333; border-radius: 3px; padding: 0 .35em; font-size: .8em; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>cyBorge · agar-lab</h1>
+    <p>the real Strudel — edit it, or just tell me what to change.
+       <kbd>Ctrl</kbd>+<kbd>Enter</kbd> plays · <kbd>Ctrl</kbd>+<kbd>.</kbd> stops.
+       <span class="soul">tempo: add <code>.fast(1.15)</code> after <code>arrange(...)</code>.</span></p>
+  </header>
+
+  <textarea id="code" spellcheck="false">
+// ─ cyBorge · song compiled from song.json — edit THAT, then run tools/song/build.py ─
+// instruments & arrangement below are GENERATED. bars come from tools/tts/eleven.py.
+
+// ── instruments · from song.json layers + cookbook/strudel/palette.json ──
+// INSTRUMENTS-START
+let bass = note("a1 a1 e2 g1 a1 a1 c2 e2").s("sawtooth").lpf(sine.range(250,900).slow(8)).lpq(8).gain(0.8)
+let kick = note("a1 ~ ~ ~ a1 ~ ~ ~").s("sine").attack(0.001).decay(0.28).sustain(0).gain(1)
+let hats = s("white*8").decay(0.02).sustain(0).hpf(8000).gain(0.22)
+let clap = s("~ white ~ white").decay(0.09).sustain(0).hpf(1400).gain(0.4).room(0.35)
+let arp = note("[a3 e4 c4 e4 g4 e4 c4 b3]*2").s("triangle").lpf(1600).delay(0.5).delaytime(0.375).delayfeedback(0.35).room(0.6).gain(0.45)
+let arpFast = note("[a3 c4 e4 g4 a4 g4 e4 c4]*4").s("square").lpf(2200).delay(0.4).delaytime(0.1875).delayfeedback(0.3).room(0.5).gain(0.28)
+let pad = note("<[a3,c4,e4] [f3,a3,c4] [c3,e3,g3] [e3,g3,b3]>").s("sawtooth").attack(0.8).release(1.5).lpf(700).gain(0.3).room(0.85)
+let lead = note("<a4 c5 b4 e4>").s("triangle").lpf(1300).release(0.3).room(0.7).gain(0.5)
+let solo = note("<[a4 c5 e5 d5 c5 b4 a4 e4] [g4 a4 b4 c5 e5 d5 b4 a4]>").s("triangle").lpf(2400).delay(0.4).delaytime(0.375).delayfeedback(0.4).room(0.5).gain(0.5)
+let wash = s("white").lpf(500).gain(0.12).room(0.9)
+let riser = s("white").lpf(saw.range(300,8000).slow(8)).gain(0.18).room(0.7)
+let impact = note("a0").s("sine").attack(0.001).decay(1.6).sustain(0).gain(1).room(0.85)
+let subHard = note("a0 a0 e1 a0 g0 a0 e1 g0").s("sawtooth").shape(0.45).lpf(600).lpq(4).gain(0.78)
+// INSTRUMENTS-END
+
+// ── VOICE TIMING · auto-managed by tools/tts/eleven.py (rewritten each render) ──
+// BARS-START
+let bars = [3, 6, 3, 3, 5, 8, 6, 13, 10, 12, 2]   // auto-generated per line length — do not hand-edit
+// BARS-END
+
+// a voice line held across its slot; its length AND its slow() both come from `bars`
+let vo = (clip, i) => clip.slow(bars[i]).gain(1.15).room(0.2)
+
+// ── the arrangement · GENERATED from song.json by tools/song/build.py ──
+// ARRANGE-START
+arrange(
+  [4, bass],   // intro
+  [4, stack(bass, kick)],
+  [2, stack(bass, kick, hats)],
+  [2, stack(bass, kick, hats, arp)],
+  [bars[0], stack(kick, hats, bass, arp, vo(s("voice:0"), 0))],
+  [bars[1], stack(kick, hats, clap, bass, arp, pad, vo(s("voice:1"), 1))],
+  [bars[2], stack(bass, vo(s("voice:2"), 2))],   // dialogue — bare
+  [bars[3], stack(bass, kick, vo(s("voice:3"), 3))],
+  [bars[4], stack(kick, hats, clap, bass, arpFast, pad, vo(s("voice:4"), 4))],   // swords
+  [3, stack(kick, hats, clap, bass, arp, pad, lead, solo, vo(s("voice:5"), 5))],   // slug — mid-drop
+  [2, bass],   // …voice 5 rings on, bars shift
+  [3, stack(kick, hats, bass, subHard, solo)],   // …voice 5 rings on, bars shift
+  [2, stack(bass, wash)],   // breakdown
+  [2, stack(bass, riser, wash)],   // rise
+  [2, stack(impact, kick, subHard)],   // HARDCORE drop
+  [6, stack(kick, hats, clap, subHard, arpFast, solo)],   // hardcore
+  [4, stack(kick, hats, clap, bass, arpFast, lead)],   // climax
+  [bars[6], stack(kick, hats, bass, arp, vo(s("voice:6"), 6))],   // club Cuomo
+  [5, stack(kick, hats, clap, bass, arpFast, pad, vo(s("voice:7"), 7))],   // night blurs — mid-drop
+  [4, stack(bass, wash)],   // …voice 7 rings on, bars shift
+  [4, stack(kick, hats, bass, arp, solo)],   // …voice 7 rings on, bars shift
+  [bars[8], stack(kick, hats, bass, arp, pad, vo(s("voice:8"), 8))],   // waiter
+  [6, stack(kick, hats, clap, bass, arp, pad, solo, vo(s("voice:9"), 9))],   // his name — mid-drop
+  [3, bass],   // …voice 9 rings on, bars shift
+  [3, stack(kick, hats, clap, bass, subHard, lead, solo)],   // …voice 9 rings on, bars shift
+  [bars[10], stack(kick, hats, clap, bass, arpFast, pad, lead, solo, vo(s("voice:10"), 10))],   // Brilliant!
+  [8, stack(bass, lead)],   // outro
+)
+// ARRANGE-END
+</textarea>
+
+  <div class="controls">
+    <button id="play">[ play ]</button>
+    <button id="stop" class="stop">[ stop ]</button>
+    <button id="export">[ export ]</button>
+    <span id="status">booting strudel…</span>
+  </div>
+
+  <script>
+    const editor = document.getElementById('code');
+    const statusEl = document.getElementById('status');
+    const setStatus = (msg, err = false) => {
+      statusEl.textContent = msg;
+      statusEl.classList.toggle('err', err);
+    };
+
+    // Recording tap: while `recDest` is set, anything that connects to the speakers also
+    // feeds a MediaStream we record. Installed before Strudel boots, so it catches all output.
+    let recDest = null, masterNode = null;
+    (function () {
+      const orig = AudioNode.prototype.connect;
+      AudioNode.prototype.connect = function (dest, ...a) {
+        if (dest instanceof AudioDestinationNode) {
+          masterNode = this;                                              // remember who feeds the speakers
+          if (recDest) { try { orig.call(this, recDest); } catch (e) {} } // live-tap per event too
+        }
+        return orig.call(this, dest, ...a);
+      };
+    })();
+
+    // Boot Strudel. By default it loads NO samples, so prebake the classic
+    // dirt-samples in case you experiment with s("bd") etc. Our current bed is
+    // all synths, so this just loads quietly in the background.
+    // Voice clips + ONE shared cache-buster, reused for the sample registration AND
+    // the preload below (so both hit the same cached URL).
+    // VOICE-FILES-START
+    const VOICE_FILES = ['line-01.wav', 'line-02.wav', 'line-03.wav', 'line-04.wav', 'line-05.wav', 'line-06.wav', 'line-07.wav', 'line-08.wav', 'line-09.wav', 'line-10.wav', 'line-11.wav'];
+    // VOICE-FILES-END
+    const VOICE_BASE = new URL('audio/voice/', location.href).href;
+    const VOICE_BUST = '?t=' + Date.now();
+
+    let booted = false;
+    try {
+      initStrudel({ prebake: async () => {
+        await samples('github:tidalcycles/dirt-samples');
+        await samples({ voice: VOICE_FILES.map(f => f + VOICE_BUST) }, VOICE_BASE);
+      }});
+      booted = true;
+    } catch (e) {
+      setStatus('strudel failed to boot: ' + (e && e.message ? e.message : e), true);
+    }
+
+    // Safety net: if this build has no arrange(), rebuild it from timeCat so the
+    // arrangement still works. (arrange plays each [bars, pattern] in turn.)
+    if (booted && typeof arrange === 'undefined') {
+      const tc = (typeof timeCat === 'function') ? timeCat
+               : (typeof timecat === 'function') ? timecat : null;
+      if (tc) {
+        window.arrange = (...secs) => {
+          const total = secs.reduce((a, s) => a + s[0], 0);
+          return tc(...secs).slow(total);
+        };
+      }
+    }
+
+    // Preload the voice clips into cache BEFORE enabling play — fixes "first play
+    // misses half the lines" (Strudel otherwise fetches each clip only when first triggered).
+    if (booted) {
+      setStatus('loading voice…');
+      Promise.all(VOICE_FILES.map(f => fetch(VOICE_BASE + f + VOICE_BUST).catch(() => {})))
+        .then(() => setStatus('ready — hit [ play ]'));
+    }
+
+    // Fire every voice clip once, silent, so Strudel DECODES them before the real
+    // playthrough — otherwise the first pass drops lines it hasn't decoded yet.
+    let primed = false;
+    async function primeVoice() {
+      const all = 'stack(' + VOICE_FILES.map((_, i) => `s("voice:${i}").gain(0)`).join(', ') + ')';
+      await evaluate(all);
+      await new Promise(r => setTimeout(r, 1600));
+      hush();
+      primed = true;
+    }
+
+    async function play() {
+      try {
+        hush();
+        if (!primed) { setStatus('priming voice…'); await primeVoice(); }
+        await evaluate(editor.value);
+        setStatus('playing…');
+      } catch (e) {
+        setStatus('error: ' + (e && e.message ? e.message : e), true);
+      }
+    }
+    function stop() { hush(); setStatus('stopped'); }
+
+    // Export: record one live playthrough to a file (webm; ffmpeg -i it to mp3).
+    let recorder = null;
+    async function exportSong() {
+      if (recorder && recorder.state === 'recording') { recorder.stop(); return; }
+      if (typeof getAudioContext !== 'function') { setStatus('export unavailable (no getAudioContext)', true); return; }
+      try {
+        const ctx = getAudioContext();
+        recDest = ctx.createMediaStreamDestination();
+        if (masterNode) { try { masterNode.connect(recDest); } catch (e) {} }  // tap the persistent master
+        const chunks = [];
+        recorder = new MediaRecorder(recDest.stream);
+        recorder.ondataavailable = e => e.data.size && chunks.push(e.data);
+        recorder.onstop = () => {
+          recDest = null;
+          const a = document.createElement('a');
+          a.href = URL.createObjectURL(new Blob(chunks, { type: 'audio/webm' }));
+          a.download = 'cyborge-song.webm';
+          a.click();
+          document.getElementById('export').textContent = '[ export ]';
+          setStatus('exported → cyborge-song.webm  ·  ffmpeg -i cyborge-song.webm cyborge-song.mp3');
+        };
+        hush();
+        if (!primed) { setStatus('priming voice…'); await primeVoice(); }
+        recorder.start();
+        await evaluate(editor.value);
+        document.getElementById('export').textContent = '[ ■ stop export ]';
+        setStatus('● recording — let it play through once, then click [ ■ stop export ]');
+      } catch (e) {
+        setStatus('export error: ' + (e && e.message ? e.message : e), true);
+      }
+    }
+
+    document.getElementById('play').addEventListener('click', play);
+    document.getElementById('stop').addEventListener('click', stop);
+    document.getElementById('export').addEventListener('click', exportSong);
+    // Ctrl/Cmd+Enter re-runs, Ctrl/Cmd+. stops — the live-coding reflexes.
+    editor.addEventListener('keydown', (e) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') { e.preventDefault(); play(); }
+      if ((e.ctrlKey || e.metaKey) && e.key === '.')     { e.preventDefault(); stop(); }
+    });
+  </script>
+</body>
+</html>

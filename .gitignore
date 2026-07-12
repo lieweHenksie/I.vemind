@@ -1,0 +1,12 @@
+# secrets — NEVER commit
+.env
+.env.*
+!.env.example
+*.key
+
+# dev tooling (large, regenerable)
+tools/tts/.venv/
+tools/tts/models/
+
+# os cruft
+.DS_Store

@@ -1,0 +1,24 @@
+/* ─────────────────────────────────────────────────────────────
+   cookbook/theme.css — the soul lives here.
+
+   cyBorge's palette and type. This is the DEFAULT mood of every
+   story: a computer half-buried in forest floor, booting in the dark.
+   To retheme a single piece, override these vars in the piece's own
+   <name>.css — don't edit this file unless you're moving the whole
+   toolkit somewhere new.
+   ───────────────────────────────────────────────────────────── */
+:root {
+  --bg:        #0a0d08;   /* near-black with a green underglow */
+  --stone:     #8b8680;   /* warm gray — artifact, old bone */
+  --moss:      #4a7c59;   /* muted forest green — nature reclaiming */
+  --amber:     #d4a843;   /* phosphor amber — old screens, still warm */
+  --amber-dim: #8a6a20;   /* the same glow, fading */
+  --rust:      #8b4a2a;   /* decay accent */
+  --white:     #e8e4d9;   /* not white — aged paper */
+
+  --font-machine: 'IBM Plex Mono', monospace;   /* the machine layer */
+  --font-story:   'Libre Baskerville', serif;   /* the human layer  */
+
+  --measure: 62ch;   /* the width a line of prose wants to be */
+  --leading: 1.8;    /* room to breathe */
+}
