@@ -48,9 +48,11 @@ build). The voice is pre-rendered to clips by `tools/tts/eleven.py`. The page gl
   timestamps** (provenance); `build.py` registers them for prebake. A sample name is **not** a
   layer — an instrument plays it (`s("name")` + `chop`/`slice`/`loopAt`/`speed`). Commercial cuts
   stay in `id/`; rights-check before `ego/`.
-- **The source film:** `sample.py --video` fetches the sampled video to `id/<name>/video/`;
-  `build.py` compiles `_samples` provenance + the shape into `VIDEO-CUES`, and the page's muted
-  `<video>` seeks each sample's birthplace as the arrangement passes it (dim when silent).
+- **The source film:** `sample.py --video` cuts a **small clip per sample** to `id/<name>/video/`
+  (the full source is cached, gitignored — only the clips ship); `build.py` compiles the shape into
+  `VIDEO-CUES` + a `VIDEO_CLIPS` map, and the page plays each sample's own clip **from frame 1** as
+  the arrangement reaches it (dim + held between cues). Small files load fast; playing a fresh clip
+  from its start is the one video path that never stalls — no big-file seeking.
 - **Voice is always pre-rendered** — browser speech can't be beat-locked; and v3 audio tags are
   paid-tier ElevenLabs.
 

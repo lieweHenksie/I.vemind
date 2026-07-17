@@ -49,7 +49,17 @@ def fetch(url):
         print(f"downloading audio: {title}")
         run(["yt-dlp", "--no-playlist", "-x", "--audio-format", "wav",
              "-o", str(CACHE / f"{vid}.%(ext)s"), url])
-    return wav, title
+    return wav, title, vid
+
+
+def fetch_video(url, vid_id):
+    # the full source video, cached once by id (gitignored) — only the small per-sample clips ship
+    mp4 = CACHE / f"{vid_id}.mp4"
+    if not mp4.exists():
+        print("downloading video…")
+        run(["yt-dlp", "--no-playlist", "-f", "b[ext=mp4]/best",
+             "-o", str(CACHE / f"{vid_id}.%(ext)s"), url])
+    return mp4
 
 
 def cut(src, dst, start, dur, mono, fade):
@@ -62,31 +72,25 @@ def cut(src, dst, start, dur, mono, fade):
     run(cmd + [str(dst)])
 
 
-def register(song_dir, name, url, start, dur, want_video):
+def cut_video(src, dst, start, dur):
+    # A small clip PLAYED FROM ITS START on the page (no seeking a big file = no decode stall,
+    # no long load). Muted/audioless, modest CRF. -ss AFTER -i so the cut is frame-accurate.
+    run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(src),
+         "-ss", f"{start:.3f}", "-t", f"{dur:.3f}", "-an",
+         "-c:v", "libx264", "-crf", "26", "-preset", "veryfast",
+         "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(dst)])
+
+
+def register(song_dir, name, url, start, dur, clip):
     pal_path = song_dir / "palette.json"
     pal = json.loads(pal_path.read_text()) if pal_path.exists() else {
         "_comment": "This song's SOUND — instruments authored by /cyborge-score override the cookbook default."}
-    # provenance (source timestamps) drives the page's video sync — see build.py VIDEO-CUES
-    pal.setdefault("_samples", {})[name] = {
-        "file": f"audio/samples/{name}.wav",
-        "start": round(start, 3), "end": round(start + dur, 3), "url": url}
-    if want_video:
-        vid = song_dir / "video" / "source.mp4"
-        if not vid.exists():
-            vid.parent.mkdir(parents=True, exist_ok=True)
-            print("downloading video…")
-            raw = vid.with_name("raw.mp4")
-            run(["yt-dlp", "--no-playlist", "-f", "b[ext=mp4]/best", "-o", str(raw), url])
-            # Re-encode with EVERY frame a keyframe (-g 1): downloaded mp4s keyframe every few
-            # seconds, so a seek stalls decoding from a distant keyframe = a frozen frame on each
-            # jump-cut. All-intra makes every source timestamp instantly seekable. Audio dropped
-            # (the page mutes it) to offset the size bump.
-            print("re-encoding for frame-accurate seeking…")
-            run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(raw), "-an",
-                 "-c:v", "libx264", "-crf", "24", "-g", "1", "-preset", "veryfast",
-                 "-pix_fmt", "yuv420p", str(vid)])
-            raw.unlink()
-        pal["_video"] = {"file": "video/source.mp4", "url": url}
+    # provenance (source timestamps) + the per-sample video clip drive the page's video sync
+    entry = {"file": f"audio/samples/{name}.wav",
+             "start": round(start, 3), "end": round(start + dur, 3), "url": url}
+    if clip:
+        entry["clip"] = clip
+    pal.setdefault("_samples", {})[name] = entry
     pal_path.write_text(json.dumps(pal, indent=2) + "\n")
 
 
@@ -102,7 +106,7 @@ def main():
     ap.add_argument("--mono", action="store_true")
     ap.add_argument("--no-fade", action="store_true")
     ap.add_argument("--video", action="store_true",
-                    help="also fetch the source video (id/<song>/video/source.mp4) for the page's video sync")
+                    help="also cut a small video clip (id/<song>/video/<name>.mp4) for the page's video sync")
     a = ap.parse_args()
 
     start = secs(a.start)
@@ -122,9 +126,16 @@ def main():
     crate.mkdir(parents=True, exist_ok=True)
     dst = crate / f"{a.name}.wav"
 
-    src, title = fetch(a.url)
+    src, title, vid_id = fetch(a.url)
     cut(src, dst, start, dur, a.mono, not a.no_fade)
-    register(song_dir, a.name, a.url, start, dur, a.video)
+
+    clip = None
+    if a.video:
+        clip_dir = song_dir / "video"
+        clip_dir.mkdir(parents=True, exist_ok=True)
+        cut_video(fetch_video(a.url, vid_id), clip_dir / f"{a.name}.mp4", start, dur)
+        clip = f"video/{a.name}.mp4"
+    register(song_dir, a.name, a.url, start, dur, clip)
 
     # bars at the SONG's tempo (one bar = 240/bpm seconds — 4 beats), for the arrange math
     line = f"cut {dur:.2f}s from \"{title}\" -> {dst.relative_to(ROOT)}  (s(\"{a.name}\"))"

@@ -67,13 +67,14 @@ def _rows(sections):
 
 def gen_cues(sections, palette, bpm):
     # Video sync: for every row, find crate samples the layers trigger and emit
-    # [row, offsetBars, durBars, srcSeconds] cues. The page seeks the source video to
-    # srcSeconds when the cue's bar window is live. Provenance comes from sample.py's
-    # _samples entries ({file,start,end,url}); legacy string entries can't cue.
-    video = palette.get("_video")
-    samples = {n: m for n, m in palette.get("_samples", {}).items() if isinstance(m, dict)}
-    if not video or not samples:
-        return '    const VIDEO_SRC = "";\n    const VIDEO_CUES = [];'
+    # [row, offsetBars, durBars, clipName, clipOffsetSec] cues. The page plays the small
+    # pre-cut clip `clipName` (from clipOffsetSec, ~0) while the cue's bar window is live —
+    # no big-file seeking. Only samples with a "clip" (sample.py --video) can cue video.
+    samples = {n: m for n, m in palette.get("_samples", {}).items()
+               if isinstance(m, dict) and m.get("clip")}
+    if not samples:
+        return '    const VIDEO_CLIPS = {};\n    const VIDEO_CUES = [];'
+    clips = {n: m["clip"] for n, m in samples.items()}
     cues = []
     for ri, (rbars, layers) in enumerate(_rows(sections)):
         for lname in layers:
@@ -87,21 +88,21 @@ def gen_cues(sections, palette, bpm):
             for i, tok in enumerate(tokens):
                 if tok not in samples:
                     continue
-                meta = samples[tok]
-                src, slen = meta["start"], (meta["end"] - meta["start"]) * bpm / 240
-                if ".slice(" in code:                     # region: show the whole source span
-                    cues.append((ri, 0.0, round(min(rbars or slen, slen), 3), src))
+                slen = (samples[tok]["end"] - samples[tok]["start"]) * bpm / 240
+                if ".slice(" in code:                     # region: show the clip from its start
+                    cues.append((ri, 0.0, round(min(rbars or slen, slen), 3), tok, 0.0))
                     continue
                 t0 = (i / len(tokens)) * period
                 if rbars is None:                          # voice row: first fire only, page clamps
-                    cues.append((ri, round(t0, 3), round(slen, 3), src))
+                    cues.append((ri, round(t0, 3), round(slen, 3), tok, 0.0))
                     continue
                 while t0 < rbars:
-                    cues.append((ri, round(t0, 3), round(min(slen, rbars - t0), 3), src))
+                    cues.append((ri, round(t0, 3), round(min(slen, rbars - t0), 3), tok, 0.0))
                     t0 += period
-    rows_js = ", ".join("[%s, %s, %s, %s]" % c for c in cues)
-    return ('    const VIDEO_SRC = %s;\n    const VIDEO_CUES = [%s];  // [row, offBars, durBars, srcSec]'
-            % (json.dumps(video["file"]), rows_js))
+    clips_js = ", ".join("%s: %s" % (json.dumps(n), json.dumps(p)) for n, p in clips.items())
+    rows_js = ", ".join("[%s, %s, %s, %s, %s]" % (r, o, d, json.dumps(c), off) for r, o, d, c, off in cues)
+    return ('    const VIDEO_CLIPS = {%s};\n    const VIDEO_CUES = [%s];  // [row, offBars, durBars, clip, clipOffSec]'
+            % (clips_js, rows_js))
 
 
 def gen_timeline(sections, bpm):

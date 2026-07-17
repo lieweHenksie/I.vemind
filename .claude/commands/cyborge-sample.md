@@ -32,8 +32,9 @@ python3 tools/song/sample.py <name> <sample-name> <url> <start> --bars N --bpm X
   in `palette.json`'s `_samples` map **with provenance** (source start/end/url — this drives the
   page's video sync). It prints the cut's length in bars at the song's bpm — quote that in your
   report; it's the number the scorer needs.
-- Add `--video` (once per song) to also fetch the source film to `id/<name>/video/source.mp4` —
-  the page then plays the video at each sample's birthplace as the arrangement passes it.
+- Add `--video` to also cut a **small clip** of this sample to `id/<name>/video/<name>.mp4` (the
+  full source is cached, gitignored — only the clip ships). The page plays each sample's clip from
+  frame 1 as the arrangement reaches it. Pass `--video` on every sample you want to see on screen.
 
 **Step 3 — report the crate, don't play it.** List what's now in `_samples` (name, length, what it
 is, where it came from). **Do not author instruments** — a sample name is not a layer; an
