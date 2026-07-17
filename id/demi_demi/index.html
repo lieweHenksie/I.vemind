@@ -56,13 +56,13 @@ let kick = note("d1*4").s("sine").attack(0.001).decay(0.3).sustain(0).shape(0.2)
 let hats = s("~ white ~ white ~ white ~ white").decay(0.05).sustain(0).hpf(6500).gain(0.18)
 let clap = s("~ white ~ white").decay(0.15).sustain(0).hpf(1800).lpf(6500).shape(0.12).gain(0.45).room(0.4)
 let pad = note("<[d3,f3,a3] [bb2,d3,f3] [c3,e3,g3] [a2,c3,e3]>").s("sawtooth").attack(1.2).release(2).lpf(800).gain(0.24).room(0.9)
+let solo = note("<[d5 f5 a5 g5] [f5 g5 a5 c6] [a5 g5 f5 d5] [g5 f5 e5 c5]>").s("sawtooth").lpf(2800).lpenv(2).lpdecay(0.1).release(0.2).delay(0.3).delaytime(0.217).delayfeedback(0.3).room(0.6).gain(0.38)
 let riser = s("white").lpf(saw.range(300,8000).slow(8)).gain(0.18).room(0.7)
 let bed = s("demicall").slow(18).lpf(1100).gain(0.3).room(0.5)
-let preach = s("sermon").slow(4).gain(1.05).room(0.2)
-let toughcall = s("toughtime").slow(2).gain(1.15).room(0.35)
-let dropcall = s("toughline").slow(4).gain(1.2).room(0.3)
-let chopsparse = s("toughline").slice(8, "0 ~ ~ 2 ~ 5 ~ ~").lpf(3500).gain(0.9)
-let chopdrop = s("toughline").slice(8, "<[0 2 1 3 ~ 5 6 7] [7 ~ 6 4 [2 2] 1 0 ~]>").shape(0.1).gain(1)
+let preach = s("sermon").slow(4).gain(1.15).room(0.15)
+let toughcall = s("toughtime").slow(2).gain(1.2).room(0.25)
+let thecall = s("toughline").slow(2).gain(1.2).room(0.35)
+let chopsparse = s("sermon").slice(8, "0 ~ ~ 2 ~ 5 ~ ~").lpf(3500).gain(0.9)
 let stab = s("~ ~ ~ demistab").gain(1.1).room(0.3)
 let acid = note("[d3 f3 d3 a3 g3 d3 f3 c3]*2").s("sawtooth").lpf(saw.range(300,2200).slow(16)).lpenv(3).lpdecay(0.12).gain(0.3)
 let acidrise = note("[d3 f3 d3 a3 g3 d3 f3 c3]*2").s("sawtooth").lpf(saw.range(500,3000).slow(8)).lpenv(4).lpdecay(0.15).gain(0.33)
@@ -82,15 +82,17 @@ let vo = (clip, i) => clip.slow(bars[i]).gain(1.15).room(0.2)
 // ARRANGE-START
 arrange(
   [4, stack(kick, acid, bed)],   // intro — four-on-the-floor, acid born dull, the call murmurs
-  [4, stack(kick, acid, bass, hats, bed)],   // the roll — bass clone joins, offbeat hats
+  [4, stack(kick, acid, bass, hats)],   // the roll — bed steps out, bass clone joins
   [4, stack(kick, acid, bass, hats, clap, gate)],   // shimmer — gated chords in
-  [4, stack(preach, kick, bass, hats)],   // the sermon — intact, pulse keeps rolling, bed aside
+  [4, stack(preach, kick, bass)],   // the sermon — intact and CLEAR, just kick and bass under
   [4, stack(kick, bass, acidrise, riser, gate)],   // the build — filter opening, riser under
-  [2, stack(toughcall, acidrise, riser)],   // TOUGH TIME NEVER LAST — beat out, acid climbing to peak
-  [1, stack(tick, riser)],   // …suspense…
-  [8, stack(dropcall, kick, clap, hats, bass, acidpump, gatepump)],   // THE DROP — only tough people last, bo demi demi (twice)
-  [6, stack(kick, clap, hats, bass, chopdrop, stab)],   // split juggling — the scramble, frantic at 138
-  [4, stack(kick, bass, bed, chopsparse)],   // ride out — calls overlap on purpose
+  [2, stack(toughcall, kick, bass)],   // the prior line — CLEAR, light pulse, no acid
+  [2, stack(thecall, riser)],   // TOUGH TIME NEVER LAST — beat out, riser cresting
+  [1, tick],   // …suspense — nothing but the tick…
+  [6, stack(kick, clap, hats, bass, acidpump, gatepump, stab)],   // DROP 1 — instrumental, demistab punches the 4s
+  [2, stack(thecall, kick, bass)],   // the resay — TOUGH TIME NEVER LAST over thinned beat
+  [8, stack(kick, clap, hats, bass, acidpump, gatepump, solo)],   // DROP 2 — the solo sings
+  [2, stack(kick, bass, chopsparse)],   // the juggle nod — brief, alone
   [4, stack(bed, pad)],   // outro — murmur into the pad
 ).fast(138/120)
 // ARRANGE-END

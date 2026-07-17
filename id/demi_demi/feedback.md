@@ -1,21 +1,19 @@
 # demi_demi — feedback
 
-Genre: afro-bounce crate jam · 104 BPM. Listened 2026-07-17. It works; two notes + one ask.
+Genre: trance · 138 BPM. Listened 2026-07-17 (v3). The trance take stands; the calls need order.
 
 ## Keep
-- The whole jam — it plays, the split works, the drop lands.
-- The overlapping demi demi calls are **hilarious** — thin them only slightly, do NOT remove
-  the comedy. (Protected: chopdrop's scramble, the bed's murmur.)
+- The trance recompose — 138, the rolling cell, acid climb, the drop mechanics. The duck stays dead.
+- The arc: sermon → clear line → "tough time never last" → suspense → drop.
 
 ## Fix
-1. **The calls overlap a bit much** — tame, don't silence: bed steps aside when an intact
-   phrase is speaking; slight bed gain trim; stab stops firing every single cycle.
-2. **The arc is missing**: you never hear "tough time never last… (suspense) …only tough
-   people last" — the phrase must play INTACT: setup line in a beatless suspense build,
-   payoff line ON the drop. (New cuts: `toughtime` = candidate setup at 19.4s, `sermon` =
-   first full delivery at 6.9s; `toughline` = the payoff, already in the crate.)
-
-## Ask (not a fix — an addition)
-- **Spend the Switch Angel bank** on the build: acid-tamed saw (lpf + lpenv), energy = opening
-  the filter (deterministic sweep into the drop), fake sidechain pump via gain patterns (real
-  duck* needs a pin bump), one-riff economy. `slice` is now runtime-proven on 1.0.3.
+1. **Overlapping calls sound weird at EVERY stage** — the scramble most of all. New law for this
+   song: **at most one voice sample audible at a time**, in every section. Scramble cut to a brief
+   nod (2 bars, sparse slices, no other voice under it).
+2. **`toughline` = "tough time never last"** (mapping corrected — it is NOT the drop payoff).
+   It falls **only before the drop** — nowhere else: the drop's intact call, and both chop
+   instruments, stop using it. Chops re-aim at `sermon` (word-sized slices).
+3. **The prior line (`toughcall`) must be clearer** — thin the layers under it, more gain,
+   less room.
+4. **New drop structure**: DROP 1 (instrumental + demistab punches, ~6 bars) → **resay
+   `toughline`** over thinned beat (2 bars) → **DROP 2 with a solo lead** (8 bars).

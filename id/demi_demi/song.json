@@ -2,18 +2,20 @@
   "essay": "none — crate jam, no voice lines",
   "genre": "trance",
   "bpm": 138,
-  "_comment": "The SHAPE v3 — TRANCE recompose. Opens ON the kick (no bass-only moment exists), one filter opening all the way to the drop = the energy. The arc holds: sermon intact → TOUGH TIME NEVER LAST beatless with the acid climbing → one bar of suspense → ONLY TOUGH PEOPLE LAST as an 8-bar trance drop (the call fires twice). Scramble comedy protected. Section starts sit on the riser's 8-bar phase so the sweeps land on the drop.",
+  "_comment": "The SHAPE v4 — one voice at a time, everywhere. toughline ('tough time never last') speaks ONLY right before a drop: once in the suspense, once as the mid-drop resay. DROP 1 is instrumental with demistab punches; the resay thins the beat; DROP 2 adds the solo lead. Scramble reduced to a 2-bar nod. Build starts at bar 16 so the riser's 8-bar phase peaks into the suspense.",
   "sections": [
     {"bars": 4, "layers": ["kick", "acid", "bed"], "label": "intro — four-on-the-floor, acid born dull, the call murmurs"},
-    {"bars": 4, "layers": ["kick", "acid", "bass", "hats", "bed"], "label": "the roll — bass clone joins, offbeat hats"},
+    {"bars": 4, "layers": ["kick", "acid", "bass", "hats"], "label": "the roll — bed steps out, bass clone joins"},
     {"bars": 4, "layers": ["kick", "acid", "bass", "hats", "clap", "gate"], "label": "shimmer — gated chords in"},
-    {"bars": 4, "layers": ["preach", "kick", "bass", "hats"], "label": "the sermon — intact, pulse keeps rolling, bed aside"},
+    {"bars": 4, "layers": ["preach", "kick", "bass"], "label": "the sermon — intact and CLEAR, just kick and bass under"},
     {"bars": 4, "layers": ["kick", "bass", "acidrise", "riser", "gate"], "label": "the build — filter opening, riser under"},
-    {"bars": 2, "layers": ["toughcall", "acidrise", "riser"], "label": "TOUGH TIME NEVER LAST — beat out, acid climbing to peak"},
-    {"bars": 1, "layers": ["tick", "riser"], "label": "…suspense…"},
-    {"bars": 8, "layers": ["dropcall", "kick", "clap", "hats", "bass", "acidpump", "gatepump"], "label": "THE DROP — only tough people last, bo demi demi (twice)"},
-    {"bars": 6, "layers": ["kick", "clap", "hats", "bass", "chopdrop", "stab"], "label": "split juggling — the scramble, frantic at 138"},
-    {"bars": 4, "layers": ["kick", "bass", "bed", "chopsparse"], "label": "ride out — calls overlap on purpose"},
+    {"bars": 2, "layers": ["toughcall", "kick", "bass"], "label": "the prior line — CLEAR, light pulse, no acid"},
+    {"bars": 2, "layers": ["thecall", "riser"], "label": "TOUGH TIME NEVER LAST — beat out, riser cresting"},
+    {"bars": 1, "layers": ["tick"], "label": "…suspense — nothing but the tick…"},
+    {"bars": 6, "layers": ["kick", "clap", "hats", "bass", "acidpump", "gatepump", "stab"], "label": "DROP 1 — instrumental, demistab punches the 4s"},
+    {"bars": 2, "layers": ["thecall", "kick", "bass"], "label": "the resay — TOUGH TIME NEVER LAST over thinned beat"},
+    {"bars": 8, "layers": ["kick", "clap", "hats", "bass", "acidpump", "gatepump", "solo"], "label": "DROP 2 — the solo sings"},
+    {"bars": 2, "layers": ["kick", "bass", "chopsparse"], "label": "the juggle nod — brief, alone"},
     {"bars": 4, "layers": ["bed", "pad"], "label": "outro — murmur into the pad"}
   ]
 }
