@@ -7,7 +7,7 @@
     {"bars": 4, "layers": ["kick", "acid", "bed"], "label": "intro — four-on-the-floor, acid born dull, the call murmurs"},
     {"bars": 4, "layers": ["kick", "acid", "bass", "hats"], "label": "the roll — bed steps out, bass clone joins"},
     {"bars": 4, "layers": ["kick", "acid", "bass", "hats", "clap", "gate"], "label": "shimmer — gated chords in"},
-    {"bars": 4, "layers": ["preach", "kick", "bass"], "label": "the sermon — intact and CLEAR, just kick and bass under"},
+    {"bars": 4, "layers": ["preach", "kick", "bass"], "label": "the invocation — his gibberish sounds, speaking in tongues before the prophecy"},
     {"bars": 4, "layers": ["kick", "bass", "acidrise", "riser", "gate"], "label": "the build — filter opening, riser under"},
     {"bars": 2, "layers": ["toughcall", "kick", "bass"], "label": "the prior line — CLEAR, light pulse, no acid"},
     {"bars": 2, "layers": ["thecall", "riser"], "label": "TOUGH TIME NEVER LAST — beat out, riser cresting"},
@@ -15,7 +15,7 @@
     {"bars": 6, "layers": ["kick", "clap", "hats", "bass", "acidpump", "gatepump", "stab"], "label": "DROP 1 — instrumental, demistab punches the 4s"},
     {"bars": 2, "layers": ["thecall", "kick", "bass"], "label": "the resay — TOUGH TIME NEVER LAST over thinned beat"},
     {"bars": 8, "layers": ["kick", "clap", "hats", "bass", "acidpump", "gatepump", "solo"], "label": "DROP 2 — the solo sings"},
-    {"bars": 2, "layers": ["kick", "bass", "chopsparse"], "label": "the juggle nod — brief, alone"},
+    {"bars": 2, "layers": ["kick", "bass", "chopsparse"], "label": "the juggle nod — gibberish slices, brief, alone"},
     {"bars": 4, "layers": ["bed", "pad"], "label": "outro — murmur into the pad"}
   ]
 }
