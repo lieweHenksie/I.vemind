@@ -115,7 +115,7 @@ arrange(
   <div id="arrpos"></div>
 
   <!-- the source film: muted; the arrangement eye seeks it to each sample's birthplace -->
-  <video id="srcvid" muted playsinline preload="auto" hidden></video>
+  <video id="srcvid" muted loop playsinline preload="auto" hidden></video>
 
   <script>
     const editor = document.getElementById('code');
@@ -197,16 +197,13 @@ arrange(
         const to = from + Math.min(dur, tl[row][0] - off);
         if (bar >= from && bar < to) hit = i;
       }
-      if (hit < 0) {
-        if (curCue !== -1) { vid.pause(); vid.classList.remove('speaking'); curCue = -1; }
-        return;
-      }
+      // The film NEVER pauses mid-song — pause→resume stalls the decoder and freezes the frame.
+      // It keeps rolling (dim); only brightens + seeks to the sample's birthplace when a cue is live.
+      if (hit < 0) { vid.classList.remove('speaking'); curCue = -1; return; }
       const [row, off, , srcT] = VIDEO_CUES[hit];
       const target = srcT + (bar - (starts[row] + off)) * barSec;
-      if (hit !== curCue || Math.abs(vid.currentTime - target) > 0.35) {
-        vid.currentTime = target;
-        curCue = hit;
-      }
+      if (hit !== curCue) { curCue = hit; vid.currentTime = target; }
+      else if (!vid.seeking && Math.abs(vid.currentTime - target) > 0.4) { vid.currentTime = target; }
       if (vid.paused) vid.play().catch(() => {});
       vid.classList.add('speaking');
     }
@@ -232,6 +229,7 @@ arrange(
       if (!TIMELINE.length) return;
       trackT0 = performance.now();
       if (rafId) cancelAnimationFrame(rafId);
+      if (VIDEO_SRC) { try { vid.currentTime = 0; } catch (e) {} vid.play().catch(() => {}); }
       trackFrame();
     }
     function trackStop() {
