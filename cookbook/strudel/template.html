@@ -118,7 +118,8 @@ arrange(
     let booted = false;
     try {
       initStrudel({ prebake: async () => {
-        await samples({ voice: VOICE_FILES.map(f => f + VOICE_BUST) }, VOICE_BASE);
+        if (VOICE_FILES.length)
+          await samples({ voice: VOICE_FILES.map(f => f + VOICE_BUST) }, VOICE_BASE);
         for (const [name, file] of Object.entries(SAMPLE_FILES))
           await samples({ [name]: file + VOICE_BUST }, SAMPLE_BASE);
       }});

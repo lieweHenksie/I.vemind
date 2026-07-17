@@ -1,0 +1,17 @@
+{
+  "essay": "none — crate jam, no voice lines",
+  "genre": "afro-bounce crate jam",
+  "bpm": 104,
+  "_comment": "The SHAPE: murmur in, tease the splits, lift, then THE DROP — the stab calls it and the toughline gets juggled. All instrumental; the crate is the voice.",
+  "sections": [
+    {"bars": 2, "layers": ["bed"], "label": "intro — the call murmurs in"},
+    {"bars": 2, "layers": ["bed", "bass"], "label": "sub joins"},
+    {"bars": 2, "layers": ["bed", "bass", "kick", "hats"], "label": "the bounce"},
+    {"bars": 2, "layers": ["bed", "bass", "kick", "hats", "chopsparse"], "label": "first splits — tease"},
+    {"bars": 2, "layers": ["bed", "riser"], "label": "lift — beat out, riser climbs"},
+    {"bars": 1, "layers": ["stab", "bass"], "label": "THE CALL — bo demi demi"},
+    {"bars": 4, "layers": ["stab", "kick", "clap", "hats", "bass", "chopdrop"], "label": "THE DROP — split juggling"},
+    {"bars": 4, "layers": ["kick", "clap", "hats", "bass", "chopsparse", "bed"], "label": "ride out"},
+    {"bars": 2, "layers": ["bed", "bass"], "label": "outro — murmur fades"}
+  ]
+}
