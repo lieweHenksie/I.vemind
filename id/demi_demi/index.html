@@ -16,10 +16,10 @@
       font-family:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
       display:flex; flex-direction:column; gap:1rem; padding:clamp(1rem,4vw,3rem); line-height:1.5;
     }
-    header h1 { color:var(--amber); font-size:1.1rem; margin:0 0 .25rem; font-weight:500; }
-    header p  { margin:0; font-size:.8rem; opacity:.72; }
+    header h1 { color:var(--amber); font-size:1.35rem; margin:0 0 .25rem; font-weight:600; }
+    header p  { margin:0; font-size:.82rem; opacity:.72; }
     #code {
-      width:100%; min-height:52vh; resize:vertical;
+      width:100%; min-height:30vh; resize:vertical; opacity:.85;
       background:#070a06; color:#cdbb8f; border:1px solid #23281c; border-radius:6px;
       font:inherit; font-size:.9rem; padding:1rem; tab-size:2; line-height:1.65;
       caret-color:var(--amber); white-space:pre; overflow-wrap:normal; overflow-x:auto;
@@ -39,9 +39,10 @@
     #arrstrip .sec { background:#141a10; border:1px solid #23281c; border-radius:2px; min-width:4px; }
     #arrstrip .sec.active { background:var(--moss); border-color:var(--amber); }
     #arrpos { font-size:.78rem; opacity:.75; min-height:1.2em; color:var(--amber); }
-    #filmword { align-self:center; text-align:center; color:var(--amber); font-size:1.05rem;
-      letter-spacing:.06em; text-transform:uppercase; min-height:1.4em; max-width:90%; opacity:.92; }
-    #srcfilm { position:relative; align-self:center; height:34vh; aspect-ratio:9/16; max-width:100%; }
+    #filmword { align-self:center; text-align:center; color:var(--amber); font-weight:600;
+      font-size:clamp(1.4rem, 4.5vw, 2.2rem); letter-spacing:.04em; text-transform:uppercase;
+      line-height:1.15; min-height:1.3em; max-width:92%; text-wrap:balance; }
+    #srcfilm { position:relative; align-self:center; height:52vh; aspect-ratio:9/16; max-width:100%; }
     #srcfilm video { position:absolute; inset:0; width:100%; height:100%; object-fit:contain;
       background:#000; border:1px solid #23281c; border-radius:6px;
       opacity:0; transition:opacity .15s, border-color .15s; }
@@ -58,6 +59,21 @@
        <kbd>Ctrl</kbd>+<kbd>.</kbd> stops. Voice clips + bars come from <code>tools/tts/eleven.py</code>.</p>
   </header>
 
+  <!-- HERO: the words from the shape, then the source film (per-sample clips + drop-only bounce) -->
+  <div id="filmword"></div>
+  <div id="srcfilm" hidden></div>
+
+  <!-- the progress bar sits below the film -->
+  <div id="arrstrip"></div>
+  <div id="arrpos"></div>
+
+  <div class="controls">
+    <button id="play">[ play ]</button>
+    <button id="stop" class="stop">[ stop ]</button>
+    <span id="status">booting strudel…</span>
+  </div>
+
+  <!-- the score, moved below — edit it or tell cyBorge what to change -->
   <textarea id="code" spellcheck="false">
 // ─ cyBorge song · palette in cookbook/strudel/palette.md, form in arrangement.md ─
 
@@ -110,19 +126,6 @@ arrange(
 // ARRANGE-END
 </textarea>
 
-  <div class="controls">
-    <button id="play">[ play ]</button>
-    <button id="stop" class="stop">[ stop ]</button>
-    <span id="status">booting strudel…</span>
-  </div>
-
-  <div id="arrstrip"></div>
-  <div id="arrpos"></div>
-
-  <!-- the words from the shape, then the source film (per-sample clips + beat-bounced fillers) -->
-  <div id="filmword"></div>
-  <div id="srcfilm" hidden></div>
-
   <script>
     const editor = document.getElementById('code');
     const statusEl = document.getElementById('status');
@@ -173,16 +176,15 @@ arrange(
       try { v.currentTime = off || 0; } catch (e) {}
       v.play().catch(() => {});
     };
-    // Between/after sample cues: bounce 4–5 random clips on the beat (like the stabs, lol).
-    function fillerFrame(bar) {
-      if (!fillerVids.length) { setFilm(activeVid, 'dim'); if (activeVid) activeVid.pause(); film.style.transform = ''; return; }
-      const beat = Math.floor(bar * 4);
-      const v = fillerVids[((beat % fillerVids.length) + fillerVids.length) % fillerVids.length];
-      if (v !== activeVid) showVid(v, 0);          // new beat → punch in the next random clip
-      const ph = (bar * 4) % 1;                    // 0 on the beat → 1 just before the next
-      film.style.transform = 'scale(' + (1 + 0.16 * Math.pow(1 - ph, 3)) + ')';
+    // Between/after sample cues, a filler clip fills the screen. On DROP sections it cuts on the
+    // beat (busy); elsewhere once a bar (calm). The BOUNCE is added by trackFrame, drops only.
+    function fillerFrame(bar, punch) {
+      if (!fillerVids.length) { setFilm(activeVid, 'dim'); if (activeVid) activeVid.pause(); return; }
+      const n = Math.floor(punch ? bar * 4 : bar);
+      const v = fillerVids[((n % fillerVids.length) + fillerVids.length) % fillerVids.length];
+      if (v !== activeVid) showVid(v, 0);
     }
-    function syncVideo(tl, bar) {
+    function syncVideo(tl, bar, punch) {
       if (!hasFilm) return;
       const starts = []; let acc = 0;
       tl.forEach(s => { starts.push(acc); acc += s[0]; });
@@ -193,9 +195,8 @@ arrange(
         const to = from + Math.min(dur, tl[row][0] - off);
         if (bar >= from && bar < to) hit = i;
       }
-      if (hit < 0) { fillerFrame(bar); curCue = -1; return; }   // gap: beat-bounced filler
-      film.style.transform = '';                                // a real sample cue plays steady
-      if (hit === curCue) return;                               // same clip still live — let it run
+      if (hit < 0) { fillerFrame(bar, punch); curCue = -1; return; }  // gap: filler
+      if (hit === curCue) return;                                     // same clip still live — let it run
       const v = clipVids[VIDEO_CUES[hit][3]];
       if (v) showVid(v, VIDEO_CUES[hit][4]);
       curCue = hit;
@@ -239,7 +240,7 @@ arrange(
 
     // ── the arrangement eye · TIMELINE generated by tools/song/build.py (markers below) ──
     // TIMELINE-START
-    const TIMELINE = [[4, "intro — four-on-the-floor, acid born dull, the call murmurs"], [4, "the roll — bed steps out, bass clone joins"], [4, "shimmer — gated chords in"], [4, "the invocation — his gibberish sounds, speaking in tongues before the prophecy"], [4, "the build — filter opening, riser under"], [2, "the prior line — the '…right now' mumble, light pulse"], [1, "TOUGH TIME NEVER LASTS — beat out, riser cresting"], [1, "…ONLY TOUGH PEOPLE LAST — alone in the silence…"], [6, "THE DROP — immediately, demistab punches the 4s"], [2, "the resay — TOUGH TIME NEVER LASTS over thinned beat"], [8, "DROP 2 — the solo answers"], [2, "the juggle nod — gibberish slices, brief, alone"], [4, "outro — murmur into the pad"]];
+    const TIMELINE = [[4, "intro — four-on-the-floor, acid born dull, the call murmurs", 0], [4, "the roll — bed steps out, bass clone joins", 0], [4, "shimmer — gated chords in", 0], [4, "the invocation — his gibberish sounds, speaking in tongues before the prophecy", 0], [4, "the build — filter opening, riser under", 0], [2, "the prior line — the '…right now' mumble, light pulse", 0], [1, "TOUGH TIME NEVER LASTS — beat out, riser cresting", 0], [1, "…ONLY TOUGH PEOPLE LAST — alone in the silence…", 0], [6, "THE DROP — immediately, demistab punches the 4s", 1], [2, "the resay — TOUGH TIME NEVER LASTS over thinned beat", 0], [8, "DROP 2 — the solo answers", 1], [2, "the juggle nod — gibberish slices, brief, alone", 0], [4, "outro — murmur into the pad", 0]];
     const SONG_BPM = 138;
     // TIMELINE-END
     const strip = document.getElementById('arrstrip');
@@ -258,19 +259,25 @@ arrange(
       // "V3" entries are voice sections — their length lives in the score's `bars` array
       const m = editor.value.match(/let bars = \[([^\]]*)\]/);
       const barsArr = m && m[1].trim() ? m[1].split(',').map(Number) : [];
-      return TIMELINE.map(([b, l]) => [(typeof b === 'string') ? (barsArr[+b.slice(1)] || 4) : b, l]);
+      return TIMELINE.map(([b, l, p]) => [(typeof b === 'string') ? (barsArr[+b.slice(1)] || 4) : b, l, p]);
     }
     function trackFrame() {
       const tl = resolvedTimeline();
       const total = tl.reduce((a, s) => a + s[0], 0);
-      const bar = ((performance.now() - trackT0) / 1000 / (240 / SONG_BPM)) % total;
+      const bar = (performance.now() - trackT0) / 1000 / (240 / SONG_BPM);
+      if (bar >= total) { finishLoop(); return; }   // one full pass through the arrangement → stop
       let acc = 0, idx = tl.length - 1;
       for (let i = 0; i < tl.length; i++) { if (bar < acc + tl[i][0]) { idx = i; break; } acc += tl[i][0]; }
       [...strip.children].forEach((el, i) => el.classList.toggle('active', i === idx));
       posEl.textContent = 'bar ' + (Math.floor(bar) + 1) + '/' + total + ' · ' + (tl[idx][1] || '');
       // the words from the shape: the label up to the em-dash (the phrase, not the stage direction)
       wordEl.textContent = (tl[idx][1] || '').split('—')[0].trim();
-      syncVideo(tl, bar);
+      // the bounce is saved for the drop — a beat-phase scale pulse, only on punch sections
+      if (hasFilm) {
+        const ph = (bar * 4) % 1;
+        film.style.transform = tl[idx][2] ? 'scale(' + (1 + 0.16 * Math.pow(1 - ph, 3)) + ')' : '';
+      }
+      syncVideo(tl, bar, !!tl[idx][2]);
       rafId = requestAnimationFrame(trackFrame);
     }
     function trackStart() {
@@ -292,6 +299,7 @@ arrange(
       catch (e) { setStatus('error: ' + (e && e.message ? e.message : e), true); }
     }
     function stop() { hush(); setStatus('stopped'); trackStop(); }
+    function finishLoop() { hush(); trackStop(); setStatus('done · one loop — hit [ play ] again'); }
     document.getElementById('play').addEventListener('click', play);
     document.getElementById('stop').addEventListener('click', stop);
     editor.addEventListener('keydown', (e) => {

@@ -109,18 +109,22 @@ def gen_cues(sections, palette, bpm):
 
 
 def gen_timeline(sections, bpm):
-    # One entry per audible row: [bars, label]. Voice sections emit "V<i>" — the page
+    # One entry per audible row: [bars, label, punch]. Voice sections emit "V<i>" — the page
     # resolves their length from the score's `bars` array (owned by eleven.py) at play time.
+    # punch = the film bounces here — a DROP: set by a section's "punch": true, or auto from
+    # a label that says "drop".
     rows = []
     for s in sections:
-        label = json.dumps(s.get("label", ""), ensure_ascii=False)
+        lbl = s.get("label", "")
+        punch = 1 if (s.get("punch") or "drop" in lbl.lower()) else 0
+        label = json.dumps(lbl, ensure_ascii=False)
         if "voice" in s:
             if "split" in s:
-                rows += ["[%s, %s]" % (n, label) for n, _ in s["split"]]
+                rows += ["[%s, %s, %d]" % (n, label, punch) for n, _ in s["split"]]
             else:
-                rows.append('["V%d", %s]' % (s["voice"], label))
+                rows.append('["V%d", %s, %d]' % (s["voice"], label, punch))
         else:
-            rows.append("[%s, %s]" % (s.get("bars", 4), label))
+            rows.append("[%s, %s, %d]" % (s.get("bars", 4), label, punch))
     return ("    const TIMELINE = [%s];\n    const SONG_BPM = %s;" % (", ".join(rows), bpm))
 
 
