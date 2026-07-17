@@ -40,14 +40,17 @@
     #arrstrip .sec.active { background:var(--moss); border-color:var(--amber); }
     #arrpos { font-size:.78rem; opacity:.75; min-height:1.2em; color:var(--amber); }
     #filmword { align-self:center; text-align:center; color:var(--amber); font-weight:600;
-      font-size:clamp(1.4rem, 4.5vw, 2.2rem); letter-spacing:.04em; text-transform:uppercase;
-      line-height:1.15; min-height:1.3em; max-width:92%; text-wrap:balance; }
+      font-size:clamp(1.3rem, 4.2vw, 2.1rem); letter-spacing:.02em;
+      line-height:1.15; min-height:1.2em; max-width:92%; text-wrap:balance; }
+    #filmsub { align-self:center; text-align:center; color:var(--stone); opacity:.7;
+      font-size:.9rem; letter-spacing:.03em; min-height:1.2em; max-width:80%;
+      margin-top:-.15rem; text-wrap:balance; }
     #srcfilm { position:relative; align-self:center; height:52vh; aspect-ratio:9/16; max-width:100%; }
-    #srcfilm video { position:absolute; inset:0; width:100%; height:100%; object-fit:contain;
-      background:#000; border:1px solid #23281c; border-radius:6px;
+    #srcfilm video, #srcfilm #viz { position:absolute; inset:0; width:100%; height:100%;
+      object-fit:contain; background:#000; border:1px solid #23281c; border-radius:6px;
       opacity:0; transition:opacity .15s, border-color .15s; }
     #srcfilm video.dim  { opacity:.12; }
-    #srcfilm video.live { opacity:1; border-color:var(--amber); }
+    #srcfilm video.live, #srcfilm #viz.live { opacity:1; border-color:var(--amber); }
     kbd { border:1px solid #333; border-radius:3px; padding:0 .35em; font-size:.8em; }
   </style>
 </head>
@@ -59,9 +62,11 @@
        <kbd>Ctrl</kbd>+<kbd>.</kbd> stops. Voice clips + bars come from <code>tools/tts/eleven.py</code>.</p>
   </header>
 
-  <!-- HERO: the words from the shape, then the source film (per-sample clips + drop-only bounce) -->
+  <!-- HERO: the shape's words (title + subtitle), then the film: sample clips, drop-bounce
+       fillers, and a winamp visualizer for the calm "real filler" stretches -->
   <div id="filmword"></div>
-  <div id="srcfilm" hidden></div>
+  <div id="filmsub"></div>
+  <div id="srcfilm" hidden><canvas id="viz" width="270" height="480"></canvas></div>
 
   <!-- the progress bar sits below the film -->
   <div id="arrstrip"></div>
@@ -168,8 +173,38 @@ arrange(
       try { v.currentTime = off || 0; } catch (e) {}
       v.play().catch(() => {});
     };
-    // Between/after sample cues, a filler clip fills the screen. On DROP sections it cuts on the
-    // beat (busy); elsewhere once a bar (calm). The BOUNCE is added by trackFrame, drops only.
+    // The winamp — a beat-driven spectrum on a canvas. It fills the "real" filler stretches (a gap
+    // that's neither a sample cue nor a drop) instead of restless video cuts, so calm parts breathe.
+    // Procedural (synced to the bar clock), so it needs no tap into Strudel's audio graph.
+    const vizEl = document.getElementById('viz');
+    const vizCtx = vizEl ? vizEl.getContext('2d') : null;
+    let vizPeaks = new Array(32).fill(0);
+    function drawViz(bar) {
+      if (!vizCtx) return;
+      const w = vizEl.width, h = vizEl.height, N = 32, bw = w / N;
+      vizCtx.clearRect(0, 0, w, h);
+      const pulse = Math.pow(1 - (bar * 4) % 1, 1.6);          // jumps on each beat, then decays
+      for (let i = 0; i < N; i++) {
+        const bass = 1 - i / N;
+        const shimmer = 0.5 + 0.5 * Math.sin(i * 0.7 + bar * 6.3 + Math.sin(i * 1.3));
+        let hgt = (0.12 + 0.88 * shimmer) * (0.32 + 0.68 * (0.4 + 0.6 * bass) * pulse);
+        hgt = Math.max(0.03, Math.min(1, hgt));
+        vizPeaks[i] = Math.max(hgt, vizPeaks[i] - 0.02);
+        const x = i * bw + 1, bwid = bw - 2;
+        vizCtx.fillStyle = i % 3 === 0 ? '#4a7c59' : '#d4a843';
+        vizCtx.fillRect(x, h - hgt * h, bwid, hgt * h);
+        vizCtx.fillStyle = '#cdbb8f';                          // the falling peak cap
+        vizCtx.fillRect(x, h - vizPeaks[i] * h - 2, bwid, 2);
+      }
+    }
+    const hideViz = () => { if (vizEl) vizEl.classList.remove('live'); };
+    function showViz(bar) {
+      if (activeVid) { setFilm(activeVid, 'off'); activeVid.pause(); activeVid = null; }
+      if (vizEl) vizEl.classList.add('live');
+      curCue = -1;
+      drawViz(bar);
+    }
+    // On a DROP gap a filler clip cuts on the beat (busy energy); the bounce is added by trackFrame.
     function fillerFrame(bar, punch) {
       if (!fillerVids.length) { setFilm(activeVid, 'dim'); if (activeVid) activeVid.pause(); return; }
       const n = Math.floor(punch ? bar * 4 : bar);
@@ -187,14 +222,22 @@ arrange(
         const to = from + Math.min(dur, tl[row][0] - off);
         if (bar >= from && bar < to) hit = i;
       }
-      if (hit < 0) { fillerFrame(bar, punch); curCue = -1; return; }  // gap: filler
-      if (hit === curCue) return;                                     // same clip still live — let it run
-      const v = clipVids[VIDEO_CUES[hit][3]];
-      if (v) showVid(v, VIDEO_CUES[hit][4]);
-      curCue = hit;
+      if (hit >= 0) {                              // a sample cue → play its clip
+        hideViz();
+        if (hit !== curCue) { const v = clipVids[VIDEO_CUES[hit][3]]; if (v) showVid(v, VIDEO_CUES[hit][4]); curCue = hit; }
+        return;
+      }
+      if (punch && fillerVids.length) {            // a drop gap → bouncing filler clips
+        hideViz();
+        fillerFrame(bar, punch);
+        curCue = -1;
+        return;
+      }
+      showViz(bar);                                // a real filler stretch → the winamp
     }
     const filmReset = () => {
       for (const v of allVids()) { try { v.pause(); } catch (e) {} setFilm(v, 'off'); }
+      hideViz(); vizPeaks.fill(0);
       film.style.transform = ''; curCue = -1; activeVid = null;
     };
 
@@ -238,6 +281,7 @@ arrange(
     const strip = document.getElementById('arrstrip');
     const posEl = document.getElementById('arrpos');
     const wordEl = document.getElementById('filmword');
+    const subEl = document.getElementById('filmsub');
     if (TIMELINE.length) {
       TIMELINE.forEach(([bars]) => {
         const b = document.createElement('div');
@@ -262,8 +306,10 @@ arrange(
       for (let i = 0; i < tl.length; i++) { if (bar < acc + tl[i][0]) { idx = i; break; } acc += tl[i][0]; }
       [...strip.children].forEach((el, i) => el.classList.toggle('active', i === idx));
       posEl.textContent = 'bar ' + (Math.floor(bar) + 1) + '/' + total + ' · ' + (tl[idx][1] || '');
-      // the words from the shape: the label up to the em-dash (the phrase, not the stage direction)
-      wordEl.textContent = (tl[idx][1] || '').split('—')[0].trim();
+      // the shape's words as title + subtitle (split on the em-dash) — the whole invocation shows
+      const lbl = tl[idx][1] || '', dash = lbl.indexOf('—');
+      wordEl.textContent = dash >= 0 ? lbl.slice(0, dash).trim() : lbl;
+      subEl.textContent = dash >= 0 ? lbl.slice(dash + 1).trim() : '';
       // the bounce is saved for the drop — a beat-phase scale pulse, only on punch sections
       if (hasFilm) {
         const ph = (bar * 4) % 1;
