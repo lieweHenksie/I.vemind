@@ -86,7 +86,7 @@ The two fonts coexist without hierarchy. Neither fully wins.
 │   └── song/transcribe.py  ← the EAR: YouTube auto-captions → timestamped transcript
 ├── .claude/commands/       ← the pipelines, as slash commands
 │   ├── cyborge-{test,direct,code,sync}.md        ← STORY pipeline
-│   └── cyborge-{research,score,compose,feedback,shape}.md ← SONG pipeline
+│   └── cyborge-{research,score,compose,feedback,shape,song}.md ← SONG pipeline (song = score→compose in one pull)
 ├── mycelium/               ← drafts, outlines, source material (never published)
 │   └── essays/             ← song lyrics/essays (blank-line block = one spoken line)
 ├── ego/                    ← finished, public-facing pieces (empty — azibo scrapped)
@@ -193,6 +193,10 @@ edit the sources and run the tools.
 | 2 | `/cyborge-compose`  | Renders the voice (`tools/tts/eleven.py` — ElevenLabs v3, incremental) and compiles the shape (`tools/song/build.py`) into the page. |
 | 3 | `/cyborge-feedback` | Plays it; turns the human's reactions into `feedback.md` — two lists, **Keep** and **Fix**. |
 | 4 | `/cyborge-shape`    | Applies the **Fix** list, leaves **Keep** (and anything unmentioned) untouched. Loops back to feedback. |
+
+**`/cyborge-song <name> [genre]`** is the one-pull wrapper: it runs **score → compose** in a single
+command (essay in, playable page out), obeying all their rules. Feedback and shape stay separate —
+they need human ears between passes.
 
 **Two tools patch separate marked regions of the page, so they never collide:**
 
