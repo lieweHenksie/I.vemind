@@ -1,16 +1,19 @@
 {
-  "_comment": "demi_demi's SOUND v4 — trance, one-voice-at-a-time law. D minor, 138, the five-note cell everywhere. toughline (= 'tough time never last') speaks ONLY before the drops; chops slice the sermon instead (word-sized pieces); demistab punches the drops; a saw solo lead crowns drop 2. lpenv + patterned gains runtime-proven. Overrides cookbook default; riser falls back.",
+  "_comment": "demi_demi's SOUND v5 — trance, one-voice-at-a-time, vosk-verified cuts. D minor, 138, the five-note cell everywhere. The couplet in order: thecall = 'tough time never lasts' (16.5s, suspense + resay), payoff = 'only tough people last' (19.5s, lands ON drop 1). toughcall = the '…right now' mumble line (prior). Chops slice the sermon gibberish; demistab punches; saw solo crowns drop 2. Overrides cookbook default; riser falls back.",
   "_samples": {
     "demicall": "audio/samples/demicall.wav",
     "toughline": "audio/samples/toughline.wav",
     "demistab": "audio/samples/demistab.wav",
     "toughtime": "audio/samples/toughtime.wav",
-    "sermon": "audio/samples/sermon.wav"
+    "sermon": "audio/samples/sermon.wav",
+    "toughtimes": "audio/samples/toughtimes.wav",
+    "toughpeople": "audio/samples/toughpeople.wav"
   },
   "bed": "s(\"demicall\").slow(18).lpf(1100).gain(0.3).room(0.5)",
   "preach": "s(\"sermon\").slow(4).gain(1.15).room(0.15)",
-  "toughcall": "s(\"toughtime\").slow(2).gain(1.2).room(0.25)",
-  "thecall": "s(\"toughline\").slow(2).gain(1.2).room(0.35)",
+  "toughcall": "s(\"toughline\").slow(2).gain(1.2).room(0.25)",
+  "thecall": "s(\"toughtimes\").slow(2).gain(1.2).room(0.35)",
+  "payoff": "s(\"toughpeople\").slow(2).gain(1.25).room(0.3)",
   "chopsparse": "s(\"sermon\").slice(8, \"0 ~ ~ 2 ~ 5 ~ ~\").lpf(3500).gain(0.9)",
   "chopdrop": "s(\"sermon\").slice(8, \"<[0 2 ~ 3 ~ 5 ~ 7] [7 ~ 6 ~ 2 ~ 1 ~]>\").shape(0.1).gain(0.95)",
   "stab": "s(\"~ ~ ~ demistab\").gain(1.1).room(0.3)",
