@@ -1,5 +1,5 @@
 {
-  "_comment": "demi_demi's SOUND — a crate jam (no essay, no voice lines): the Demi Demi short split and dropped. D-minor bounce at 104, now spending the Switch Angel bank: acid-tamed saw (lpf+lpenv), energy = opening the filter (saw.range sweep into the drop), fake sidechain pump via gain patterns (real duck* needs a pin bump). Overrides cookbook/strudel/palette.json; riser falls back to the default.",
+  "_comment": "demi_demi's SOUND v3 — TRANCE (full recompose; Switch Angel bank spent). D minor, 138. One five-note cell is the whole song: the acid lead runs it in 16ths, the bass is the same cell cloned two octaves down (rolling, never naked). Acid saw born dull, filter opens = energy; gated saw chords shimmer; sidechain faked with gain patterns (duck*/supersaw await a pin bump). Crate samples are the voice; lpenv is runtime-proven as of v2. Overrides cookbook default; riser falls back.",
   "_samples": {
     "demicall": "audio/samples/demicall.wav",
     "toughline": "audio/samples/toughline.wav",
@@ -7,18 +7,22 @@
     "toughtime": "audio/samples/toughtime.wav",
     "sermon": "audio/samples/sermon.wav"
   },
-  "bed": "s(\"demicall\").slow(14).lpf(1100).gain(0.34).room(0.5)",
-  "preach": "s(\"sermon\").slow(3).gain(1.05).room(0.2)",
-  "toughcall": "s(\"toughtime\").slow(3).gain(1.15).room(0.35)",
+  "bed": "s(\"demicall\").slow(18).lpf(1100).gain(0.3).room(0.5)",
+  "preach": "s(\"sermon\").slow(4).gain(1.05).room(0.2)",
+  "toughcall": "s(\"toughtime\").slow(2).gain(1.15).room(0.35)",
   "dropcall": "s(\"toughline\").slow(4).gain(1.2).room(0.3)",
   "chopsparse": "s(\"toughline\").slice(8, \"0 ~ ~ 2 ~ 5 ~ ~\").lpf(3500).gain(0.9)",
   "chopdrop": "s(\"toughline\").slice(8, \"<[0 2 1 3 ~ 5 6 7] [7 ~ 6 4 [2 2] 1 0 ~]>\").shape(0.1).gain(1)",
   "stab": "s(\"~ ~ ~ demistab\").gain(1.1).room(0.3)",
-  "acid": "note(\"[d3 f3 d3 a3 g3 d3 f3 c3]*2\").s(\"sawtooth\").lpf(saw.range(250,2600).slow(3)).lpenv(3).lpdecay(0.12).gain(0.34)",
-  "acidpump": "note(\"[d3 f3 d3 a3 g3 d3 f3 c3]*2\").s(\"sawtooth\").lpf(2200).lpenv(3).lpdecay(0.12).gain(\"0.12 0.3 0.38 0.12 0.3 0.38 0.12 0.3\")",
+  "acid": "note(\"[d3 f3 d3 a3 g3 d3 f3 c3]*2\").s(\"sawtooth\").lpf(saw.range(300,2200).slow(16)).lpenv(3).lpdecay(0.12).gain(0.3)",
+  "acidrise": "note(\"[d3 f3 d3 a3 g3 d3 f3 c3]*2\").s(\"sawtooth\").lpf(saw.range(500,3000).slow(8)).lpenv(4).lpdecay(0.15).gain(0.33)",
+  "acidpump": "note(\"[d3 f3 d3 a3 g3 d3 f3 c3]*2\").s(\"sawtooth\").lpf(2400).lpenv(3).lpdecay(0.12).gain(\"[0.1 0.3 0.36 0.36]*4\")",
+  "gate": "note(\"[d3,f3,a3,d4]\").s(\"sawtooth\").attack(0.005).release(0.05).lpf(1900).gain(\"[0.26 0]*8\").room(0.5)",
+  "gatepump": "note(\"[d3,f3,a3,d4]\").s(\"sawtooth\").attack(0.005).release(0.05).lpf(2500).gain(\"[0.3 0 0.2 0]*8\").room(0.45)",
+  "pad": "note(\"<[d3,f3,a3] [bb2,d3,f3] [c3,e3,g3] [a2,c3,e3]>\").s(\"sawtooth\").attack(1.2).release(2).lpf(800).gain(0.24).room(0.9)",
   "tick": "s(\"white ~ ~ ~ white ~ ~ ~\").decay(0.02).sustain(0).hpf(7000).gain(0.1)",
-  "bass": "note(\"d2 ~ ~ d2 ~ ~ f1 ~\").s(\"sawtooth\").lpf(480).lpq(6).gain(0.85)",
-  "kick": "note(\"d1 ~ ~ d1 ~ ~ d1 ~\").s(\"sine\").attack(0.001).decay(0.35).sustain(0).shape(0.15).gain(1)",
-  "clap": "s(\"~ white ~ white\").decay(0.18).sustain(0).hpf(1800).lpf(6500).shape(0.12).gain(0.5).room(0.4)",
-  "hats": "s(\"white ~ white white ~ white white ~\").decay(0.03).sustain(0).hpf(6000).gain(0.16)"
+  "bass": "note(\"[d1 f1 d1 a1 g1 d1 f1 c1]*2\").s(\"sawtooth\").lpf(550).lpq(5).gain(0.72)",
+  "kick": "note(\"d1*4\").s(\"sine\").attack(0.001).decay(0.3).sustain(0).shape(0.2).gain(1.05)",
+  "clap": "s(\"~ white ~ white\").decay(0.15).sustain(0).hpf(1800).lpf(6500).shape(0.12).gain(0.45).room(0.4)",
+  "hats": "s(\"~ white ~ white ~ white ~ white\").decay(0.05).sustain(0).hpf(6500).gain(0.18)"
 }
