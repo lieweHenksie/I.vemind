@@ -51,11 +51,28 @@ def gen_arrange(sections, bpm):
     return "arrange(\n" + "\n".join(rows) + "\n)" + tail
 
 
+def gen_timeline(sections, bpm):
+    # One entry per audible row: [bars, label]. Voice sections emit "V<i>" — the page
+    # resolves their length from the score's `bars` array (owned by eleven.py) at play time.
+    rows = []
+    for s in sections:
+        label = json.dumps(s.get("label", ""), ensure_ascii=False)
+        if "voice" in s:
+            if "split" in s:
+                rows += ["[%s, %s]" % (n, label) for n, _ in s["split"]]
+            else:
+                rows.append('["V%d", %s]' % (s["voice"], label))
+        else:
+            rows.append("[%s, %s]" % (s.get("bars", 4), label))
+    return ("    const TIMELINE = [%s];\n    const SONG_BPM = %s;" % (", ".join(rows), bpm))
+
+
 def patch(txt, start, end, content, indent=""):
     if start not in txt or end not in txt:
         raise SystemExit(f"markers {start}/{end} not found in index.html — add them first")
+    # lambda replacement: content is literal text, never regex escapes (labels may hold \u…)
     return re.sub(re.escape(start) + r".*?" + re.escape(end),
-                  f"{start}\n{content}\n{indent}{end}", txt, flags=re.S)
+                  lambda m: f"{start}\n{content}\n{indent}{end}", txt, flags=re.S)
 
 
 def main():
@@ -98,6 +115,9 @@ def main():
         txt = patch(txt, "// SAMPLE-FILES-START", "// SAMPLE-FILES-END",
                     "    const SAMPLE_FILES = {%s};" % (" " + files + " " if files else ""),
                     indent="    ")
+    if "// TIMELINE-START" in txt:
+        txt = patch(txt, "// TIMELINE-START", "// TIMELINE-END",
+                    gen_timeline(sections, bpm), indent="    ")
     idx.write_text(txt)
     n_voice = sum(1 for s in sections if "voice" in s)
     crate_note = f", {len(crate)} crate samples" if crate else ""
