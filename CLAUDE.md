@@ -74,22 +74,25 @@ The two fonts coexist without hierarchy. Neither fully wins.
 │   ├── audio.js reveal.js flash.js particles.js textfx.js loader.js  ← story recipes (copy-me)
 │   ├── README.md           ← story recipe catalog + CUT→recipe map
 │   └── strudel/            ← THE MUSIC COOKBOOK
-│       ├── palette.json    ← instruments, machine-readable (the generator reads this)
+│       ├── palette.json    ← DEFAULT instruments (each song overrides in its own palette.json)
 │       ├── palette.md      ← instruments, human catalog
 │       ├── arrangement.md  ← the bars/vo/arrange lock pattern + section templates
 │       ├── template.html   ← copy-to-start-a-song page (Strudel boot + voice loading)
-│       └── README.md       ← music cookbook catalog + the laws
+│       ├── README.md       ← music cookbook catalog + the laws
+│       └── research/       ← THE LISTENING BANK: studies of real artists (/cyborge-research)
 ├── tools/                  ← dev-only build tools (never shipped)
 │   ├── tts/eleven.py       ← the VOICE: ElevenLabs v3 render, incremental (+ audio-tags.md)
-│   └── song/build.py       ← the SHAPE: compiles song.json → Strudel
+│   ├── song/build.py       ← SHAPE+SOUND: compiles song.json + palette.json → Strudel
+│   └── song/transcribe.py  ← the EAR: YouTube auto-captions → timestamped transcript
 ├── .claude/commands/       ← the pipelines, as slash commands
 │   ├── cyborge-{test,direct,code,sync}.md        ← STORY pipeline
-│   └── cyborge-{score,compose,feedback,shape}.md ← SONG pipeline
+│   └── cyborge-{research,score,compose,feedback,shape}.md ← SONG pipeline
 ├── mycelium/               ← drafts, outlines, source material (never published)
 │   └── essays/             ← song lyrics/essays (blank-line block = one spoken line)
 ├── ego/                    ← finished, public-facing pieces (empty — azibo scrapped)
-└── id/                     ← raw experiments
-    └── agar-lab/           ← the reference SONG: essay-1 + song.json, spec-driven
+└── id/                     ← raw experiments (songs)
+    ├── agar-lab/           ← reference SONG: essay-1 + song.json (plays the default sound)
+    └── head_god/           ← song.json (SHAPE) + palette.json (its OWN sound) + index.html
 ```
 
 ### Folder meanings
@@ -127,7 +130,10 @@ Full details and the recipe API live in `cookbook/README.md`.
 
 **The music cookbook (`cookbook/strudel/`) works differently.** Strudel *is* the runtime (a pinned
 `<script>`, not copied recipes), so a song's "recipes" are the **instrument palette** and the
-**arrangement pattern** — and a song is *compiled from data* (`song.json`) rather than hand-wired.
+**arrangement pattern** — and a song is *compiled from data* rather than hand-wired. The cookbook
+`palette.json` is the **default sound**; each song authors its **own** `id/<name>/palette.json` that
+overrides it (its own key, riffs, timbres — from the essay's mood), so no two songs sound alike.
+A song compiles from three data files: the essay (words), `song.json` (shape), `palette.json` (sound).
 See `cookbook/strudel/README.md`.
 
 ---
@@ -175,13 +181,15 @@ the human for it, leaving a `.placeholder` wherever an asset isn't ready yet.
 
 ## Song Pipeline
 
-A song is **an essay read by a synthetic voice over a live Strudel bed**. It's built from two data
-files — the essay (words) and `id/<name>/song.json` (shape) — which *compile* to a self-contained
-page. You never hand-edit the generated Strudel; you edit the two sources and run the tools.
+A song is **an essay read by a synthetic voice over a live Strudel bed**. It's built from three data
+files — the essay (words), `id/<name>/song.json` (shape), and `id/<name>/palette.json` (its own
+sound) — which *compile* to a self-contained page. You never hand-edit the generated Strudel; you
+edit the sources and run the tools.
 
 | Step | Command | What it does |
 |------|---------|--------------|
-| 1 | `/cyborge-score`    | Reads the essay, drafts `song.json` — the SHAPE (tempo + ordered sections, each `{bars\|voice, layers}`). Never clobbers a tuned spec; only appends sections for new lines. |
+| 0 | `/cyborge-research` | *(any time, feeds the cookbook — not per-song)* Transcribes a real Strudel artist's video (`tools/song/transcribe.py` → yt-dlp auto-captions), extracts their **moves** (never their patterns), verifies every claimed function against the strudel.cc docs (captions garble code), and banks the study in `cookbook/strudel/research/` — flagged against the pinned runtime. `/cyborge-score` spends the bank. |
+| 1 | `/cyborge-score`    | Reads the essay for its arc AND its mood; picks/records a **genre** and researches how it's built in Strudel (opening the research bank first); drafts `song.json` (SHAPE + genre) and `palette.json` (SOUND — its own key/riffs/timbres). `<name> <genre>` = a deliberate **full recompose** in that genre; bare `<name>` preserves tuned files, appending only what's new. |
 | 2 | `/cyborge-compose`  | Renders the voice (`tools/tts/eleven.py` — ElevenLabs v3, incremental) and compiles the shape (`tools/song/build.py`) into the page. |
 | 3 | `/cyborge-feedback` | Plays it; turns the human's reactions into `feedback.md` — two lists, **Keep** and **Fix**. |
 | 4 | `/cyborge-shape`    | Applies the **Fix** list, leaves **Keep** (and anything unmentioned) untouched. Loops back to feedback. |
@@ -189,13 +197,17 @@ page. You never hand-edit the generated Strudel; you edit the two sources and ru
 **Two tools patch separate marked regions of the page, so they never collide:**
 
 ```
-mycelium/essays/<name>.md  ──eleven.py─▶  line-NN.wav  +  patches // BARS, // VOICE-FILES
-id/<name>/song.json        ──build.py──▶  patches // INSTRUMENTS, // ARRANGE (from palette.json)
+mycelium/essays/<name>.md            ──eleven.py─▶  line-NN.wav  +  // BARS, // VOICE-FILES
+id/<name>/song.json    (shape)  ┐
+id/<name>/palette.json (sound)  ┴──build.py──▶  // ARRANGE + // INSTRUMENTS  (palette.json
+                                                overrides the cookbook default sound)
 ```
 
 **Everything is incremental & deterministic — the iron rule: *fix where broken, leave what works.***
 Edit one essay line → only that voice clip re-renders. Edit one `song.json` section → only that
-arrange row changes. Nothing else moves. `id/agar-lab/` is the reference build.
+arrange row changes. Edit one `palette.json` instrument → only that instrument changes. Nothing
+else moves. The one deliberate exception is a **genre recompose** — `/cyborge-score <name> <genre>`
+re-authors the whole shape + sound on purpose. `id/agar-lab/` is the reference build.
 
 ---
 
@@ -215,13 +227,14 @@ arrange row changes. Nothing else moves. `id/agar-lab/` is the reference build.
 
 **Music (the second craft) bends "no frameworks" on purpose:**
 - **Strudel** is the song engine — loaded from a pinned `<script>` (still no build/npm), the one
-  place we vendor a runtime. Music is Strudel patterns, compiled from `song.json`.
+  place we vendor a runtime. Music is Strudel patterns, compiled from `song.json` (shape) + a
+  per-song `palette.json` (sound, authored from the essay's mood) over the cookbook default.
 - **Voice** is pre-rendered offline by `tools/tts/eleven.py` (ElevenLabs v3, so `[audio tags]`
   like `[sigh]`/`[whispers]` perform). Clips ship; nothing calls a voice API at play-time. Keys
   live in `.env` (gitignored), never in code.
-- **Spec-driven & deterministic:** a song is *compiled from data* (`song.json` + the essay), never
-  hand-written. Same spec → same Strudel, so iteration never clobbers tuned parts. The generated
-  page is a build artifact; the sources are the two data files.
+- **Spec-driven & deterministic:** a song is *compiled from data* (the essay + `song.json` +
+  `palette.json`), never hand-written. Same sources → same Strudel, so iteration never clobbers
+  tuned parts. The generated page is a build artifact; the sources are the three data files.
 
 ### Future: MCP
 

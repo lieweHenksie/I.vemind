@@ -1,0 +1,25 @@
+{
+  "essay": "mycelium/essays/head_god.md",
+  "genre": "trip-hop / dark downtempo",
+  "bpm": 86,
+  "_comment": "The song's SHAPE + its genre. Trip-hop / dark downtempo (Portishead-noir): slow, dusty, heavy, the spoken voice forward over the bed, dynamics from adding/dropping the beat rather than a euphoric build. The genre field records what type of song this is; /cyborge-score <name> <genre> re-authors shape+sound in a genre. Instruments live in id/head_god/palette.json (its own trip-hop sound). Edit + /cyborge-compose head_god. Split bars sum ~ that line's rendered bars (at THIS bpm).",
+  "sections": [
+    {"bars": 2, "layers": ["wash"], "label": "intro — vinyl crackle in"},
+    {"bars": 2, "layers": ["wash", "bass"], "label": "the deep sub"},
+    {"bars": 1, "layers": ["wash", "bass", "kick"]},
+    {"bars": 1, "layers": ["wash", "bass", "kick", "clap", "hats"], "label": "the dusty beat"},
+    {"voice": 0, "layers": ["wash", "kick", "clap", "hats", "bass", "arp"], "label": "the goddess behind the ear"},
+    {"voice": 1, "layers": ["wash", "bass", "arp"], "label": "I wish she wouldn't — beat drops, intimate"},
+    {"voice": 2, "split": [[3, ["wash", "kick", "clap", "hats", "bass", "arp"]], [2, ["wash", "bass"]]], "label": "die virgins — beat drops on the decree"},
+    {"voice": 3, "layers": ["wash", "bass"], "label": "punishment — bare"},
+    {"voice": 4, "layers": ["wash", "kick", "clap", "hats", "bass", "arp", "pad"], "label": "the shaman weaves it in"},
+    {"voice": 5, "layers": ["wash", "bass", "pad"], "label": "this much we know — brood, beat out"},
+    {"bars": 2, "layers": ["wash", "bass", "pad", "riser"], "label": "breakdown — swell"},
+    {"bars": 2, "layers": ["wash", "riser", "pad"], "label": "rise"},
+    {"voice": 6, "layers": ["wash", "bass"], "label": "hating me in common — bare"},
+    {"voice": 7, "split": [[3, ["wash", "kick", "clap", "hats", "bass", "arp", "pad", "lead"]], [2, ["wash", "bass"]], [3, ["wash", "kick", "clap", "hats", "bass", "arp", "solo"]]], "label": "wisdom & desire — the mechanism (peak)"},
+    {"bars": 4, "layers": ["wash", "kick", "clap", "hats", "bass", "arp", "solo"], "label": "dub solo — afterglow"},
+    {"voice": 8, "split": [[1, ["wash", "kick", "clap", "hats", "bass", "arp"]], [3, ["wash", "bass"]]], "label": "she does the talking → embarrass myself (beat drops for the confession)"},
+    {"bars": 8, "layers": ["wash", "bass", "pad", "lead"], "label": "outro — fade"}
+  ]
+}

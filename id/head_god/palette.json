@@ -1,0 +1,23 @@
+{
+  "_comment": "head_god's SOUND — genre: trip-hop / dark downtempo (authored by /cyborge-score from the essay's mood + Strudel genre research). D minor, dusty and heavy, the beat laid-back under a forward voice. Synthesized kit (no sample banks) so it boots on the pinned Strudel. Overrides cookbook/strudel/palette.json for THIS song; unspecified instruments fall back. Edit + /cyborge-compose head_god.",
+
+  "bass":    "note(\"d2 ~ ~ ~ bb1 ~ ~ ~\").s(\"sawtooth\").lpf(sine.range(140,440).slow(16)).lpq(7).gain(0.86)",
+
+  "kick":    "note(\"d1 ~ ~ ~ d1 ~ d1 ~\").s(\"sine\").attack(0.001).decay(0.4).sustain(0).shape(0.12).gain(1)",
+
+  "clap":    "s(\"~ white ~ white\").decay(0.18).sustain(0).hpf(1800).lpf(6500).shape(0.12).gain(0.5).room(0.4)",
+
+  "hats":    "s(\"white ~ white white ~ white ~ white\").decay(0.03).sustain(0).hpf(5000).lpf(11000).gain(0.14)",
+
+  "arp":     "note(\"~ [d3,f3,a3,c4] ~ [c3,eb3,g3,bb3]\").s(\"triangle\").attack(0.01).release(0.4).lpf(1600).delay(0.3).delaytime(0.28).delayfeedback(0.28).room(0.55).gain(0.34)",
+
+  "pad":     "note(\"<[d3,f3,a3] [bb2,d3,f3] [g2,bb2,d3] [a2,c3,e3,g3]>\").s(\"sawtooth\").attack(1.4).release(2).lpf(sine.range(300,650).slow(24)).gain(0.24).room(0.92)",
+
+  "lead":    "note(\"<f4 a4 g4 d4>\").s(\"triangle\").lpf(1050).release(0.5).delay(0.4).delaytime(0.5).delayfeedback(0.42).room(0.8).gain(0.4)",
+
+  "solo":    "note(\"<[d5 ~ f5 a5 ~ g5 f5 ~] [~ c5 d5 ~ f5 ~ e5 d5]>\").s(\"triangle\").lpf(1900).delay(0.5).delaytime(0.375).delayfeedback(0.5).room(0.7).gain(0.42)",
+
+  "wash":    "s(\"white*16\").decay(0.004).sustain(0).hpf(4000).gain(0.07)",
+
+  "riser":   "s(\"white\").lpf(saw.range(200,5000).slow(8)).gain(0.13).room(0.8)"
+}

@@ -15,8 +15,9 @@ PALETTE = ROOT / "cookbook/strudel/palette.json"
 
 
 def gen_instruments(used, palette):
-    # palette order = definition order; only emit what the song uses
-    return "\n".join(f"let {name} = {palette[name]}" for name in palette if name in used)
+    # palette order = definition order; only emit what the song uses (skip _meta keys)
+    return "\n".join(f"let {name} = {palette[name]}" for name in palette
+                     if name in used and not name.startswith("_"))
 
 
 def _stack(parts):
@@ -63,8 +64,16 @@ def main():
     ap.add_argument("--index", required=True)
     a = ap.parse_args()
 
-    spec = json.loads(pathlib.Path(a.spec).read_text())
+    spec_path = pathlib.Path(a.spec)
+    spec = json.loads(spec_path.read_text())
     palette = json.loads(PALETTE.read_text())
+    # Per-song palette: id/<name>/palette.json overrides/extends the cookbook default so each
+    # song owns its instruments (its own key, riffs, timbres — authored from the essay's mood).
+    # Anything the song doesn't redefine falls back to the shared recipe. The sound is DATA,
+    # so builds stay deterministic and incremental.
+    song_palette = spec_path.parent / "palette.json"
+    if song_palette.exists():
+        palette = {**palette, **json.loads(song_palette.read_text())}
     sections = spec["sections"]
     bpm = spec.get("bpm", 120)
 

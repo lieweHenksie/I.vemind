@@ -14,6 +14,7 @@ build). The voice is pre-rendered to clips by `tools/tts/eleven.py`. The page gl
 | [`template.html`](template.html) | **Copy this to start a song.** The whole page: Strudel boot, voice-loading, play/stop, and a starter score. |
 | [`palette.md`](palette.md) | The instruments — copy-me synth voices (bass, sub-kick, arps, pad, hats, clap, lead, solo, wash, riser, impact). |
 | [`arrangement.md`](arrangement.md) | How to bind voice + music into one `arrange()` timeline, with section templates (intro / breakdown / bridge / solo / climax). |
+| [`research/`](research/README.md) | **The listening bank** — studies of real Strudel artists (via `/cyborge-research`): techniques verified against the docs, caption-garble corrected, flagged against the pinned runtime. |
 | `../../tools/tts/audio-tags.md` | ElevenLabs v3 audio tags (`[sigh]`, `[whispers]`, `[sad]`) — cyBorge's acting notes, dropped inline in the essay. |
 
 ## Make a song (the loop)

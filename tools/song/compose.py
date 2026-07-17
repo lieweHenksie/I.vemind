@@ -37,9 +37,14 @@ def main():
     if not essay.exists():
         sys.exit(f'essay not found: {essay} — set "essay" in {spec.name}')
 
+    # Size the bars array at the SONG's tempo (a bar = 240/bpm seconds), so a voice line's slot
+    # fits its clip at any BPM. Without this, a slow song leaves huge gaps and a fast one clips.
+    bpm = data.get("bpm", 120)
+
     py = sys.executable
-    print(f"● voice  ({essay})")
-    cmd = [py, str(ROOT / "tools/tts/eleven.py"), str(essay), str(voice), "--index", str(index)]
+    print(f"● voice  ({essay}) @ {bpm} BPM")
+    cmd = [py, str(ROOT / "tools/tts/eleven.py"), str(essay), str(voice),
+           "--index", str(index), "--bpm", str(bpm)]
     if a.only:
         cmd += ["--only", a.only]
     if a.all:

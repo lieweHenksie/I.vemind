@@ -10,7 +10,9 @@ Build the song for: $ARGUMENTS
 - Essay: `mycelium/essays/<name>.md` · Spec: `id/<name>/song.json` · Piece: `id/<name>/index.html`.
 
 State them. If the essay is missing, stop. If `song.json` is missing, stop and say: run
-**`/cyborge-score <name>`** first — the shape must exist before you can build it.
+**`/cyborge-score <name>`** first — the shape must exist before you can build it. To change the
+genre or fully recompose, that's a scoring act too: run **`/cyborge-score <name> <genre>`** first
+(it re-authors the shape + sound in that genre) — compose only turns the crank.
 
 **Step 1 — scaffold if new.** If `id/<name>/index.html` doesn't exist, copy
 `cookbook/strudel/template.html` there. It already carries the markers the tools need
@@ -23,8 +25,10 @@ python3 tools/song/compose.py <name>
 It reads `id/<name>/song.json` for the essay path (its `essay` field; falls back to
 `mycelium/essays/<name>.md`), renders the voice (`tools/tts/eleven.py` — ElevenLabs v3,
 **incremental**: only edited lines) and compiles the shape (`tools/song/build.py`, **deterministic**:
-one section changed → one arrange row changed). `--only N` re-rolls a line; `--all` forces all.
-Needs `.env`: `eleven_labs=<key>` + `eleven_voice_id=<id>`.
+one section changed → one arrange row changed). The compile also merges this song's own
+`id/<name>/palette.json` (its SOUND, authored by `/cyborge-score`) **over** the cookbook default, so
+each song plays its own instruments; anything the song doesn't redefine falls back to the cookbook.
+`--only N` re-rolls a line; `--all` forces all. Needs `.env`: `eleven_labs=<key>` + `eleven_voice_id=<id>`.
 
 **Step 3 — serve, then listen.**
 `python3 -m http.server --bind 127.0.0.1 8000`, open `http://localhost:8000/id/<name>/`. Wait for
