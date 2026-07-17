@@ -56,10 +56,16 @@ let kick = note("d1 ~ ~ d1 ~ ~ d1 ~").s("sine").attack(0.001).decay(0.35).sustai
 let hats = s("white ~ white white ~ white white ~").decay(0.03).sustain(0).hpf(6000).gain(0.16)
 let clap = s("~ white ~ white").decay(0.18).sustain(0).hpf(1800).lpf(6500).shape(0.12).gain(0.5).room(0.4)
 let riser = s("white").lpf(saw.range(300,8000).slow(8)).gain(0.18).room(0.7)
-let bed = s("demicall").slow(14).lpf(1100).gain(0.4).room(0.5)
+let bed = s("demicall").slow(14).lpf(1100).gain(0.34).room(0.5)
+let preach = s("sermon").slow(3).gain(1.05).room(0.2)
+let toughcall = s("toughtime").slow(3).gain(1.15).room(0.35)
+let dropcall = s("toughline").slow(4).gain(1.2).room(0.3)
 let chopsparse = s("toughline").slice(8, "0 ~ ~ 2 ~ 5 ~ ~").lpf(3500).gain(0.9)
 let chopdrop = s("toughline").slice(8, "<[0 2 1 3 ~ 5 6 7] [7 ~ 6 4 [2 2] 1 0 ~]>").shape(0.1).gain(1)
-let stab = s("demistab").gain(1.15).room(0.3)
+let stab = s("~ ~ ~ demistab").gain(1.1).room(0.3)
+let acid = note("[d3 f3 d3 a3 g3 d3 f3 c3]*2").s("sawtooth").lpf(saw.range(250,2600).slow(3)).lpenv(3).lpdecay(0.12).gain(0.34)
+let acidpump = note("[d3 f3 d3 a3 g3 d3 f3 c3]*2").s("sawtooth").lpf(2200).lpenv(3).lpdecay(0.12).gain("0.12 0.3 0.38 0.12 0.3 0.38 0.12 0.3")
+let tick = s("white ~ ~ ~ white ~ ~ ~").decay(0.02).sustain(0).hpf(7000).gain(0.1)
 // INSTRUMENTS-END
 
 // ── voice timing · auto-managed by tools/tts/eleven.py (don't hand-edit) ──
@@ -74,11 +80,12 @@ arrange(
   [2, bed],   // intro — the call murmurs in
   [2, stack(bed, bass)],   // sub joins
   [2, stack(bed, bass, kick, hats)],   // the bounce
-  [2, stack(bed, bass, kick, hats, chopsparse)],   // first splits — tease
-  [2, stack(bed, riser)],   // lift — beat out, riser climbs
-  [1, stack(stab, bass)],   // THE CALL — bo demi demi
-  [4, stack(stab, kick, clap, hats, bass, chopdrop)],   // THE DROP — split juggling
-  [4, stack(kick, clap, hats, bass, chopsparse, bed)],   // ride out
+  [3, stack(preach, bass, kick, hats)],   // the sermon — intact, bed steps aside
+  [2, stack(toughcall, acid, riser)],   // TOUGH TIME NEVER LAST — beat out, filter climbs
+  [1, stack(tick, riser)],   // …suspense…
+  [4, stack(dropcall, kick, clap, hats, bass, acidpump)],   // THE DROP — only tough people last, bo demi demi
+  [4, stack(kick, clap, hats, bass, chopdrop, stab)],   // split juggling — the scramble (the funny part stays)
+  [2, stack(bed, chopsparse, bass)],   // ride out — calls overlap on purpose
   [2, stack(bed, bass)],   // outro — murmur fades
 ).fast(104/120)
 // ARRANGE-END
@@ -105,7 +112,7 @@ arrange(
     // The crate: extra samples cut by tools/song/sample.py · managed by tools/song/build.py
     // from palette.json's _samples map (don't hand-edit).
     // SAMPLE-FILES-START
-    const SAMPLE_FILES = { "demicall": "audio/samples/demicall.wav", "toughline": "audio/samples/toughline.wav", "demistab": "audio/samples/demistab.wav" };
+    const SAMPLE_FILES = { "demicall": "audio/samples/demicall.wav", "toughline": "audio/samples/toughline.wav", "demistab": "audio/samples/demistab.wav", "toughtime": "audio/samples/toughtime.wav", "sermon": "audio/samples/sermon.wav" };
     // SAMPLE-FILES-END
     const SAMPLE_BASE = new URL('.', location.href).href;
 

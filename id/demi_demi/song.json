@@ -1,17 +1,18 @@
 {
   "essay": "none — crate jam, no voice lines",
-  "genre": "afro-bounce crate jam",
+  "genre": "afro-bounce crate jam × Switch Angel trance moves",
   "bpm": 104,
-  "_comment": "The SHAPE: murmur in, tease the splits, lift, then THE DROP — the stab calls it and the toughline gets juggled. All instrumental; the crate is the voice.",
+  "_comment": "The SHAPE, v2: the arc the world needs — sermon intact, then TOUGH TIME NEVER LAST in a beatless suspense build (acid filter opening = the energy, per the bank), one bar of near-silence, then ONLY TOUGH PEOPLE LAST as the drop. The scramble comedy stays after. Bed steps aside whenever an intact phrase speaks.",
   "sections": [
     {"bars": 2, "layers": ["bed"], "label": "intro — the call murmurs in"},
     {"bars": 2, "layers": ["bed", "bass"], "label": "sub joins"},
     {"bars": 2, "layers": ["bed", "bass", "kick", "hats"], "label": "the bounce"},
-    {"bars": 2, "layers": ["bed", "bass", "kick", "hats", "chopsparse"], "label": "first splits — tease"},
-    {"bars": 2, "layers": ["bed", "riser"], "label": "lift — beat out, riser climbs"},
-    {"bars": 1, "layers": ["stab", "bass"], "label": "THE CALL — bo demi demi"},
-    {"bars": 4, "layers": ["stab", "kick", "clap", "hats", "bass", "chopdrop"], "label": "THE DROP — split juggling"},
-    {"bars": 4, "layers": ["kick", "clap", "hats", "bass", "chopsparse", "bed"], "label": "ride out"},
+    {"bars": 3, "layers": ["preach", "bass", "kick", "hats"], "label": "the sermon — intact, bed steps aside"},
+    {"bars": 2, "layers": ["toughcall", "acid", "riser"], "label": "TOUGH TIME NEVER LAST — beat out, filter climbs"},
+    {"bars": 1, "layers": ["tick", "riser"], "label": "…suspense…"},
+    {"bars": 4, "layers": ["dropcall", "kick", "clap", "hats", "bass", "acidpump"], "label": "THE DROP — only tough people last, bo demi demi"},
+    {"bars": 4, "layers": ["kick", "clap", "hats", "bass", "chopdrop", "stab"], "label": "split juggling — the scramble (the funny part stays)"},
+    {"bars": 2, "layers": ["bed", "chopsparse", "bass"], "label": "ride out — calls overlap on purpose"},
     {"bars": 2, "layers": ["bed", "bass"], "label": "outro — murmur fades"}
   ]
 }
