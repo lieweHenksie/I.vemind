@@ -43,6 +43,11 @@ build). The voice is pre-rendered to clips by `tools/tts/eleven.py`. The page gl
 - **`arrange` loops each section every bar** — a one-shot voice needs `.slow(n)` (use `vo`).
 - **Every `"…"` is mini-notation** — never `s("voice:" + i)`; pass a finished `s("voice:0")` clip.
 - **Drums are synth** (a low sine sub-kick, noise hats/clap) — never the tacky sample kit.
+- **The crate:** extra samples (cut by `tools/song/sample.py`, e.g. from a YouTube link) live in
+  `id/<name>/audio/samples/` and are declared in `palette.json`'s `_samples` map; `build.py`
+  registers them for prebake. A sample name is **not** a layer — an instrument plays it
+  (`s("name")` + `chop`/`slice`/`loopAt`/`speed`). Commercial cuts stay in `id/`; rights-check
+  before `ego/`.
 - **Voice is always pre-rendered** — browser speech can't be beat-locked; and v3 audio tags are
   paid-tier ElevenLabs.
 

@@ -63,6 +63,10 @@ Research for *ideas*; author with the *safe* toolkit.
 `id/<name>/palette.json` — a JSON map of instrument **name → Strudel code** overriding the cookbook
 default. Redefine every instrument the shape uses so it carries this genre & mood; leave the rest to
 fall back.
+- **Open the crate first:** if `palette.json` has a `_samples` map (stocked by `/cyborge-sample`),
+  those are cut audio waiting to be played. Author an instrument for any that serve the song —
+  `s("name")` + `chop`/`slice`/`loopAt`/`speed` — sized by the bars-math `sample.py` printed.
+  Never delete `_samples` entries; an unused sample just stays shelved.
 - **One coherent key/mode** across all layers. Give it its **own riffs**, not the defaults
   transposed — a fresh bass rhythm, chord voicings, lead contour, the genre's signature textures.
 - **Valid Strudel only** — the cookbook's function vocabulary (`note`, `s`, `lpf`, `lpq`, `hpf`,

@@ -83,10 +83,11 @@ The two fonts coexist without hierarchy. Neither fully wins.
 ├── tools/                  ← dev-only build tools (never shipped)
 │   ├── tts/eleven.py       ← the VOICE: ElevenLabs v3 render, incremental (+ audio-tags.md)
 │   ├── song/build.py       ← SHAPE+SOUND: compiles song.json + palette.json → Strudel
-│   └── song/transcribe.py  ← the EAR: YouTube auto-captions → timestamped transcript
+│   ├── song/transcribe.py  ← the EAR: YouTube auto-captions → timestamped transcript
+│   └── song/sample.py      ← the CRATE: YouTube link → cut wav + `_samples` entry (/cyborge-sample)
 ├── .claude/commands/       ← the pipelines, as slash commands
 │   ├── cyborge-{test,direct,code,sync}.md        ← STORY pipeline
-│   └── cyborge-{research,score,compose,feedback,shape,song}.md ← SONG pipeline (song = score→compose in one pull)
+│   └── cyborge-{research,sample,score,compose,feedback,shape,song}.md ← SONG pipeline (song = score→compose in one pull)
 ├── mycelium/               ← drafts, outlines, source material (never published)
 │   └── essays/             ← song lyrics/essays (blank-line block = one spoken line)
 ├── ego/                    ← finished, public-facing pieces (empty — azibo scrapped)
@@ -189,6 +190,7 @@ edit the sources and run the tools.
 | Step | Command | What it does |
 |------|---------|--------------|
 | 0 | `/cyborge-research` | *(any time, feeds the cookbook — not per-song)* Transcribes a real Strudel artist's video (`tools/song/transcribe.py` → yt-dlp auto-captions), extracts their **moves** (never their patterns), verifies every claimed function against the strudel.cc docs (captions garble code), and banks the study in `cookbook/strudel/research/` — flagged against the pinned runtime. `/cyborge-score` spends the bank. |
+| ½ | `/cyborge-sample`   | *(optional, before the score)* The crate-digger: cuts material from a YouTube link (`tools/song/sample.py` → yt-dlp + ffmpeg; timestamps, or a described phrase found via the transcript) into `id/<name>/audio/samples/` and registers it in `palette.json`'s `_samples` map. Cuts material only — never authors instruments; the scorer opens the crate. Commercial cuts stay in `id/`; rights-check before `ego/`. |
 | 1 | `/cyborge-score`    | Reads the essay for its arc AND its mood; picks/records a **genre** and researches how it's built in Strudel (opening the research bank first); drafts `song.json` (SHAPE + genre) and `palette.json` (SOUND — its own key/riffs/timbres). `<name> <genre>` = a deliberate **full recompose** in that genre; bare `<name>` preserves tuned files, appending only what's new. |
 | 2 | `/cyborge-compose`  | Renders the voice (`tools/tts/eleven.py` — ElevenLabs v3, incremental) and compiles the shape (`tools/song/build.py`) into the page. |
 | 3 | `/cyborge-feedback` | Plays it; turns the human's reactions into `feedback.md` — two lists, **Keep** and **Fix**. |

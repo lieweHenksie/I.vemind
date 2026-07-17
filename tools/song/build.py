@@ -51,11 +51,11 @@ def gen_arrange(sections, bpm):
     return "arrange(\n" + "\n".join(rows) + "\n)" + tail
 
 
-def patch(txt, start, end, content):
+def patch(txt, start, end, content, indent=""):
     if start not in txt or end not in txt:
         raise SystemExit(f"markers {start}/{end} not found in index.html — add them first")
     return re.sub(re.escape(start) + r".*?" + re.escape(end),
-                  f"{start}\n{content}\n{end}", txt, flags=re.S)
+                  f"{start}\n{content}\n{indent}{end}", txt, flags=re.S)
 
 
 def main():
@@ -90,9 +90,18 @@ def main():
     txt = idx.read_text()
     txt = patch(txt, "// INSTRUMENTS-START", "// INSTRUMENTS-END", gen_instruments(used, palette))
     txt = patch(txt, "// ARRANGE-START", "// ARRANGE-END", gen_arrange(sections, bpm))
+    # The crate: `_samples` in palette.json (stocked by tools/song/sample.py) registers extra
+    # audio for prebake. Instruments PLAY them — a sample name isn't a layer by itself.
+    crate = palette.get("_samples", {})
+    if crate or "// SAMPLE-FILES-START" in txt:
+        files = ", ".join(f"{json.dumps(n)}: {json.dumps(f)}" for n, f in crate.items())
+        txt = patch(txt, "// SAMPLE-FILES-START", "// SAMPLE-FILES-END",
+                    "    const SAMPLE_FILES = {%s};" % (" " + files + " " if files else ""),
+                    indent="    ")
     idx.write_text(txt)
     n_voice = sum(1 for s in sections if "voice" in s)
-    print(f"built {len(sections)} sections ({n_voice} voice), {len(used)} instruments -> {idx.name}")
+    crate_note = f", {len(crate)} crate samples" if crate else ""
+    print(f"built {len(sections)} sections ({n_voice} voice), {len(used)} instruments{crate_note} -> {idx.name}")
 
 
 if __name__ == "__main__":

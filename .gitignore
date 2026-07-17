@@ -7,6 +7,7 @@
 # dev tooling (large, regenerable)
 tools/tts/.venv/
 tools/tts/models/
+tools/song/.sample-cache/
 
 # os cruft
 .DS_Store

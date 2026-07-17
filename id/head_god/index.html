@@ -115,10 +115,19 @@ arrange(
     const VOICE_BASE = new URL('audio/voice/', location.href).href;
     const VOICE_BUST = '?t=' + Date.now();
 
+    // The crate: extra samples cut by tools/song/sample.py · managed by tools/song/build.py
+    // from palette.json's _samples map (don't hand-edit).
+    // SAMPLE-FILES-START
+    const SAMPLE_FILES = {};
+    // SAMPLE-FILES-END
+    const SAMPLE_BASE = new URL('.', location.href).href;
+
     let booted = false;
     try {
       initStrudel({ prebake: async () => {
         await samples({ voice: VOICE_FILES.map(f => f + VOICE_BUST) }, VOICE_BASE);
+        for (const [name, file] of Object.entries(SAMPLE_FILES))
+          await samples({ [name]: file + VOICE_BUST }, SAMPLE_BASE);
       }});
       booted = true;
     } catch (e) { setStatus('strudel failed to boot: ' + (e && e.message ? e.message : e), true); }
@@ -129,10 +138,12 @@ arrange(
       if (tc) window.arrange = (...secs) => tc(...secs).slow(secs.reduce((a,s)=>a+s[0],0));
     }
 
-    // Preload voice clips BEFORE enabling play — fixes "first play misses lines".
+    // Preload voice clips + crate samples BEFORE enabling play — fixes "first play misses lines".
     if (booted) {
       setStatus('loading voice…');
-      Promise.all(VOICE_FILES.map(f => fetch(VOICE_BASE + f + VOICE_BUST).catch(()=>{})))
+      const urls = [...VOICE_FILES.map(f => VOICE_BASE + f),
+                    ...Object.values(SAMPLE_FILES).map(f => SAMPLE_BASE + f)];
+      Promise.all(urls.map(u => fetch(u + VOICE_BUST).catch(()=>{})))
         .then(() => setStatus('ready — hit [ play ]'));
     }
 
