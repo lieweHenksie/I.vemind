@@ -51,6 +51,59 @@ def gen_arrange(sections, bpm):
     return "arrange(\n" + "\n".join(rows) + "\n)" + tail
 
 
+def _rows(sections):
+    # The audible row walk shared by timeline + video cues: split voice sections expand to
+    # their sub-rows (known bars); plain voice sections have runtime bars (None).
+    rows = []
+    for s in sections:
+        if "voice" in s and "split" in s:
+            rows += [(n, list(p)) for n, p in s["split"]]
+        elif "voice" in s:
+            rows.append((None, list(s.get("layers", []))))
+        else:
+            rows.append((s.get("bars", 4), list(s.get("layers", []))))
+    return rows
+
+
+def gen_cues(sections, palette, bpm):
+    # Video sync: for every row, find crate samples the layers trigger and emit
+    # [row, offsetBars, durBars, srcSeconds] cues. The page seeks the source video to
+    # srcSeconds when the cue's bar window is live. Provenance comes from sample.py's
+    # _samples entries ({file,start,end,url}); legacy string entries can't cue.
+    video = palette.get("_video")
+    samples = {n: m for n, m in palette.get("_samples", {}).items() if isinstance(m, dict)}
+    if not video or not samples:
+        return '    const VIDEO_SRC = "";\n    const VIDEO_CUES = [];'
+    cues = []
+    for ri, (rbars, layers) in enumerate(_rows(sections)):
+        for lname in layers:
+            code = palette.get(lname, "")
+            m = re.search(r's\("([^"]+)"', code)
+            if not m:
+                continue
+            tokens = m.group(1).split()
+            slow = re.search(r"\.slow\(([\d.]+)\)", code)
+            period = float(slow.group(1)) if slow else 1.0
+            for i, tok in enumerate(tokens):
+                if tok not in samples:
+                    continue
+                meta = samples[tok]
+                src, slen = meta["start"], (meta["end"] - meta["start"]) * bpm / 240
+                if ".slice(" in code:                     # region: show the whole source span
+                    cues.append((ri, 0.0, round(min(rbars or slen, slen), 3), src))
+                    continue
+                t0 = (i / len(tokens)) * period
+                if rbars is None:                          # voice row: first fire only, page clamps
+                    cues.append((ri, round(t0, 3), round(slen, 3), src))
+                    continue
+                while t0 < rbars:
+                    cues.append((ri, round(t0, 3), round(min(slen, rbars - t0), 3), src))
+                    t0 += period
+    rows_js = ", ".join("[%s, %s, %s, %s]" % c for c in cues)
+    return ('    const VIDEO_SRC = %s;\n    const VIDEO_CUES = [%s];  // [row, offBars, durBars, srcSec]'
+            % (json.dumps(video["file"]), rows_js))
+
+
 def gen_timeline(sections, bpm):
     # One entry per audible row: [bars, label]. Voice sections emit "V<i>" — the page
     # resolves their length from the score's `bars` array (owned by eleven.py) at play time.
@@ -111,13 +164,18 @@ def main():
     # audio for prebake. Instruments PLAY them — a sample name isn't a layer by itself.
     crate = palette.get("_samples", {})
     if crate or "// SAMPLE-FILES-START" in txt:
-        files = ", ".join(f"{json.dumps(n)}: {json.dumps(f)}" for n, f in crate.items())
+        files = ", ".join(
+            f"{json.dumps(n)}: {json.dumps(f['file'] if isinstance(f, dict) else f)}"
+            for n, f in crate.items())
         txt = patch(txt, "// SAMPLE-FILES-START", "// SAMPLE-FILES-END",
                     "    const SAMPLE_FILES = {%s};" % (" " + files + " " if files else ""),
                     indent="    ")
     if "// TIMELINE-START" in txt:
         txt = patch(txt, "// TIMELINE-START", "// TIMELINE-END",
                     gen_timeline(sections, bpm), indent="    ")
+    if "// VIDEO-CUES-START" in txt:
+        txt = patch(txt, "// VIDEO-CUES-START", "// VIDEO-CUES-END",
+                    gen_cues(sections, palette, bpm), indent="    ")
     idx.write_text(txt)
     n_voice = sum(1 for s in sections if "voice" in s)
     crate_note = f", {len(crate)} crate samples" if crate else ""
