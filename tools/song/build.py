@@ -72,8 +72,10 @@ def gen_cues(sections, palette, bpm):
     # no big-file seeking. Only samples with a "clip" (sample.py --video) can cue video.
     samples = {n: m for n, m in palette.get("_samples", {}).items()
                if isinstance(m, dict) and m.get("clip")}
+    filler = palette.get("_filler", [])
+    filler_js = "    const FILLER_CLIPS = %s;\n" % json.dumps(filler)
     if not samples:
-        return '    const VIDEO_CLIPS = {};\n    const VIDEO_CUES = [];'
+        return filler_js + '    const VIDEO_CLIPS = {};\n    const VIDEO_CUES = [];'
     clips = {n: m["clip"] for n, m in samples.items()}
     cues = []
     for ri, (rbars, layers) in enumerate(_rows(sections)):
@@ -101,8 +103,9 @@ def gen_cues(sections, palette, bpm):
                     t0 += period
     clips_js = ", ".join("%s: %s" % (json.dumps(n), json.dumps(p)) for n, p in clips.items())
     rows_js = ", ".join("[%s, %s, %s, %s, %s]" % (r, o, d, json.dumps(c), off) for r, o, d, c, off in cues)
-    return ('    const VIDEO_CLIPS = {%s};\n    const VIDEO_CUES = [%s];  // [row, offBars, durBars, clip, clipOffSec]'
-            % (clips_js, rows_js))
+    return (filler_js
+            + '    const VIDEO_CLIPS = {%s};\n' % clips_js
+            + '    const VIDEO_CUES = [%s];  // [row, offBars, durBars, clip, clipOffSec]' % rows_js)
 
 
 def gen_timeline(sections, bpm):
