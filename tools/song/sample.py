@@ -75,7 +75,17 @@ def register(song_dir, name, url, start, dur, want_video):
         if not vid.exists():
             vid.parent.mkdir(parents=True, exist_ok=True)
             print("downloading video…")
-            run(["yt-dlp", "--no-playlist", "-f", "b[ext=mp4]/best", "-o", str(vid), url])
+            raw = vid.with_name("raw.mp4")
+            run(["yt-dlp", "--no-playlist", "-f", "b[ext=mp4]/best", "-o", str(raw), url])
+            # Re-encode with EVERY frame a keyframe (-g 1): downloaded mp4s keyframe every few
+            # seconds, so a seek stalls decoding from a distant keyframe = a frozen frame on each
+            # jump-cut. All-intra makes every source timestamp instantly seekable. Audio dropped
+            # (the page mutes it) to offset the size bump.
+            print("re-encoding for frame-accurate seeking…")
+            run(["ffmpeg", "-y", "-loglevel", "error", "-i", str(raw), "-an",
+                 "-c:v", "libx264", "-crf", "24", "-g", "1", "-preset", "veryfast",
+                 "-pix_fmt", "yuv420p", str(vid)])
+            raw.unlink()
         pal["_video"] = {"file": "video/source.mp4", "url": url}
     pal_path.write_text(json.dumps(pal, indent=2) + "\n")
 
