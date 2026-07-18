@@ -1,0 +1,65 @@
+{
+  "_comment": "nice_ron's SOUND v1 — melodic techno gone 8-BIT, 140, E minor. The arc: peaceful meadow (bells + pad on the e-g-b-a cell, deer on screen) → THE SNEEZE → 'nice one, ron' → a SHORT four-on-floor techno drop wrapped in melody (offbeat technobass walks the cell, droplead sings it; sneezestab punches bar 1s; drop II is a dialog: sneezechop argues on odd bars, ronstab answers 'nice ron' twice on evens; the machine sections are square+crush chiptune, the meadow stays organic) → the confession → the apology → stillness. One voice at a time. Speech cuts peak-normalized to -3dB (source is quiet phone audio); gains sit at ~0.7-1.0 against that. Moves spent from the bank: one-riff economy, filter-as-energy (switch-angel study).",
+  "_samples": {
+    "deercalm": {
+      "file": "audio/samples/deercalm.wav",
+      "start": 0.0,
+      "end": 1.25,
+      "url": "https://www.youtube.com/shorts/MUINFs1Sp94",
+      "clip": "video/deercalm.mp4"
+    },
+    "sneeze": {
+      "file": "audio/samples/sneeze.wav",
+      "start": 1.25,
+      "end": 1.95,
+      "url": "https://www.youtube.com/shorts/MUINFs1Sp94",
+      "clip": "video/sneeze.mp4"
+    },
+    "niceron": {
+      "file": "audio/samples/niceron.wav",
+      "start": 2.95,
+      "end": 4.0,
+      "url": "https://www.youtube.com/shorts/MUINFs1Sp94",
+      "clip": "video/niceron.mp4"
+    },
+    "isneezed": {
+      "file": "audio/samples/isneezed.wav",
+      "start": 3.95,
+      "end": 4.8,
+      "url": "https://www.youtube.com/shorts/MUINFs1Sp94",
+      "clip": "video/isneezed.mp4"
+    },
+    "notallowed": {
+      "file": "audio/samples/notallowed.wav",
+      "start": 4.75,
+      "end": 6.15,
+      "url": "https://www.youtube.com/shorts/MUINFs1Sp94",
+      "clip": "video/notallowed.mp4"
+    }
+  },
+  "_filler": [
+    "video/filler-1.mp4",
+    "video/filler-2.mp4",
+    "video/filler-3.mp4"
+  ],
+  "deerbed": "s(\"deercalm\").slow(8).gain(0.5).room(0.9)",
+  "belltale": "note(\"<e4 g4 b4 a4>\").s(\"triangle\").attack(0.4).release(1.4).lpf(1400).room(0.85).gain(0.4)",
+  "softpad": "note(\"<[e3,g3,b3] [c3,e3,g3] [a2,c3,e3] [b2,d3,fs3]>\").s(\"sawtooth\").attack(1.5).release(2.5).lpf(600).gain(0.25).room(0.9)",
+  "gentlearp": "note(\"[e4 g4 b4 a4]*2\").s(\"triangle\").lpf(1200).delay(0.4).delaytime(0.428).delayfeedback(0.35).room(0.7).gain(0.28)",
+  "shimmerhat": "s(\"~ white ~ white ~ white ~ white\").decay(0.03).sustain(0).hpf(9000).gain(0.08)",
+  "thesneeze": "s(\"sneeze\").slow(2).gain(1.25).room(0.5)",
+  "ronline": "s(\"niceron\").slow(2).gain(1.0).room(0.3)",
+  "confess": "s(\"isneezed\").slow(2).gain(0.9).room(0.35)",
+  "apology": "s(\"notallowed\").slow(4).gain(0.9).room(0.5)",
+  "sub": "note(\"<e1 e1 g1 a1>\").s(\"sine\").attack(0.005).release(0.25).gain(0.85)",
+  "dropkick": "note(\"e1*4\").s(\"sine\").attack(0.001).decay(0.3).sustain(0).shape(0.25).gain(1.1)",
+  "dropsnare": "s(\"~ white ~ white\").decay(0.12).sustain(0).hpf(1500).lpf(7000).crush(6).shape(0.2).gain(0.6).room(0.3)",
+  "drophats": "s(\"[~ white]*4\").decay(0.03).sustain(0).hpf(7000).gain(0.16)",
+  "sneezestab": "s(\"sneeze ~ ~ ~\").speed(0.85).gain(0.8).room(0.3)",
+  "sneezechop": "s(\"sneeze\").slice(4, \"<[0 ~ 1 ~ 2 ~ 3 ~] ~>\").speed(0.9).crush(5).gain(0.75)",
+  "technobass": "note(\"[~ e1 ~ e1 ~ g1 ~ a1]\").s(\"square\").crush(6).lpf(900).shape(0.15).gain(0.78)",
+  "droplead": "note(\"[e4 g4 b4 a4]*2\").s(\"square\").crush(5).lpf(3200).release(0.15).delay(0.2).delaytime(0.214).delayfeedback(0.25).room(0.4).gain(0.34)",
+  "notline": "s(\"notallowed\").slow(2).gain(0.9).room(0.4)",
+  "chiparp": "note(\"[e5 b4 g4 b4]*8\").s(\"square\").crush(4).decay(0.08).sustain(0).gain(0.2)",
+  "ronstab": "s(\"<~ [niceron ~ niceron ~]>\").speed(1.15).gain(0.95).room(0.25)"
+}

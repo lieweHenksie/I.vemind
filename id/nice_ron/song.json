@@ -1,0 +1,159 @@
+{
+  "essay": "none — crate jam, no voice lines",
+  "genre": "melodic techno",
+  "bpm": 140,
+  "_comment": "The SHAPE v3 — feedback pass 2: machine sections go 8-bit (square+crush); drop II becomes a chops/ron dialog. The sneeze now lands after a bar of TRUE silence (deer look up — comedy timing; it was camouflaged against the riser's noise crest). Drops shortened 8+8 → 4+4 with a melodic clearing between; wobble replaced by techno bass + the motif as lead. The outro grows a litany: 'i sneezed' / 'not allowed' trading two-bar lines before the full apology.",
+  "sections": [
+    {
+      "bars": 8,
+      "layers": [
+        "deerbed",
+        "softpad",
+        "belltale"
+      ],
+      "label": "stillness — the deer graze, nothing has ever happened"
+    },
+    {
+      "bars": 8,
+      "layers": [
+        "deerbed",
+        "softpad",
+        "belltale",
+        "gentlearp",
+        "shimmerhat"
+      ],
+      "label": "the meadow — one gentle motif, the forest is polite"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "softpad",
+        "gentlearp",
+        "riser",
+        "shimmerhat"
+      ],
+      "label": "the itch — something stirs in the nose of the world"
+    },
+    {
+      "bars": 1,
+      "layers": [
+        "deerbed"
+      ],
+      "label": "the deer look up — nothing moves"
+    },
+    {
+      "bars": 1,
+      "layers": [
+        "thesneeze"
+      ],
+      "label": "THE SNEEZE — the forest holds its breath"
+    },
+    {
+      "bars": 1,
+      "layers": [
+        "ronline",
+        "riser"
+      ],
+      "label": "nice one, ron — the last polite words"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "technobass",
+        "dropkick",
+        "dropsnare",
+        "droplead",
+        "sneezestab",
+        "drophats"
+      ],
+      "label": "THE DROP — gesundheit"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "technobass",
+        "dropkick",
+        "droplead",
+        "chiparp",
+        "softpad"
+      ],
+      "label": "the clearing — 8-bit birdsong keeps the pulse"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "technobass",
+        "dropkick",
+        "dropsnare",
+        "sneezechop",
+        "ronstab",
+        "drophats",
+        "chiparp"
+      ],
+      "label": "DROP II — the sneeze argues, ron answers"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "confess",
+        "softpad",
+        "sub"
+      ],
+      "label": "the confession — i sneezed"
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "confess",
+        "belltale",
+        "sub"
+      ],
+      "label": "the litany — i sneezed…"
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "notline",
+        "belltale",
+        "sub"
+      ],
+      "label": "…the litany — i'm not allowed to sneeze"
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "confess",
+        "belltale",
+        "sub"
+      ],
+      "label": "the litany — i sneezed…"
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "notline",
+        "belltale",
+        "sub"
+      ],
+      "label": "…the litany — i'm not allowed to sneeze"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "apology",
+        "softpad",
+        "belltale"
+      ],
+      "label": "the apology — oh, i'm not allowed to sneeze"
+    },
+    {
+      "bars": 8,
+      "layers": [
+        "softpad",
+        "belltale",
+        "deerbed"
+      ],
+      "label": "stillness again — the deer do not return"
+    }
+  ]
+}

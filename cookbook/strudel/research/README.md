@@ -13,6 +13,8 @@ study are re-expressed in our own key and motif, and the source is always credit
 
 - `doc-verified` — confirmed against strudel.cc docs; exact name + signature recorded.
 - `runtime-verified` — parsed AND heard on our pinned runtime, in a real song.
+- `frame-read` — read off a screenshot (`transcribe.py --frames`, the eye); name certain,
+  signature not yet confirmed in docs.
 - `unverified` — heard in the video, couldn't confirm; the guess is recorded as a guess.
 - flags: `needs-pin-bump` (newer than the template's pinned `@strudel/web`) · `repl-only`
   (an editor widget; no equivalent in an embedded page).
@@ -25,3 +27,4 @@ loop — whoever lands it updates the study's table.
 | Study | Artist | Genre | The moves |
 |-------|--------|-------|-----------|
 | [switch-angel--trance-in-the-beginning](switch-angel--trance-in-the-beginning.md) | Switch Angel | trance | one-riff genesis · acid saw lead · duck-orbit sidechain · supersaw detune · filter-as-energy · `.fit()` tops |
+| [oazoor--riff-banks-big-room](oazoor--riff-banks-big-room.md) | Oazoor · Jean-François | big-room EDM | riff banks + `pick` walk · rhythm/harmony split via `inhabit` · factory instruments · four-bass pyramid · `@` drop-holds · `postgain` mix + `all()` master |

@@ -15,9 +15,13 @@ pick the most technique-dense candidate and confirm with the human if more than 
 First check the bank's index (`cookbook/strudel/research/README.md`) — never re-study a video
 that's already banked.
 
-**Step 1 — transcribe.** `python3 tools/song/transcribe.py <url> -o <scratchpad>/<slug>.md`.
+**Step 1 — transcribe + look.** `python3 tools/song/transcribe.py <url> -o <scratchpad>/<slug>.md --frames 6`.
 The transcript is raw study material — it stays in the scratchpad, never committed, never
-published. Read it whole.
+published. Read it whole. `--frames N` is the EYE: a few evenly-spaced screenshots (they land in
+the gitignored `.sample-cache/frames/<id>/`; the tool prints the paths). **Read every frame** —
+Strudel videos show the CODE on screen, and a frame you can read beats a caption you must
+un-garble. Frames also make caption-less videos studyable (the transcript step degrades to
+metadata-only). Keep N small — a few frames is a study; forty is a bootleg.
 
 **Step 2 — extract the MOVES, not the code.** Read like a director watching another director:
 what do they *do*? How is the piece born (melody-first? drums-first?), what's the sound-design
@@ -26,10 +30,12 @@ line. **The law: learn the move, never lift the piece.** Their motif, their exac
 song — stays theirs. What we bank is the technique, re-expressed later in our own key and voice.
 
 **Step 3 — verify against the docs. Trust nothing the captions say.** Auto-captions garble code
-("el pea eff" → `lpf`; "targets three four" → `.duckorbit("3:4")`). For every function the
-transcript implies, WebFetch the strudel.cc docs (learn/synths, learn/effects, learn/samples,
-learn/tonal …) and pin down the exact name, signature, and an example. Mark each:
+("el pea eff" → `lpf`; "targets three four" → `.duckorbit("3:4")`). A frame that clearly shows
+the function ON SCREEN counts as a primary source for its *name* — but still WebFetch the
+strudel.cc docs (learn/synths, learn/effects, learn/samples, learn/tonal …) for the signature
+and an example. Mark each:
 - **doc-verified** — found in the docs, syntax confirmed.
+- **frame-read** — read off a screenshot; name certain, signature unconfirmed in docs.
 - **unverified** — heard it, couldn't confirm it; record the guess honestly, as a guess.
 
 Then check it against **our pin**: read the `@strudel/web@…` version in
