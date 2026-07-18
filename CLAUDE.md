@@ -255,42 +255,42 @@ are what make that migration mechanical instead of a rewrite. Skills first; MCP 
 
 **When the user says goodbye (any farewell), before ending the session:**
 
-1. Update the `## Last Session` section below with a brief summary of what was decided or built.
-2. Update the `## Next` section with what we planned to do next.
-3. Replace the previous entries — do not accumulate old sessions here (git history preserves them).
+1. Update the `## Last Session
 
-This keeps context alive across conversations. Do not skip this step.
+**The stage, the crate jams, and the best song yet (theGodInUrhead).**
 
----
-
-## Last Session
-
-**Grew a second craft: cyBorge now makes SONGS (voice-over-music), not just story pages.**
-
-- **Scrapped the built `ego/azibo/` page** (its prose + sourced media were preserved into
-  `mycelium/`); the story pipeline is intact but idle.
-- **Built the song craft** — a synthetic voice reading an essay over a live **Strudel** bed
-  (Agar-Agar music, Headache-style AI narration). Reference build: `id/agar-lab/` (essay-1).
-- **Voice pipeline** — tried Piper (offline, flat) → Chatterbox (great emotion, but torched the
-  5.8 GB WSL) → landed on **ElevenLabs v3** (paid; `[audio tags]` perform). `tools/tts/eleven.py`
-  renders **incrementally** (only edited lines) and auto-patches `bars` + `VOICE_FILES`. Key +
-  voice_id live in `.env` (gitignored).
-- **Music cookbook** — `cookbook/strudel/` (instrument palette, arrangement pattern, template, laws).
-- **Spec-driven shape** — a song is compiled from `song.json` by `tools/song/build.py`
-  (deterministic → editing one section changes one arrange row). `agar-lab` migrated to it.
-- **Song pipeline skills** — `/cyborge-score` → `/cyborge-compose` → `/cyborge-feedback` →
-  `/cyborge-shape` (the last enforces *fix broken, leave what works*). Enshrined in this bible.
+- **The stage** — every song now plays on a shared visual apparatus: the **Laughing Man sea**
+  (cookbook-linked negative-space visualizer — a black-on-black picture revealed by a white tide
+  that follows the beat AND the arrangement's energy), a full-width back wall with sample videos
+  appearing over it, hero **titles from labels** (`title — subtitle` on the em-dash), a progress
+  strip, drop-bounce (punch), one-loop stop, and a **word-by-word typewriter** of the spoken
+  lines (amber, Libre Baskerville — the human layer).
+- **Crate jams shipped:** `id/nice_ron/` (Ron sneezes and scares deer — 8-bit melodic techno;
+  lessons: comedy needs silence before the punchline, quiet phone audio needs RMS-norm not
+  peak-norm) and `id/fenton/` (JESUS CHRIST IN RICHMOND PARK — lofi; **the full take plays once**
+  with a through-composed 14-step-walk kit/harmony/melody under it, then the remix answers).
+- **The research eye** — `transcribe.py --frames N` grabs screenshots; caption-less videos are
+  now studyable. First frames-only study banked: **Oazoor** (riff banks + `pick` walks,
+  `inhabit` rhythm/harmony split, `@` drop-holds, `postgain`) — all now **runtime-verified**
+  across three songs.
+- **`id/theGodInUrhead/`** — the biggest voice song (16 lines, cinematic downtempo, D minor):
+  one cell two faces (goddess descends / priestess's violin ascends), themes orchestrated across
+  registers, "No." over literal silence, a twelve-count wound outro. **The human's favourite.**
+- **The voice bus** — voice clips are no longer strudel events (one-shots could start late or be
+  skipped under render jank — nondeterministic missing lines). The page arms every line
+  sample-accurately on the WebAudio clock; the load gate is honest (real button gating, retries,
+  failure counts). eleven.py ships `VOICE_TEXTS` for the typewriter.
+- **Words are load-bearing, now law** — labels-as-lyrics enshrined in `/cyborge-score` +
+  `/cyborge-shape`; `arrangement.md` rewritten for the bus era.
 
 ## Next
 
-- **Take the song pipeline for a full spin** — a fresh `mycelium/essays/` draft through
-  `score → compose → feedback → shape`, end to end, on something that isn't agar-lab.
-- **v3 accent consistency** — lines drift (v3 rejects request stitching). Try a higher `stability`
-  in `eleven.py`, or ElevenLabs' text-to-dialogue endpoint.
-- **Make `template.html` generator-ready** — add the `// INSTRUMENTS` / `// ARRANGE` markers so a
-  brand-new song is `build.py`-driven from scratch; and reconcile the essay↔piece naming (agar-lab
-  uses `essay-1`, but the skills assume one shared `<name>`).
-- **Home page** — `index.html`: the gallery/face of the site, listing pieces (story + song).
-- **Story-side leftovers** (if returning to stories): particle/termite wiring, Netlify + secrets,
-  the Claude-API closing message.
-- **MCP migration** — wrap the recipes + tools as MCP tools once they stabilize.
+- **Feedback loops**: theGodInUrhead (split points vs sentences, the bell/music-box gains, v3
+  accent drift over 16 lines), fenton, nice_ron — all await another ear pass.
+- **agar-lab + head_god**: recompose onto the current template (their pages predate the voice
+  bus + typewriter; one `compose.py` each, no re-renders). agar-lab also wants labels written
+  (its titles are mostly blank) and the essay-1 naming reconciled.
+- **head_god punch bug**: labels saying "beat drops" auto-flag punch — add `"punch": false`
+  override in build.py.
+- **Standing**: home page (`index.html` gallery), Netlify hookup + secrets, MCP migration,
+  v3 accent consistency (higher stability / text-to-dialogue).

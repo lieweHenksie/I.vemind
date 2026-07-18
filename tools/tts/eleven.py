@@ -116,8 +116,10 @@ def patch_bars(index_path, bars):
     print(f"patched bars in {index_path.name}: {bars}")
 
 
-def patch_voice_files(index_path, n):
-    """Sync the VOICE_FILES list in index.html to the current number of lines."""
+def patch_voice_files(index_path, blocks):
+    """Sync VOICE_FILES + VOICE_TEXTS in index.html to the current lines. The texts feed the
+    page's typewriter (words appear as spoken); [tags] are performance notes — stripped."""
+    n = len(blocks)
     if not index_path.exists():
         return
     txt = index_path.read_text()
@@ -125,10 +127,13 @@ def patch_voice_files(index_path, n):
     if S not in txt or E not in txt:
         print("(no VOICE-FILES markers in index.html — skipped)"); return
     files = ", ".join(f"'line-{i:02d}.wav'" for i in range(1, n + 1))
-    block = f"{S}\n    const VOICE_FILES = [{files}];\n    {E}"
-    txt = re.sub(re.escape(S) + r".*?" + re.escape(E), block, txt, flags=re.S)
+    texts = ", ".join(json.dumps(re.sub(r"\[[^\]]*\]", "", b).replace("\n", " ").strip(),
+                                 ensure_ascii=False) for b in blocks)
+    block = f"{S}\n    const VOICE_FILES = [{files}];\n    const VOICE_TEXTS = [{texts}];\n    {E}"
+    # lambda replacement: texts hold escapes (\" …) that re.sub would misread as group refs
+    txt = re.sub(re.escape(S) + r".*?" + re.escape(E), lambda m: block, txt, flags=re.S)
     index_path.write_text(txt)
-    print(f"patched VOICE_FILES: {n} lines")
+    print(f"patched VOICE_FILES: {n} lines (+ texts)")
 
 
 def main():
@@ -203,7 +208,7 @@ def main():
 
     if a.index:
         patch_bars(pathlib.Path(a.index), bars)
-        patch_voice_files(pathlib.Path(a.index), len(blocks))
+        patch_voice_files(pathlib.Path(a.index), blocks)
     print("done. bars:", bars)
 
 

@@ -83,10 +83,19 @@ fall back.
   **ask first.**
 
 Shape schema: `{ "essay": "mycelium/essays/<name>.md", "genre": "…", "bpm": 120, "sections": [ … ] }`
-— sections are `{bars, layers, label?}` (instrumental) · `{voice, layers, label?}` (a line) ·
-`{voice, split:[[bars,layers],…], label?}` (a line with a mid-sentence drop). Record `essay` (the
+— sections are `{bars, layers, label}` (instrumental) · `{voice, layers, label}` (a line) ·
+`{voice, split:[[bars,layers],…], label}` (a line with a mid-sentence drop). Record `essay` (the
 words) and `genre` (what type of song this is). Sound schema:
 `{ "_comment": "…", "bass": "<strudel>", "arp": "<strudel>", … }`.
+
+**The labels ARE lyrics — write every one.** They render on screen as the piece's hero title:
+before the em-dash = title, after = subtitle — so a label is a full invocation
+(`"THE SNEEZE — the forest holds its breath"`), never a comment. Side effects to wield: a label
+containing **"drop"** flags the section as a punch (the film bounces; use only on real drops —
+beware phrases like "beat drops out"; a wordless drop can set `"punch": true`); each row's
+**layer count vs the song's max** sets the sea's height on screen, so density is also staging —
+thin the layers before a drop and the water visibly recedes. The essay's words themselves reach
+the page automatically (the typewriter); the labels are YOURS to write.
 
 **Step 6 — report; don't build it.** Name the **genre**, describe the **arc** and the **sound**
 (key/mode, feel, signature moves, how it differs from the default / the previous take). Then hand

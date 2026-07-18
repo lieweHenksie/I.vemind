@@ -1,0 +1,267 @@
+{
+  "essay": "mycelium/essays/theGodInUrhead.md",
+  "genre": "cinematic downtempo",
+  "bpm": 90,
+  "_comment": "The SHAPE v1 — Kramer, the goddess, the priestess, twelve. The ward and the temple alternate (lofi kit vs beatless drones); the violin gets better as Kramer gets worse; 'No.' is one word truly alone; the break snaps mid-line; the outro counts the twelve head wounds one bar per strike, then the ward hums on like nothing happened. Split sums tuned to rendered lengths (14/18/10/11). v2: themes orchestrated across instruments — the goddess gains deep/bell registers, the priestess a music box and a cello; the piece ends on her cell in the music box over the monitor.",
+  "sections": [
+    {
+      "bars": 2,
+      "layers": [
+        "gauze",
+        "monitor"
+      ],
+      "label": "the ward — the bad kind of clean"
+    },
+    {
+      "voice": 0,
+      "layers": [
+        "monitor"
+      ],
+      "label": "kramer collected head wounds — the thesis"
+    },
+    {
+      "voice": 1,
+      "layers": [
+        "gauze",
+        "monitor",
+        "wardkick"
+      ],
+      "label": "a collection of one — everyone making such a fuss"
+    },
+    {
+      "voice": 2,
+      "layers": [
+        "gauze",
+        "wardkick",
+        "wardhats"
+      ],
+      "label": "jellyfish of sunlight — spiraling into the dark"
+    },
+    {
+      "voice": 3,
+      "layers": [
+        "wardkick",
+        "wardsnare",
+        "wardhats",
+        "wardbass",
+        "gauze"
+      ],
+      "label": "bleeergh — the goddess brings her own followers"
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "winedrone",
+        "riser"
+      ],
+      "label": "drifting — antiseptic becomes wine and steam"
+    },
+    {
+      "voice": 4,
+      "layers": [
+        "winedrone",
+        "goddess"
+      ],
+      "label": "the temple — you will let me do the talking"
+    },
+    {
+      "voice": 5,
+      "layers": [
+        "winedrone",
+        "goddess",
+        "gauze"
+      ],
+      "label": "the lady of homemade lobotomies — knitted into the skull"
+    },
+    {
+      "voice": 6,
+      "layers": [
+        "wardkick",
+        "wardbass",
+        "monitor",
+        "goddessbell"
+      ],
+      "label": "the flock is aging — truly, the temple of my goddess"
+    },
+    {
+      "voice": 7,
+      "layers": [
+        "artifact",
+        "gauze"
+      ],
+      "label": "the leather couch — you say that every time"
+    },
+    {
+      "voice": 8,
+      "layers": [
+        "artifact",
+        "artifactbox",
+        "gauze",
+        "monitor"
+      ],
+      "label": "dressed in sunshine — storm clouds, here to block the sun"
+    },
+    {
+      "voice": 9,
+      "layers": [
+        "winedrone",
+        "gauze",
+        "artifactlow"
+      ],
+      "label": "too smart anyway — she was getting younger"
+    },
+    {
+      "voice": 10,
+      "split": [
+        [
+          8,
+          [
+            "winedrone",
+            "decree",
+            "goddess",
+            "goddessdeep"
+          ]
+        ],
+        [
+          6,
+          [
+            "artifact2",
+            "gauze"
+          ]
+        ]
+      ],
+      "label": "the decree — she is to be sacrificed"
+    },
+    {
+      "voice": 11,
+      "layers": [
+        "artifact2",
+        "gauze"
+      ],
+      "label": "dressed in flowers — every time, kramer"
+    },
+    {
+      "voice": 12,
+      "split": [
+        [
+          6,
+          [
+            "artifact2",
+            "wardkick",
+            "gauze"
+          ]
+        ],
+        [
+          5,
+          [
+            "gauze"
+          ]
+        ],
+        [
+          7,
+          [
+            "artifact",
+            "artifactbox",
+            "monitor"
+          ]
+        ]
+      ],
+      "label": "a stranger's body — she deserved to be remembered"
+    },
+    {
+      "voice": 13,
+      "layers": [],
+      "label": "no. — the only word there is"
+    },
+    {
+      "voice": 14,
+      "split": [
+        [
+          4,
+          [
+            "gauze"
+          ]
+        ],
+        [
+          2,
+          [
+            "snapped",
+            "impact"
+          ]
+        ],
+        [
+          4,
+          [
+            "monitor"
+          ]
+        ]
+      ],
+      "label": "the break — goodbye, kramer"
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "winedrone",
+        "riser"
+      ],
+      "label": "the warm sun — a perfect crack for a new home"
+    },
+    {
+      "voice": 15,
+      "split": [
+        [
+          7,
+          [
+            "winedrone",
+            "goddess",
+            "goddessdeep"
+          ]
+        ],
+        [
+          4,
+          [
+            "decree",
+            "riser"
+          ]
+        ]
+      ],
+      "label": "DO IT — the collection resumes"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "wound"
+      ],
+      "label": "one two three four — head wounds"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "wound",
+        "winedrone"
+      ],
+      "label": "five six seven eight — no one stops him"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "wound",
+        "winedrone",
+        "goddess",
+        "goddessdeep",
+        "goddessbell",
+        "riser"
+      ],
+      "label": "nine ten eleven twelve — the orderlies"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "gauze",
+        "monitor",
+        "artifactbox"
+      ],
+      "label": "the ward — nothing new there"
+    }
+  ]
+}

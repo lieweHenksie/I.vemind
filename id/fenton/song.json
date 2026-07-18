@@ -1,0 +1,149 @@
+{
+  "essay": "none — crate jam, no voice lines",
+  "genre": "lofi hip-hop",
+  "bpm": 75,
+  "_comment": "The SHAPE v2 — the full take plays FIRST (the original comedy arc, unbroken, beat rolling calmly underneath), then the remix answers as the flip. JESUS CHRIST IN RICHMOND PARK. The joke is structural: the lofi beat never once panics. Long dusty peace, the first dignified call, escalation while the kit keeps smoking, JESUS CHRIST alone in a stopped world, then the STAMPEDE DROP turns the famous run into percussion. The double rides it, the full run plays over everything like a choir, and the park closes its eyes on a distant underwater fenton.",
+  "sections": [
+    {
+      "bars": 4,
+      "layers": [
+        "parkbedi",
+        "lochords",
+        "crackle"
+      ],
+      "label": "richmond park — nothing has ever gone wrong here"
+    },
+    {
+      "bars": 14,
+      "layers": [
+        "thefilm",
+        "filmkick",
+        "filmsnare",
+        "filmhats",
+        "filmbass",
+        "filmchords",
+        "filmmelody",
+        "crackle"
+      ],
+      "label": "the film — one take, the beat leans in"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "lochords",
+        "crackle",
+        "lokick",
+        "losnare",
+        "lohats",
+        "lobass"
+      ],
+      "label": "the beat lights a cigarette — dust, swing, patience"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "lochords",
+        "lobass",
+        "lohats",
+        "lomelody",
+        "crackle"
+      ],
+      "label": "a dog considers the deer — the leash of civilization"
+    },
+    {
+      "bars": 1,
+      "layers": [
+        "call1",
+        "lobass",
+        "crackle"
+      ],
+      "label": "fenton. — the first call, still dignified"
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "call2",
+        "lokick",
+        "losnare",
+        "lohats",
+        "lobass"
+      ],
+      "label": "fenton, fenton — rising, the beat does not care"
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "call3",
+        "lokick",
+        "losnare",
+        "lohats",
+        "lobass",
+        "lochords",
+        "crackle"
+      ],
+      "label": "FENTON — the herd is moving"
+    },
+    {
+      "bars": 1,
+      "layers": [
+        "christ"
+      ],
+      "label": "JESUS CHRIST — everything stops"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "fentonchop",
+        "lokick",
+        "losnare",
+        "lohats",
+        "lobass",
+        "lochords"
+      ],
+      "label": "THE STAMPEDE DROP — the beat finally runs"
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "double",
+        "lokick",
+        "lobass",
+        "lohats"
+      ],
+      "label": "the double — FENTON! FENTON! still going"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "run",
+        "lochords",
+        "lobass",
+        "lokick",
+        "losnare",
+        "lohats",
+        "crackle"
+      ],
+      "label": "the run — every fenton at once, lofi forgives"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "aftermathi",
+        "lochords",
+        "lomelody",
+        "crackle"
+      ],
+      "label": "aftermath — wind, hooves, a man still running"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "aftermathi",
+        "lochords",
+        "fentonecho",
+        "crackle"
+      ],
+      "label": "oh dear — the park closes its eyes"
+    }
+  ]
+}

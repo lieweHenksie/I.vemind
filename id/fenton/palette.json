@@ -1,0 +1,97 @@
+{
+  "_comment": "fenton's SOUND v1 — lofi hip-hop, 75, A minor (Am7 Dm7 G7 Cmaj7). THE JOKE: the beat stays utterly calm while a man loses his dog. v2: the FULL 44.8s take plays once (fullfilm = exactly 14 bars at 75) with the kit rolling underneath — the original peace-to-chaos arc lands intact; the remix afterwards is the flip. v3: the film kit is a 14-step pick walk (one entry per bar) — the beat evolves WITH the take (peace/groove/run/OUT-on-jesus/sheepish return) while the video never cuts; film kit runs quieter than the remix kit so the take stays audible. v4: harmony + melody walk the take too — the progression itself is the 14-step walk (peace circle, E7 tension in the chase, dominant run, out on jesus, resolve home). Dusty swung kit (swing = @ elongation, long-short hats), one lazy pentatonic cell, chords drifting under a slow filter. The cries escalate against the chill; the STAMPEDE DROP chops the big run into percussion; jesus stops the world. Cries: HPF 180Hz (wind-blast stripped) then RMS-normalized to -16 with limiter — far-field screams have huge crest factors, peak-norm alone isn't enough (fenton's lesson, deepening Ron's). Beds raw. Moves spent: riff-bank walk + inhabit bass (oazoor), swing-by-@ (oazoor @ generalized), one-riff economy + filter-as-energy (switch-angel).",
+  "_samples": {
+    "fenton1": {
+      "file": "audio/samples/fenton1.wav",
+      "start": 0.7,
+      "end": 2.6,
+      "url": "https://www.youtube.com/watch?v=3GRSbr0EYYU",
+      "clip": "video/fenton1.mp4"
+    },
+    "fenton2": {
+      "file": "audio/samples/fenton2.wav",
+      "start": 3.1,
+      "end": 4.6,
+      "url": "https://www.youtube.com/watch?v=3GRSbr0EYYU",
+      "clip": "video/fenton2.mp4"
+    },
+    "fenton3": {
+      "file": "audio/samples/fenton3.wav",
+      "start": 6.3,
+      "end": 8.6,
+      "url": "https://www.youtube.com/watch?v=3GRSbr0EYYU",
+      "clip": "video/fenton3.mp4"
+    },
+    "fentondouble": {
+      "file": "audio/samples/fentondouble.wav",
+      "start": 19.6,
+      "end": 22.0,
+      "url": "https://www.youtube.com/watch?v=3GRSbr0EYYU",
+      "clip": "video/fentondouble.mp4"
+    },
+    "bigrun": {
+      "file": "audio/samples/bigrun.wav",
+      "start": 25.4,
+      "end": 29.6,
+      "url": "https://www.youtube.com/watch?v=3GRSbr0EYYU",
+      "clip": "video/bigrun.mp4"
+    },
+    "jesus": {
+      "file": "audio/samples/jesus.wav",
+      "start": 32.9,
+      "end": 34.4,
+      "url": "https://www.youtube.com/watch?v=3GRSbr0EYYU",
+      "clip": "video/jesus.mp4"
+    },
+    "parkamb": {
+      "file": "audio/samples/parkamb.wav",
+      "start": 14.8,
+      "end": 19.4,
+      "url": "https://www.youtube.com/watch?v=3GRSbr0EYYU",
+      "clip": "video/parkamb.mp4"
+    },
+    "aftermath": {
+      "file": "audio/samples/aftermath.wav",
+      "start": 35.3,
+      "end": 39.5,
+      "url": "https://www.youtube.com/watch?v=3GRSbr0EYYU",
+      "clip": "video/aftermath.mp4"
+    },
+    "fullfilm": {
+      "file": "audio/samples/fullfilm.wav",
+      "start": 0.0,
+      "end": 44.8,
+      "url": "https://www.youtube.com/watch?v=3GRSbr0EYYU",
+      "clip": "video/fullfilm.mp4"
+    }
+  },
+  "_filler": [
+    "video/filler-1.mp4",
+    "video/filler-2.mp4",
+    "video/filler-3.mp4"
+  ],
+  "parkbedi": "s(\"parkamb\").slow(8).gain(0.8).room(0.4)",
+  "aftermathi": "s(\"aftermath\").slow(8).gain(0.9).room(0.5)",
+  "lokick": "note(\"c1 ~ [~ c1] ~\").s(\"sine\").attack(0.001).decay(0.42).sustain(0).shape(0.15).gain(1.0)",
+  "losnare": "s(\"~ white ~ white\").decay(0.14).sustain(0).lpf(3400).crush(8).gain(0.5).room(0.35)",
+  "lohats": "s(\"[white@1.15 white@0.85]*4\").decay(0.03).sustain(0).hpf(6500).gain(0.13)",
+  "crackle": "s(\"white*16\").decay(0.008).sustain(0).hpf(9000).gain(0.045)",
+  "lochords": "note(\"<[a2,c3,e3,g3] [d2,a2,c3,f3] [g2,b2,d3,f3] [c3,e3,g3,b3]>\").s(\"sawtooth\").attack(0.6).release(1.2).lpf(sine.range(500,1100).slow(16)).room(0.7).gain(0.3)",
+  "lobass": "note(pick([\"{[0 ~ ~ 0] [~ 0]}\".inhabit([\"a1\",\"d2\",\"g1\",\"c2\"]), \"{[1 ~ ~ 1] [~ 1]}\".inhabit([\"a1\",\"d2\",\"g1\",\"c2\"]), \"{[2 ~ 2 ~] [~ 2]}\".inhabit([\"a1\",\"d2\",\"g1\",\"c2\"]), \"{[3 ~ ~ 3] [3 ~]}\".inhabit([\"a1\",\"d2\",\"g1\",\"c2\"])], \"<0 1 2 3>\")).s(\"sine\").attack(0.01).release(0.3).postgain(0.85)",
+  "lomelody": "note(\"<[a3 ~ c4 e4] [~ g3 a3 ~] [c4 ~ a3 ~] [~ e3 g3 ~]>\").s(\"triangle\").lpf(1300).release(0.4).delay(0.35).delaytime(0.4).delayfeedback(0.3).room(0.6).gain(0.32)",
+  "call1": "s(\"fenton1\").slow(2).gain(0.95).room(0.4)",
+  "call2": "s(\"fenton2\").slow(2).gain(0.9).room(0.4)",
+  "call3": "s(\"fenton3\").slow(2).gain(0.9).room(0.4)",
+  "double": "s(\"fentondouble\").slow(2).gain(0.9).room(0.4)",
+  "run": "s(\"bigrun\").slow(2).gain(0.95).room(0.45)",
+  "christ": "s(\"jesus\").slow(2).gain(1.1).room(0.55)",
+  "fentonchop": "s(\"bigrun\").slice(8, \"<[0 ~ 2 ~ 4 ~ 6 ~] [1 3 ~ 5 ~ 7 2 ~]>\").speed(0.95).postgain(0.8)",
+  "fentonecho": "s(\"fenton1\").slow(4).speed(0.85).lpf(1800).gain(0.5).room(0.9)",
+  "thefilm": "s(\"fullfilm\").slow(14).gain(1.2)",
+  "filmkick": "note(pick([\"c1 ~ ~ ~\", \"c1 ~ [~ c1] ~\", \"c1 [~ c1] [~ c1] c1\", \"~\"], \"<0 0 0 0 1 1 1 1 2 2 3 1 1 1>\")).s(\"sine\").attack(0.001).decay(0.42).sustain(0).shape(0.15).gain(0.85)",
+  "filmsnare": "s(pick([\"~\", \"~ white ~ white\", \"~ white ~ [white white]\", \"~\"], \"<0 0 0 0 1 1 1 1 2 2 3 1 1 1>\")).decay(0.14).sustain(0).lpf(3400).crush(8).gain(0.4).room(0.35)",
+  "filmhats": "s(pick([\"~\", \"[white@1.15 white@0.85]*4\", \"[white@1.15 white@0.85]*8\", \"~\"], \"<0 0 0 0 1 1 1 1 2 2 3 1 1 1>\")).decay(0.03).sustain(0).hpf(6500).gain(0.1)",
+  "filmbass": "note(pick([\"{[0 ~ ~ 0] [~ 0]}\".inhabit([\"a1\",\"d2\",\"g1\",\"c2\"]), \"{[1 ~ ~ 1] [~ 1]}\".inhabit([\"a1\",\"d2\",\"g1\",\"c2\"]), \"{[2 ~ 2 ~] [~ 2]}\".inhabit([\"a1\",\"d2\",\"g1\",\"c2\"]), \"~\"], \"<0 1 2 0 0 1 2 0 0 1 3 0 1 2>\")).s(\"sine\").attack(0.01).release(0.3).postgain(0.7)",
+  "filmchords": "note(pick([\"[a2,c3,e3,g3]\", \"[d2,a2,c3,f3]\", \"[g2,b2,d3,f3]\", \"[c3,e3,g3,b3]\", \"[f2,a2,c3,e3]\", \"[e2,gs2,b2,d3]\", \"~\"], \"<0 1 3 4 0 1 0 5 5 5 6 4 3 0>\")).s(\"sawtooth\").attack(0.5).release(1.1).lpf(900).room(0.7).gain(0.22)",
+  "filmmelody": "note(pick([\"~\", \"~ a3 ~ c4\", \"a3 c4 e4 ~\", \"e4 g4 a4 c5\", \"c4 ~ a3 g3\"], \"<0 0 1 1 2 2 2 2 3 3 0 4 4 4>\")).s(\"triangle\").lpf(1300).release(0.4).delay(0.3).delaytime(0.4).delayfeedback(0.25).room(0.6).gain(0.26)"
+}

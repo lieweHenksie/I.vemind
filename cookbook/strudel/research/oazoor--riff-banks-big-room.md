@@ -40,10 +40,10 @@
 
 | move | exact Strudel | status |
 |------|---------------|--------|
-| bank walk | `pick(BANK, "<0 1 2 3 4 5 6 7>")` | doc-verified · **in pinned bundle 1.0.3** (frame-read signature: bank first, index-pattern second) |
-| skeleton fill | `"{[0 ~ ~ 0] [~ 0]}".inhabit(LOOKUP)` | doc-verified · **in pinned bundle 1.0.3** (`inhabit`, `inhabitmod` both registered) |
-| held index | `"{0@4}".inhabit(CHORDS)` | doc-verified (`@` elongation is core mininotation) |
-| post-FX level | `.postgain(0.15)` | doc-verified · in pinned bundle |
+| bank walk | `pick(BANK, "<0 1 2 3 4 5 6 7>")` | **runtime-verified** — survived feedback in nice_ron (drop walks), fenton (film kit + bass), theGodInUrhead (wardbass) |
+| skeleton fill | `"{[0 ~ ~ 0] [~ 0]}".inhabit(LOOKUP)` | **runtime-verified** — nice_ron + fenton + theGodInUrhead bass banks, confirmed by ear |
+| held index | `"{0@4}".inhabit(CHORDS)` | **runtime-verified** — nice_ron drop II exhales on the held bar |
+| post-FX level | `.postgain(0.15)` | **runtime-verified** — the crushed voices in nice_ron sit right |
 | bar tempo | `setcpm(133/4)` | doc-verified · in pinned bundle (we use `.fast(BPM/120)` instead — same effect, arrange-local) |
 | octave clone | `.transpose(12)` | doc-verified · in pinned bundle |
 | sustained sample | `.sound("name:3".loop(1))` | doc-verified (sampler `loop`) |

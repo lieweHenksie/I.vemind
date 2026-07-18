@@ -36,5 +36,10 @@ byte-identical. Never hand-edit the generated Strudel.
 changed **and what you deliberately left**. Then back to **`/cyborge-feedback <name>`** for the next
 pass: listen → note → shave, until it's right.
 
+**Labels are tuned surface too.** They show on screen as the piece's titles (and set punch +
+the sea's drama) — a label not named in Fix stays byte-identical, exactly like a tuned
+instrument. Label rewrites are legitimate Fix items; treat "the words on screen" as part of
+what the human is reacting to.
+
 ---
 Fix where broken. Leave what works. Cut nothing that sings.

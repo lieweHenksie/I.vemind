@@ -2,7 +2,7 @@
   "essay": "none — crate jam, no voice lines",
   "genre": "melodic techno",
   "bpm": 140,
-  "_comment": "The SHAPE v3 — feedback pass 2: machine sections go 8-bit (square+crush); drop II becomes a chops/ron dialog. The sneeze now lands after a bar of TRUE silence (deer look up — comedy timing; it was camouflaged against the riser's noise crest). Drops shortened 8+8 → 4+4 with a melodic clearing between; wobble replaced by techno bass + the motif as lead. The outro grows a litany: 'i sneezed' / 'not allowed' trading two-bar lines before the full apology.",
+  "_comment": "The SHAPE v4 — the Oazoor spend: drop basses are riff-bank walks (each bar a different skeleton over one chord bank), a sine sub pyramid locks underneath, and drop II's walk ends on a held bar — the bass exhales into the confession. The sneeze now lands after a bar of TRUE silence (deer look up — comedy timing; it was camouflaged against the riser's noise crest). Drops shortened 8+8 → 4+4 with a melodic clearing between; wobble replaced by techno bass + the motif as lead. The outro grows a litany: 'i sneezed' / 'not allowed' trading two-bar lines before the full apology.",
   "sections": [
     {
       "bars": 8,
@@ -60,6 +60,7 @@
       "bars": 4,
       "layers": [
         "technobass",
+        "techsub",
         "dropkick",
         "dropsnare",
         "droplead",
@@ -82,7 +83,8 @@
     {
       "bars": 4,
       "layers": [
-        "technobass",
+        "technobass2",
+        "techsub2",
         "dropkick",
         "dropsnare",
         "sneezechop",

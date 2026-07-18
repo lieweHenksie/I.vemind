@@ -21,30 +21,29 @@ def gen_instruments(used, palette):
 
 
 def _stack(parts):
+    if not parts:
+        return "silence"                      # a voice line truly alone: the music plays nothing
     return parts[0] if len(parts) == 1 else "stack(" + ", ".join(parts) + ")"
 
 
-def _vc(i):
-    return 'vo(s("voice:' + str(i) + '"), ' + str(i) + ')'
-
-
 def gen_arrange(sections, bpm):
+    # The score shapes the MUSIC only. Voice clips are NOT strudel events: the page arms every
+    # line on the WebAudio clock itself (sample-accurate, immune to main-thread jank) — a
+    # one-shot strudel event could start late or be skipped under render load, and a voice line
+    # only fires once. Voice rows still size themselves from bars[i] (owned by eleven.py).
     rows = []
     for s in sections:
         label = ("   // " + s["label"]) if s.get("label") else ""
         if "voice" in s:
             i = s["voice"]
             if "split" in s:
-                # The voice fires in the FIRST sub-section and rings out on its own; later
-                # sub-sections just change the music — so bars can DROP mid-sentence while the
-                # line keeps speaking. Sub bar-counts should sum ~ bars[i] (the clip's length).
+                # Later sub-sections change the music mid-line — bars can DROP mid-sentence
+                # while the line keeps speaking. Sub bar-counts should sum ~ bars[i].
                 for j, (n, plyrs) in enumerate(s["split"]):
-                    if j == 0:
-                        rows.append("  [%d, %s],%s" % (n, _stack(list(plyrs) + [_vc(i)]), label))
-                    else:
-                        rows.append("  [%d, %s],   // …voice %d rings on, bars shift" % (n, _stack(list(plyrs)), i))
+                    note = label if j == 0 else "   // …voice %d rings on, bars shift" % i
+                    rows.append("  [%d, %s],%s" % (n, _stack(list(plyrs)), note))
             else:
-                rows.append("  [bars[%d], %s],%s" % (i, _stack(list(s.get("layers", [])) + [_vc(i)]), label))
+                rows.append("  [bars[%d], %s],%s" % (i, _stack(list(s.get("layers", []))), label))
         else:
             rows.append("  [%s, %s],%s" % (s.get("bars", 4), _stack(list(s.get("layers", []))), label))
     tail = ".fast(%s/120)" % bpm if bpm != 120 else ""
@@ -119,20 +118,25 @@ def gen_timeline(sections, bpm):
     # punch = the film bounces here — a DROP: set by a section's "punch": true, or auto from
     # a label that says "drop". energy = this row's layer count / the song's max — the sea's
     # height follows the arrangement's density, so the water rises where the music thickens.
-    rows = []                                     # (bars_expr, label, punch, layer_count)
+    rows = []                                     # (bars_expr, label, punch, layer_count, voice_idx)
     for s in sections:
         lbl = s.get("label", "")
         punch = 1 if (s.get("punch") or "drop" in lbl.lower()) else 0
         label = json.dumps(lbl, ensure_ascii=False)
         if "voice" in s and "split" in s:
             for j, (n, plyrs) in enumerate(s["split"]):
-                rows.append((str(n), label, punch, len(plyrs) + (1 if j == 0 else 0)))
+                # the line FIRES in the first sub-row (vi set) and rings across the rest (null) —
+                # the page's typewriter keeps typing straight through the music changes
+                rows.append((str(n), label, punch, len(plyrs) + (1 if j == 0 else 0),
+                             s["voice"] if j == 0 else None))
         elif "voice" in s:
-            rows.append(('"V%d"' % s["voice"], label, punch, len(s.get("layers", [])) + 1))
+            rows.append(('"V%d"' % s["voice"], label, punch, len(s.get("layers", [])) + 1, s["voice"]))
         else:
-            rows.append((str(s.get("bars", 4)), label, punch, len(s.get("layers", []))))
-    maxc = max((c for *_, c in rows), default=1) or 1
-    out = ", ".join("[%s, %s, %d, %s]" % (b, l, p, round(c / maxc, 2)) for b, l, p, c in rows)
+            rows.append((str(s.get("bars", 4)), label, punch, len(s.get("layers", [])), None))
+    maxc = max((c for *_, c, _v in rows), default=1) or 1
+    out = ", ".join("[%s, %s, %d, %s, %s]" % (b, l, p, round(c / maxc, 2),
+                                              "null" if v is None else v)
+                    for b, l, p, c, v in rows)
     return ("    const TIMELINE = [%s];\n    const SONG_BPM = %s;" % (out, bpm))
 
 
