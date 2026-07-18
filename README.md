@@ -24,21 +24,54 @@ cp .env.example .env      # then paste your ElevenLabs key + a voice_id
 
 ## Make a song
 
-Two files are your only source of truth: the **essay** (`mycelium/essays/<name>.md`, one spoken
-line per blank-line block) and the **shape** (`id/<name>/song.json`). Everything else is generated.
+A song compiles from three data files — the **essay** (`mycelium/essays/<name>.md`, words),
+**`id/<name>/song.json`** (shape), and **`id/<name>/palette.json`** (its own sound). Everything
+else is generated; you never hand-edit the built page.
 
-```bash
-# 1. write/rewrite  mycelium/essays/<name>.md   (drop [tags] like [sigh] inline)
-# 2. shape it:      /cyborge-score <name>        (drafts/updates id/<name>/song.json)
-# 3. build it:      python3 tools/song/compose.py <name>     (== /cyborge-compose)
-# 4. play it:       python3 -m http.server --bind 127.0.0.1 8000   →   localhost:8000/id/<name>/
-# 5. refine:        /cyborge-feedback <name>  →  /cyborge-shape <name>
+### The music skills
+
+| Skill | When | What it does |
+|-------|------|--------------|
+| `/cyborge-research <url>` | any time | Studies a real Strudel artist's video → banks their **moves** in `cookbook/strudel/research/` (feeds every future score, not one song) |
+| `/cyborge-sample <name> <url> [what]` | before the score | The crate-digger: cuts audio (and `--video` clips) from a YouTube link into `id/<name>/`, registers them in `palette.json`'s `_samples` |
+| `/cyborge-score <name> [genre]` | step 1 | Reads the essay's arc + mood, picks a genre, drafts `song.json` (shape) + `palette.json` (sound). Bare `<name>` appends; `<name> <genre>` = full recompose |
+| `/cyborge-compose <name>` | step 2 | Renders the voice (ElevenLabs, incremental) + compiles the shape → the playable page |
+| `/cyborge-song <name> [genre]` | steps 1+2 | The one-pull wrapper: **score → compose** in a single command |
+| `/cyborge-feedback <name>` | step 3 | Plays it; turns your reactions into `feedback.md` — **Keep** / **Fix** lists |
+| `/cyborge-shape <name>` | step 4 | Applies the **Fix** list only — *fix where broken, leave what works*. Loop back to feedback |
+
+### Flow — voice song (no samples)
+
+```
+essay (mycelium/essays/<name>.md)
+   │  /cyborge-song <name>            ← or /cyborge-score → /cyborge-compose
+   ▼
+id/<name>/  song.json + palette.json + index.html   (voice clips rendered per line)
+   │  /cyborge-feedback ⇄ /cyborge-shape            ← loop until it sings
+   ▼
+play: python3 -m http.server --bind 127.0.0.1 8000  →  localhost:8000/id/<name>/
 ```
 
-`compose.py` renders **only lines you changed** (incremental) and recompiles **only shape sections
-you changed** (deterministic) — iterating never clobbers takes you're happy with. The instrument
-palette and arrangement recipes live in [`cookbook/strudel/`](cookbook/strudel/README.md).
-`id/agar-lab/` is the reference build.
+### Flow — with samples (a crate jam, or voice + crate)
+
+Same as above, with one step in front: **stock the crate first**, then score.
+
+```
+YouTube link ──/cyborge-sample──▶ id/<name>/audio/samples/*.wav (+ video clips)
+                                      registered in palette.json _samples
+                                           │
+essay (optional — a crate jam needs none) ─┴─ /cyborge-song <name> [genre] ─▶ …same loop
+```
+
+The sampler only *cuts and shelves* material — the scorer decides what the song does with it.
+With `--video`, the page plays each sample's source clip in sync with the arrangement, over the
+visualizer back wall. `id/agar-lab/` is the reference voice song; `id/demi_demi/` the reference
+crate jam.
+
+Everything is **incremental & deterministic**: edit one essay line → only that voice clip
+re-renders; edit one `song.json` section → only that arrange row changes. Iterating never clobbers
+takes you're happy with. The instrument palette and arrangement recipes live in
+[`cookbook/strudel/`](cookbook/strudel/README.md).
 
 ## Make a story page
 

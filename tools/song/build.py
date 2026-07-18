@@ -73,9 +73,14 @@ def gen_cues(sections, palette, bpm):
     samples = {n: m for n, m in palette.get("_samples", {}).items()
                if isinstance(m, dict) and m.get("clip")}
     filler = palette.get("_filler", [])
-    filler_js = "    const FILLER_CLIPS = %s;\n" % json.dumps(filler)
+    # The viz backdrop is the shared cookbook default (linked, like theme.css), so EVERY song shows
+    # the hidden face — even ones with no samples. A song overrides with its own "_viz_image" path,
+    # or sets it to "" to opt out.
+    viz = palette.get("_viz_image", "../../cookbook/strudel/laughing-man.png")
+    head_js = ("    const VIZ_IMAGE = %s;\n    const FILLER_CLIPS = %s;\n"
+               % (json.dumps(viz), json.dumps(filler)))
     if not samples:
-        return filler_js + '    const VIDEO_CLIPS = {};\n    const VIDEO_CUES = [];'
+        return head_js + '    const VIDEO_CLIPS = {};\n    const VIDEO_CUES = [];'
     clips = {n: m["clip"] for n, m in samples.items()}
     cues = []
     for ri, (rbars, layers) in enumerate(_rows(sections)):
@@ -103,29 +108,32 @@ def gen_cues(sections, palette, bpm):
                     t0 += period
     clips_js = ", ".join("%s: %s" % (json.dumps(n), json.dumps(p)) for n, p in clips.items())
     rows_js = ", ".join("[%s, %s, %s, %s, %s]" % (r, o, d, json.dumps(c), off) for r, o, d, c, off in cues)
-    return (filler_js
+    return (head_js
             + '    const VIDEO_CLIPS = {%s};\n' % clips_js
             + '    const VIDEO_CUES = [%s];  // [row, offBars, durBars, clip, clipOffSec]' % rows_js)
 
 
 def gen_timeline(sections, bpm):
-    # One entry per audible row: [bars, label, punch]. Voice sections emit "V<i>" — the page
-    # resolves their length from the score's `bars` array (owned by eleven.py) at play time.
+    # One entry per audible row: [bars, label, punch, energy]. Voice sections emit "V<i>" — the
+    # page resolves their length from the score's `bars` array (owned by eleven.py) at play time.
     # punch = the film bounces here — a DROP: set by a section's "punch": true, or auto from
-    # a label that says "drop".
-    rows = []
+    # a label that says "drop". energy = this row's layer count / the song's max — the sea's
+    # height follows the arrangement's density, so the water rises where the music thickens.
+    rows = []                                     # (bars_expr, label, punch, layer_count)
     for s in sections:
         lbl = s.get("label", "")
         punch = 1 if (s.get("punch") or "drop" in lbl.lower()) else 0
         label = json.dumps(lbl, ensure_ascii=False)
-        if "voice" in s:
-            if "split" in s:
-                rows += ["[%s, %s, %d]" % (n, label, punch) for n, _ in s["split"]]
-            else:
-                rows.append('["V%d", %s, %d]' % (s["voice"], label, punch))
+        if "voice" in s and "split" in s:
+            for j, (n, plyrs) in enumerate(s["split"]):
+                rows.append((str(n), label, punch, len(plyrs) + (1 if j == 0 else 0)))
+        elif "voice" in s:
+            rows.append(('"V%d"' % s["voice"], label, punch, len(s.get("layers", [])) + 1))
         else:
-            rows.append("[%s, %s, %d]" % (s.get("bars", 4), label, punch))
-    return ("    const TIMELINE = [%s];\n    const SONG_BPM = %s;" % (", ".join(rows), bpm))
+            rows.append((str(s.get("bars", 4)), label, punch, len(s.get("layers", []))))
+    maxc = max((c for *_, c in rows), default=1) or 1
+    out = ", ".join("[%s, %s, %d, %s]" % (b, l, p, round(c / maxc, 2)) for b, l, p, c in rows)
+    return ("    const TIMELINE = [%s];\n    const SONG_BPM = %s;" % (out, bpm))
 
 
 def patch(txt, start, end, content, indent=""):
