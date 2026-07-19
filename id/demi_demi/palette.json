@@ -29,5 +29,7 @@
   "bass": "note(\"[d1 f1 d1 a1 g1 d1 f1 c1]*2\").s(\"sawtooth\").lpf(550).lpq(5).gain(0.72)",
   "kick": "note(\"d1*4\").s(\"sine\").attack(0.001).decay(0.3).sustain(0).shape(0.2).gain(1.05)",
   "clap": "s(\"~ white ~ white\").decay(0.15).sustain(0).hpf(1800).lpf(6500).shape(0.12).gain(0.45).room(0.4)",
-  "hats": "s(\"~ white ~ white ~ white ~ white\").decay(0.05).sustain(0).hpf(6500).gain(0.18)"
+  "hats": "s(\"~ white ~ white ~ white ~ white\").decay(0.05).sustain(0).hpf(6500).gain(0.18)",
+  "gauzeahead": "note(\"<[d3,f3,a3] [bb2,d3,f3]>\").s(\"sawtooth\").attack(1.8).release(2.5).lpf(550).gain(0.2).room(0.92)",
+  "monitorghost": "note(\"d5 ~ ~ ~\").s(\"sine\").decay(0.05).sustain(0).gain(0.1).delay(0.3).delaytime(0.333)"
 }

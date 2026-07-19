@@ -5,11 +5,12 @@
   "_comment": "The SHAPE v1 — Kramer, the goddess, the priestess, twelve. The ward and the temple alternate (lofi kit vs beatless drones); the violin gets better as Kramer gets worse; 'No.' is one word truly alone; the break snaps mid-line; the outro counts the twelve head wounds one bar per strike, then the ward hums on like nothing happened. Split sums tuned to rendered lengths (14/18/10/11). v2: themes orchestrated across instruments — the goddess gains deep/bell registers, the priestess a music box and a cello; the piece ends on her cell in the music box over the monitor.",
   "sections": [
     {
-      "bars": 2,
+      "bars": 4,
       "layers": [
         "gauze",
         "monitor"
       ],
+      "fade": "in",
       "label": "the ward — the bad kind of clean"
     },
     {
@@ -230,7 +231,8 @@
     {
       "bars": 4,
       "layers": [
-        "wound"
+        "wound",
+        "woundknock"
       ],
       "label": "one two three four — head wounds"
     },
@@ -238,6 +240,7 @@
       "bars": 4,
       "layers": [
         "wound",
+        "woundknock",
         "winedrone"
       ],
       "label": "five six seven eight — no one stops him"
@@ -246,6 +249,7 @@
       "bars": 4,
       "layers": [
         "wound",
+        "woundknock",
         "winedrone",
         "goddess",
         "goddessdeep",
@@ -262,6 +266,16 @@
         "artifactbox"
       ],
       "label": "the ward — nothing new there"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "artifactbox",
+        "monitor",
+        "boxtoforest"
+      ],
+      "fade": "out",
+      "label": "the box winds down — a forest is listening"
     }
   ]
 }

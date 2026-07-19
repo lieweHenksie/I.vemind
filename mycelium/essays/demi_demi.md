@@ -1,0 +1,1 @@
+[deadpan] He's wrong of course, tough times ever last and no people ever do.

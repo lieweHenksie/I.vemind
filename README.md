@@ -39,6 +39,7 @@ else is generated; you never hand-edit the built page.
 | `/cyborge-song <name> [genre]` | steps 1+2 | The one-pull wrapper: **score → compose** in a single command |
 | `/cyborge-feedback <name>` | step 3 | Plays it; turns your reactions into `feedback.md` — **Keep** / **Fix** lists |
 | `/cyborge-shape <name>` | step 4 | Applies the **Fix** list only — *fix where broken, leave what works*. Loop back to feedback |
+| `/cyborge-album <name> [tracks…]` | when songs become a record | Builds/tends an album: the hallway page (one click plays all tracks in order), and the **edge pass** — every track fades in/out and each outro harmonically bridges the next intro. Never touches voice notes. Recipe: `cookbook/strudel/album.md` |
 
 ### Flow — voice song (no samples)
 

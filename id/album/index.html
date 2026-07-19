@@ -34,10 +34,12 @@
     }
     #playalbum:hover { background:var(--amber); color:var(--bg); }
     #albumstatus { font-size:.78rem; opacity:.7; }
-    #stage {
-      flex:1; width:100%; min-height:0; border:1px solid #23281c; border-radius:8px;
-      background:var(--bg);
+    #stagewrap { flex:1; position:relative; min-height:0; }
+    #stagewrap iframe {
+      position:absolute; inset:0; width:100%; height:100%;
+      border:1px solid #23281c; border-radius:8px; background:var(--bg);
     }
+    #stagewrap iframe.standby { visibility:hidden; pointer-events:none; }
   </style>
 </head>
 <body>
@@ -48,14 +50,16 @@
 
   <div id="tracks"></div>
   <button id="playalbum">[ play the album ]</button>
-  <span id="albumstatus">five songs · each plays once, then the next loads and begins</span>
-  <iframe id="stage" allow="autoplay" title="now playing" hidden></iframe>
+  <span id="albumstatus">five songs · while one plays, the next loads in the wings — no gap</span>
+  <div id="stagewrap"></div>
 
   <script>
-    // The album is a hallway; the songs are the rooms. Each track is a finished song page,
-    // loaded into the frame with ?album=1: the page auto-plays once its load gate opens and
-    // posts { cyb:'song-done' } after its one loop — the frame's allow="autoplay" carries the
-    // listener's single click across every track.
+    // The album is a hallway; the songs are the rooms. DOUBLE-BUFFERED: the visible frame plays
+    // (?album=1 → auto-play at gate-open, {cyb:'song-done'} after its loop); meanwhile the NEXT
+    // track loads in a hidden frame with ?album=1&hold=1 — it fills its load gate, posts
+    // {cyb:'song-ready'}, and waits. On song-done we promote the hidden frame and post
+    // {cyb:'go'}: the next song starts in milliseconds. allow="autoplay" carries the listener's
+    // single click into every frame.
     const TRACKS = [
       { src: '../demi_demi/',      name: 'demi demi',      sub: 'trance · crate jam' },
       { src: '../theGodInUrhead/', name: 'theGodInUrhead', sub: 'cinematic downtempo' },
@@ -63,11 +67,11 @@
       { src: '../agar-lab/',       name: 'essay-1',        sub: 'the agar lab · techno' },
       { src: '../oh_dear/',        name: 'oh dear',        sub: 'dub techno requiem' },
     ];
-    const stage = document.getElementById('stage');
+    const wrap = document.getElementById('stagewrap');
     const list = document.getElementById('tracks');
     const status = document.getElementById('albumstatus');
     const playBtn = document.getElementById('playalbum');
-    let cur = -1;
+    let cur = -1, live = null, next = null, nextIdx = -1, nextReady = false, waiting = false;
 
     TRACKS.forEach((t, i) => {
       const b = document.createElement('button');
@@ -80,21 +84,52 @@
       el.classList.toggle('now', i === cur);
       el.classList.toggle('done', cur >= 0 && i < cur);
     });
-
+    const mkFrame = (standby) => {
+      const f = document.createElement('iframe');
+      f.allow = 'autoplay'; f.title = 'now playing';
+      if (standby) f.className = 'standby';
+      wrap.appendChild(f);
+      return f;
+    };
+    const drop = (f) => { if (f) f.remove(); };
+    function preload(i) {
+      drop(next); next = null; nextIdx = -1; nextReady = false;
+      if (i >= TRACKS.length) return;
+      next = mkFrame(true); nextIdx = i;
+      next.src = TRACKS[i].src + '?album=1&hold=1';
+    }
     function playTrack(i) {
+      waiting = false; playBtn.hidden = true;
+      if (next && nextIdx === i) {           // the wings had it ready (or nearly)
+        drop(live); live = next; next = null;
+        live.classList.remove('standby');
+        if (nextReady) live.contentWindow.postMessage({ cyb: 'go' }, '*');
+        else waiting = true;                 // its song-ready will fire the go
+      } else {                               // cold start (first track, or a jump)
+        drop(live); drop(next); next = null;
+        live = mkFrame(false);
+        live.src = TRACKS[i].src + '?album=1';
+      }
       cur = i; paint();
-      playBtn.hidden = true; stage.hidden = false;
-      status.textContent = 'now playing ' + (i + 1) + '/' + TRACKS.length + ' — ' + TRACKS[i].name
-                         + ' (loads, then begins on its own)';
-      stage.src = TRACKS[i].src + '?album=1';
+      status.textContent = 'now playing ' + (i + 1) + '/' + TRACKS.length + ' — ' + TRACKS[i].name;
+      preload(i + 1);
     }
     window.addEventListener('message', (e) => {
-      if (!e.data || e.data.cyb !== 'song-done') return;
-      if (cur + 1 < TRACKS.length) playTrack(cur + 1);
-      else {
-        cur = -1; paint();
-        status.textContent = 'the album rests. tough times ever last — play it again?';
-        playBtn.hidden = false; playBtn.textContent = '[ play it again ]';
+      const d = e.data; if (!d || !d.cyb) return;
+      if (d.cyb === 'song-done' && live && e.source === live.contentWindow) {
+        if (cur + 1 < TRACKS.length) playTrack(cur + 1);
+        else {
+          cur = -1; paint(); drop(live); drop(next); live = next = null;
+          status.textContent = 'the album rests. tough times ever last — play it again?';
+          playBtn.hidden = false; playBtn.textContent = '[ play it again ]';
+        }
+      }
+      if (d.cyb === 'song-ready') {
+        if (next && e.source === next.contentWindow) nextReady = true;
+        if (live && e.source === live.contentWindow && waiting) {
+          waiting = false;
+          live.contentWindow.postMessage({ cyb: 'go' }, '*');
+        }
       }
     });
     playBtn.addEventListener('click', () => playTrack(0));

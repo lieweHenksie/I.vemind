@@ -43,9 +43,28 @@ def gen_arrange(sections, bpm):
                     note = label if j == 0 else "   // …voice %d rings on, bars shift" % i
                     rows.append("  [%d, %s],%s" % (n, _stack(list(plyrs)), note))
             else:
-                rows.append("  [bars[%d], %s],%s" % (i, _stack(list(s.get("layers", []))), label))
+                core = _stack(list(s.get("layers", [])))
+                if "bars" in s:
+                    # a line spoken OVER a fixed-length section (e.g. a fading outro): bars are
+                    # explicit, so the fade wrap works exactly like an instrumental row's
+                    n = s["bars"]
+                    fade = s.get("fade")
+                    if fade in ("in", "out") and core != "silence":
+                        core = '%s.postgain(saw.range(%s).slow(%s))' % (core, "0,1" if fade == "in" else "1,0", n)
+                    rows.append("  [%s, %s],%s" % (n, core, label))
+                else:
+                    rows.append("  [bars[%d], %s],%s" % (i, core, label))
         else:
-            rows.append("  [%s, %s],%s" % (s.get("bars", 4), _stack(list(s.get("layers", []))), label))
+            core = _stack(list(s.get("layers", [])))
+            n = s.get("bars", 4)
+            # "fade": "in" | "out" — an album-edge ramp over exactly this section's bars.
+            # postgain multiplies AFTER each layer's own gain/fx (mix balance survives), and
+            # arrange restarts each section's pattern, so the saw ramps from the section's edge.
+            # Instrumental sections only: voice rows have runtime bars, and voice is untouchable.
+            fade = s.get("fade")
+            if fade in ("in", "out") and core != "silence":
+                core = '%s.postgain(saw.range(%s).slow(%s))' % (core, "0,1" if fade == "in" else "1,0", n)
+            rows.append("  [%s, %s],%s" % (n, core, label))
     tail = ".fast(%s/120)" % bpm if bpm != 120 else ""
     return "arrange(\n" + "\n".join(rows) + "\n)" + tail
 
@@ -58,7 +77,7 @@ def _rows(sections):
         if "voice" in s and "split" in s:
             rows += [(n, list(p)) for n, p in s["split"]]
         elif "voice" in s:
-            rows.append((None, list(s.get("layers", []))))
+            rows.append((s.get("bars"), list(s.get("layers", []))))
         else:
             rows.append((s.get("bars", 4), list(s.get("layers", []))))
     return rows
@@ -130,7 +149,8 @@ def gen_timeline(sections, bpm):
                 rows.append((str(n), label, punch, len(plyrs) + (1 if j == 0 else 0),
                              s["voice"] if j == 0 else None))
         elif "voice" in s:
-            rows.append(('"V%d"' % s["voice"], label, punch, len(s.get("layers", [])) + 1, s["voice"]))
+            b = str(s["bars"]) if "bars" in s else '"V%d"' % s["voice"]
+            rows.append((b, label, punch, len(s.get("layers", [])) + 1, s["voice"]))
         else:
             rows.append((str(s.get("bars", 4)), label, punch, len(s.get("layers", [])), None))
     maxc = max((c for *_, c, _v in rows), default=1) or 1

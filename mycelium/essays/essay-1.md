@@ -36,7 +36,16 @@ The night becomes a blur of conversation and I ask the others if they've heard a
 
 Our waiter comes, he is middle-aged and skinny. His English is broken. I feel sorry for him, but I cannot say why. He probably never had to have his finger up a pitbull's rectum when it didn't want to release his scared and confused old dog. 
 
-I ask his name, and he says "I'm Brilliant" and I am terrified that my friends will say something about his name, that they will tease him. Because they have a habit of making terrible jokes like that. But they don't. And I am relieved and I am happy. And I think... Wow, Brilliant is a name too. 
+I ask his name, and he says "I'm Brilliant" and I am terrified that my friends will say something about his name, that they will tease him. Because they have a habit of making terrible jokes like that. But they don't. And I am relieved and I am happy. And I think... Wow, Brilliant is a name too. Brilliant is a name too.
 
-[elated] Brilliant is a name too.
+We are the last ones in the restaurant. It closes at 1am because of us! [elated] How cool! 
 
+Brilliant leaves at 1:30. He needs to clean first. Minibus taxis are sparse this time of night. He waits another half an hour, then takes two separate taxis to his corrugated tin shack. In the taxi he can't help but marvel at how cool the lights are. They are like little slugs in the mist. He showers in a bucket, by standing in it and squeezing a sponge so that hot water flows from where he sponges back into the bucket. There is no shower in his shack. He is 37 this year. He has been a waiter for 10 of those years. His 10 hour shift starts in 7 hours from now. [sad] Brilliant.
+
+[defeated] Brilliant is a name too. [sad] Brilliant is a person too.
+
+Zoom out. There are thousands of Brilliants. There are Gifts and Blessings and Preciouses and one or two Innocents, carrying plates, carrying mops, carrying other people's keys. A mother names her child like a prayer, and hands him to the world.
+
+The people wear out. The names don't. A name gets handed on, mother to child, prayer to prayer, until it is smooth as a river stone. Tough times ever last. Tough people never do.
+
+[slowly] So this is where this god is born. Not in the shack. Not in the taxi. In the name — a god assembled from every prayer a mother ever hid inside one. Brilliant is a god too.

@@ -4,7 +4,7 @@
   "bpm": 108,
   "_comment": "The SHAPE v1 — Saint Helena collects, then creates. 47 voice lines in five strata: genesis (bones+wash, beatless), Lopes (the clock ticks dry, the sea opens at the marooning, the cockerel motif debuts), empire (the coin machine, the emperor theme falls, the slaves stretch is the darkest full groove then falls away under the [sighs]), the guests (Bb-major amahubo lift for Dinuzulu, crushed brass for the boers), the dream and the recipe (ingredients stack a layer per line, the water recedes on SOMETHING IS READY, one bare question, then THE MATCH DROPS — the only punch — eruption, afterglow, and a god born over almost nothing). Splits (v12 fast friends, v21 the sigh, v35 the whisper) are ESTIMATES — tune to rendered bars from timing.md after the voice pass. Litany (v30) stacks every theme: swell + emperordeep + cockerelghost + ohdearbell + bones.",
   "sections": [
-    { "bars": 4, "layers": ["wash", "bones"], "label": "OH DEAR — a hymn for saint helena" },
+    { "bars": 4, "layers": ["wash", "bones"], "fade": "in", "label": "OH DEAR — a hymn for saint helena" },
     { "voice": 0, "layers": ["wash", "bones"], "label": "THE WOUND — even the earth bleeds" },
     { "voice": 1, "layers": ["wash", "bones", "sub"], "label": "THE SCAR — the middle of fucking nowhere" },
     { "voice": 2, "layers": ["tick", "ohdear"], "label": "WHAT YEAR — the clock starts ticking" },
@@ -66,6 +66,6 @@
     { "bars": 4, "layers": ["swell", "bones", "ohdear"], "label": "AFTERGLOW — the sea steams" },
     { "voice": 46, "layers": ["bones", "cockerelghost"], "label": "A GOD BORN HERE — something new" },
     { "voice": 47, "layers": ["bones", "ohdearbell", "cockerelghost"], "label": "WHERE GODS ARE BORN — the middle of fucking nowhere" },
-    { "bars": 6, "layers": ["ohdearbell", "bones", "wash", "cockerelghost"], "label": "DAWN — the first crow of the new god" }
+    { "bars": 10, "layers": ["ohdearbell", "bones", "wash", "cockerelghost"], "fade": "out", "label": "DAWN — the first crow of the new god" }
   ]
 }

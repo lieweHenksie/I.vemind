@@ -374,7 +374,11 @@ arrange(
     // ── album mode · framed by an album page (?album=1): auto-play when the gate opens, and
     // report the one-loop finish so the album advances. The album's <iframe allow="autoplay">
     // delegates the listener's single click to every track.
-    const ALBUM = new URLSearchParams(location.search).has('album') && window.parent !== window;
+    const QS = new URLSearchParams(location.search);
+    const ALBUM = QS.has('album') && window.parent !== window;
+    // &hold = preloaded by the album in a hidden frame: fill the gate, report ready, then WAIT
+    // for {cyb:'go'} — so the next track starts in milliseconds, not a load-gap.
+    const HOLD = ALBUM && QS.has('hold');
 
     // Preload voice clips + crate samples + the film clips BEFORE enabling play. This must go
     // through Strudel's OWN loadBuffer (not a bare fetch): Strudel decodes lazily at first
@@ -404,7 +408,13 @@ arrange(
         playBtn.disabled = false;
         setStatus(bad ? 'ready — but ' + bad + ' clip(s) FAILED (see console; they may start late)'
                       : 'ready — hit [ play ]');
-        if (ALBUM) { if (ac && ac.state === 'suspended') ac.resume().catch(() => {}); play(); }
+        if (ALBUM) {
+          const go = () => { if (ac && ac.state === 'suspended') ac.resume().catch(() => {}); play(); };
+          if (HOLD) {
+            window.addEventListener('message', (e) => { if (e.data && e.data.cyb === 'go') go(); });
+            parent.postMessage({ cyb: 'song-ready' }, '*');
+          } else go();
+        }
       });
     }
 

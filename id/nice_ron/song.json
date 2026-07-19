@@ -1,20 +1,30 @@
 {
-  "essay": "none — crate jam, no voice lines",
+  "essay": "mycelium/essays/nice_ron.md",
   "genre": "melodic techno",
   "bpm": 140,
-  "_comment": "The SHAPE v4 — the Oazoor spend: drop basses are riff-bank walks (each bar a different skeleton over one chord bank), a sine sub pyramid locks underneath, and drop II's walk ends on a held bar — the bass exhales into the confession. The sneeze now lands after a bar of TRUE silence (deer look up — comedy timing; it was camouflaged against the riser's noise crest). Drops shortened 8+8 → 4+4 with a melodic clearing between; wobble replaced by techno bass + the motif as lead. The outro grows a litany: 'i sneezed' / 'not allowed' trading two-bar lines before the full apology.",
+  "_comment": "The SHAPE v6 — the ALBUM CUT, drop-as-outro. Trimmed front (comedy timing untouched), then the drop IS the rest of the song: two punching rows with techsub back from the shelf for weight, then an 8-bar fading exhale of the same kit with the cadenza drone surfacing beneath it — E E A A E E A A, ending on A as the fader reaches zero, merging straight into essay-1. No clearing, no separate cadence.",
   "sections": [
     {
-      "bars": 8,
+      "bars": 4,
       "layers": [
         "deerbed",
         "softpad",
         "belltale"
       ],
+      "fade": "in",
       "label": "stillness — the deer graze, nothing has ever happened"
     },
     {
-      "bars": 8,
+      "voice": 0,
+      "layers": [
+        "deerbed",
+        "softpad",
+        "belltale"
+      ],
+      "label": "stillness — nature was a gift once"
+    },
+    {
+      "bars": 4,
       "layers": [
         "deerbed",
         "softpad",
@@ -25,7 +35,7 @@
       "label": "the meadow — one gentle motif, the forest is polite"
     },
     {
-      "bars": 4,
+      "bars": 2,
       "layers": [
         "softpad",
         "gentlearp",
@@ -59,103 +69,51 @@
     {
       "bars": 4,
       "layers": [
-        "technobass",
-        "techsub",
-        "dropkick",
-        "dropsnare",
-        "droplead",
-        "sneezestab",
-        "drophats"
+        "hardkick",
+        "rollbass",
+        "ronsub",
+        "hookchords",
+        "hooklead",
+        "hookrun",
+        "hookdeep",
+        "openhat",
+        "hardclap"
       ],
-      "label": "THE DROP — gesundheit"
+      "label": "THE DROP — the forest goes hardcore"
     },
     {
       "bars": 4,
       "layers": [
-        "technobass",
-        "dropkick",
-        "droplead",
+        "hardkick",
+        "rollbass",
+        "ronsub",
+        "hookchords",
+        "hooklead",
+        "hookrun",
+        "hookdeep",
+        "openhat",
+        "hardclap",
         "chiparp",
-        "softpad"
+        "shimmerhat"
       ],
-      "label": "the clearing — 8-bit birdsong keeps the pulse"
+      "label": "DROP II — the hook doubles down"
     },
     {
-      "bars": 4,
-      "layers": [
-        "technobass2",
-        "techsub2",
-        "dropkick",
-        "dropsnare",
-        "sneezechop",
-        "ronstab",
-        "drophats",
-        "chiparp"
-      ],
-      "label": "DROP II — the sneeze argues, ron answers"
-    },
-    {
-      "bars": 4,
-      "layers": [
-        "confess",
-        "softpad",
-        "sub"
-      ],
-      "label": "the confession — i sneezed"
-    },
-    {
-      "bars": 2,
-      "layers": [
-        "confess",
-        "belltale",
-        "sub"
-      ],
-      "label": "the litany — i sneezed…"
-    },
-    {
-      "bars": 2,
-      "layers": [
-        "notline",
-        "belltale",
-        "sub"
-      ],
-      "label": "…the litany — i'm not allowed to sneeze"
-    },
-    {
-      "bars": 2,
-      "layers": [
-        "confess",
-        "belltale",
-        "sub"
-      ],
-      "label": "the litany — i sneezed…"
-    },
-    {
-      "bars": 2,
-      "layers": [
-        "notline",
-        "belltale",
-        "sub"
-      ],
-      "label": "…the litany — i'm not allowed to sneeze"
-    },
-    {
-      "bars": 4,
-      "layers": [
-        "apology",
-        "softpad",
-        "belltale"
-      ],
-      "label": "the apology — oh, i'm not allowed to sneeze"
-    },
-    {
+      "voice": 1,
       "bars": 8,
+      "fade": "out",
       "layers": [
-        "softpad",
-        "belltale",
-        "deerbed"
+        "hardkick",
+        "rollbass",
+        "ronsub",
+        "hookchords",
+        "hooklead",
+        "hookrun",
+        "hookdeep",
+        "openhat",
+        "cadenza"
       ],
-      "label": "stillness again — the deer do not return"
+      "label": "the long exhale — hardcore dissolves onto A"
     }
   ]
 }

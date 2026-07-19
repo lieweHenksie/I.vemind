@@ -3,7 +3,7 @@
   "bpm": 120,
   "_comment": "The song's SHAPE. Edit this, then: python3 tools/song/compose.py agar-lab. A section is {bars, layers} (instrumental) | {voice, layers} (a voice line) | {voice, split:[[bars,layers],…]} (the voice fires once and rings out while the music drops/changes mid-line; the split bars should sum ~ that line's rendered bars). Instruments are names from cookbook/strudel/palette.json.",
   "sections": [
-    {"bars": 4, "layers": ["bass"], "label": "intro"},
+    {"bars": 4, "layers": ["bass", "fromforest"], "fade": "in", "label": "intro"},
     {"bars": 4, "layers": ["bass", "kick"]},
     {"bars": 2, "layers": ["bass", "kick", "hats"]},
     {"bars": 2, "layers": ["bass", "kick", "hats", "arp"]},
@@ -22,7 +22,13 @@
     {"voice": 7, "split": [[5, ["kick", "hats", "clap", "bass", "arpFast", "pad"]], [4, ["bass", "wash"]], [4, ["kick", "hats", "bass", "arp", "solo"]]], "label": "night blurs — mid-drop"},
     {"voice": 8, "layers": ["kick", "hats", "bass", "arp", "pad"], "label": "waiter"},
     {"voice": 9, "split": [[6, ["kick", "hats", "clap", "bass", "arp", "pad", "solo"]], [3, ["bass"]], [3, ["kick", "hats", "clap", "bass", "subHard", "lead", "solo"]]], "label": "his name — mid-drop"},
-    {"voice": 10, "layers": ["kick", "hats", "clap", "bass", "arpFast", "pad", "lead", "solo"], "label": "Brilliant!"},
-    {"bars": 8, "layers": ["bass", "lead"], "label": "outro"}
+    {"voice": 10, "layers": ["kick", "hats", "clap", "bass", "arpFast", "pad", "lead", "solo"], "label": "the last ones — it closes at 1am because of us"},
+    {"voice": 11, "layers": ["bass", "pad"], "label": "two taxis home — he is 37 this year"},
+    {"voice": 12, "layers": ["pad"], "label": "brilliant is a name too — a person too"},
+    {"voice": 13, "layers": ["bass", "pad"], "label": "thousands of brilliants — zoom out"},
+    {"voice": 14, "layers": ["pad"], "label": "the names outlast — smooth as river stones"},
+    {"voice": 15, "layers": ["pad", "fromforest"], "label": "in the name — brilliant is a god too"},
+    {"bars": 8, "layers": ["bass", "lead"], "label": "outro"},
+    {"bars": 4, "layers": ["towardsea"], "fade": "out", "label": "toward the sea — down a tone to G"}
   ]
 }
