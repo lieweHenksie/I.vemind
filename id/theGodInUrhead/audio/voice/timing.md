@@ -15,6 +15,6 @@
 | 10 | 32.72 | 14 | “My priestess will come again. Tomorrow you  |
 | 11 | 5.76 | 4 | “My god said you’d come,” Kramer said. “You  |
 | 12 | 43.12 | 18 | Kramer stood up unsteadily, piloting a stran |
-| 13 | 1.20 | 2 | [sad]“No.” |
-| 14 | 22.80 | 10 | He watched the priestess break. Her eyes gre |
+| 13 | 2.88 | 3 | [sad]“No.” he said. [crying]"I don't" |
+| 14 | 21.20 | 9 | He watched the priestess break. Her eyes gre |
 | 15 | 26.64 | 11 | Kramer stood in the warm sun and wondered ho |

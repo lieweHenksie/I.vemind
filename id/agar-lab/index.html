@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>cyBorge — agar-lab (essay-1)</title>
+  <title>cyBorge — song</title>
 
   <!-- Strudel, no build step. One script tag. Pinned; bump the version freely. -->
   <script src="https://unpkg.com/@strudel/web@1.0.3"></script>
@@ -31,6 +31,8 @@
       font:inherit; font-size:.9rem; padding:.5rem 1.1rem; border-radius:4px; cursor:pointer;
     }
     button:hover { background:var(--amber); color:var(--bg); }
+    button:disabled { opacity:.35; cursor:default; }
+    button:disabled:hover { background:transparent; color:var(--amber); }
     button.stop { color:var(--rust); border-color:var(--rust); }
     button.stop:hover { background:var(--rust); color:var(--bg); }
     #status { font-size:.82rem; opacity:.8; margin-left:.4rem; }
@@ -57,6 +59,12 @@
       opacity:0; transition:opacity .15s, border-color .15s; }
     #srcfilm video.dim  { opacity:.12; }
     #srcfilm video.live { opacity:1; border-color:var(--amber); }
+    /* the spoken words, typewritten word by word as they are said — bold amber, like the title,
+       but in the story font (the human layer) */
+    #lyric { align-self:center; text-align:center; max-width:64ch; min-height:2.8em;
+      font-family:"Libre Baskerville", Georgia, "Times New Roman", serif;
+      font-size:1.05rem; font-weight:700; line-height:1.45; color:var(--amber);
+      text-wrap:balance; }
     kbd { border:1px solid #333; border-radius:3px; padding:0 .35em; font-size:.8em; }
   </style>
 </head>
@@ -73,6 +81,9 @@
   <div id="filmword"></div>
   <div id="filmsub"></div>
   <div id="srcfilm" hidden><canvas id="viz" width="1280" height="720"></canvas></div>
+
+  <!-- the spoken line, typed as it is said -->
+  <div id="lyric"></div>
 
   <!-- the progress bar sits below the film -->
   <div id="arrstrip"></div>
@@ -118,12 +129,12 @@ arrange(
   [4, stack(bass, kick)],
   [2, stack(bass, kick, hats)],
   [2, stack(bass, kick, hats, arp)],
-  [bars[0], stack(kick, hats, bass, arp, vo(s("voice:0"), 0))],
-  [bars[1], stack(kick, hats, clap, bass, arp, pad, vo(s("voice:1"), 1))],
-  [bars[2], stack(bass, vo(s("voice:2"), 2))],   // dialogue — bare
-  [bars[3], stack(bass, kick, vo(s("voice:3"), 3))],
-  [bars[4], stack(kick, hats, clap, bass, arpFast, pad, vo(s("voice:4"), 4))],   // swords
-  [3, stack(kick, hats, clap, bass, arp, pad, lead, solo, vo(s("voice:5"), 5))],   // slug — mid-drop
+  [bars[0], stack(kick, hats, bass, arp)],
+  [bars[1], stack(kick, hats, clap, bass, arp, pad)],
+  [bars[2], bass],   // dialogue — bare
+  [bars[3], stack(bass, kick)],
+  [bars[4], stack(kick, hats, clap, bass, arpFast, pad)],   // swords
+  [3, stack(kick, hats, clap, bass, arp, pad, lead, solo)],   // slug — mid-drop
   [2, bass],   // …voice 5 rings on, bars shift
   [3, stack(kick, hats, bass, subHard, solo)],   // …voice 5 rings on, bars shift
   [2, stack(bass, wash)],   // breakdown
@@ -131,15 +142,15 @@ arrange(
   [2, stack(impact, kick, subHard)],   // HARDCORE drop
   [6, stack(kick, hats, clap, subHard, arpFast, solo)],   // hardcore
   [4, stack(kick, hats, clap, bass, arpFast, lead)],   // climax
-  [bars[6], stack(kick, hats, bass, arp, vo(s("voice:6"), 6))],   // club Cuomo
-  [5, stack(kick, hats, clap, bass, arpFast, pad, vo(s("voice:7"), 7))],   // night blurs — mid-drop
+  [bars[6], stack(kick, hats, bass, arp)],   // club Cuomo
+  [5, stack(kick, hats, clap, bass, arpFast, pad)],   // night blurs — mid-drop
   [4, stack(bass, wash)],   // …voice 7 rings on, bars shift
   [4, stack(kick, hats, bass, arp, solo)],   // …voice 7 rings on, bars shift
-  [bars[8], stack(kick, hats, bass, arp, pad, vo(s("voice:8"), 8))],   // waiter
-  [6, stack(kick, hats, clap, bass, arp, pad, solo, vo(s("voice:9"), 9))],   // his name — mid-drop
+  [bars[8], stack(kick, hats, bass, arp, pad)],   // waiter
+  [6, stack(kick, hats, clap, bass, arp, pad, solo)],   // his name — mid-drop
   [3, bass],   // …voice 9 rings on, bars shift
   [3, stack(kick, hats, clap, bass, subHard, lead, solo)],   // …voice 9 rings on, bars shift
-  [bars[10], stack(kick, hats, clap, bass, arpFast, pad, lead, solo, vo(s("voice:10"), 10))],   // Brilliant!
+  [bars[10], stack(kick, hats, clap, bass, arpFast, pad, lead, solo)],   // Brilliant!
   [8, stack(bass, lead)],   // outro
 )
 // ARRANGE-END
@@ -153,6 +164,7 @@ arrange(
     // Voice clips + ONE shared cache-buster (used for BOTH sample registration and the preload).
     // VOICE-FILES-START
     const VOICE_FILES = ['line-01.wav', 'line-02.wav', 'line-03.wav', 'line-04.wav', 'line-05.wav', 'line-06.wav', 'line-07.wav', 'line-08.wav', 'line-09.wav', 'line-10.wav', 'line-11.wav'];
+    const VOICE_TEXTS = ["There is a man that lives in the hotel, she said, that recommended club Cuomo.", "He seemed cool, she assures us and I ask if he was wearing wooden beads, like a bhuddist monk might, but she seems confused.", "\"What made him seem cool?\" I ask.", "\"I don't know, he had a cigar,\" she says.", "In the Taxi, I picture cool people, many are black, but more have swords.  None ... have cigars.", "I watch the streetlights make little slugs of light crawling over a misty grey night. Could the others in the taxi tell how cool they were? The slugs? None of the slugs had cigars either.", "When we get to club Cuomo,  it turns out pretty cool. Maybe because of all the black people? But I keep my eyes out for swords just in case.", "The night becomes a blur of conversation and I ask the others if they've heard about how you're supposed to put a finger in a dog's rectum when it bites? They seem ignorant of that myth.  I only brought it up to dispell it in the first place.  It doesn't work, trust me. I backtrack and tell them that it doesn't work and I never should have brought it up, since they already knew.  They seem like they agree.", "Our waiter comes, he is middle-aged and skinny. His English is broken. I feel sorry for him, but I cannot say why. He probably never had to have his finger up a pitbull's rectum when it didn't want to release his scared and confused old dog.", "I ask his name, and he says \"I'm Brilliant\" and I am terrified that my friends will say something about his name, that they will tease him. Because they have a habit of making terrible jokes like that. But they don't. And I am relieved and I am happy. And I think... Wow, Brilliant is a name too.", "Brilliant is a name too."];
     // VOICE-FILES-END
     const VOICE_BASE = new URL('audio/voice/', location.href).href;
     const VOICE_BUST = '?t=' + Date.now();
@@ -375,30 +387,54 @@ arrange(
       if (tc) window.arrange = (...secs) => tc(...secs).slow(secs.reduce((a,s)=>a+s[0],0));
     }
 
-    // Preload voice clips + crate samples + the film clips BEFORE enabling play — each small clip
-    // must be ready so it plays instantly from frame 1 when its cue fires (no mid-song load hitch).
+    // ── album mode · framed by an album page (?album=1): auto-play when the gate opens, and
+    // report the one-loop finish so the album advances. The album's <iframe allow="autoplay">
+    // delegates the listener's single click to every track.
+    const ALBUM = new URLSearchParams(location.search).has('album') && window.parent !== window;
+
+    // Preload voice clips + crate samples + the film clips BEFORE enabling play. This must go
+    // through Strudel's OWN loadBuffer (not a bare fetch): Strudel decodes lazily at first
+    // trigger, and a long clip that isn't decoded in time misses its one scheduled chance —
+    // a voice line fires once, so a miss means a silent line. loadBuffer decodes into the same
+    // cache playback reads, keyed by URL, so the busted URL here must match samples() exactly.
     if (booted) {
+      const playBtn = document.getElementById('play');
+      playBtn.disabled = true;               // truly gated — not just a status line
       setStatus('loading voice…');
-      const urls = [...VOICE_FILES.map(f => VOICE_BASE + f),
-                    ...Object.values(SAMPLE_FILES).map(f => SAMPLE_BASE + f)];
-      const waits = urls.map(u => fetch(u + VOICE_BUST).catch(()=>{}));
+      const urls = [...VOICE_FILES.map(f => VOICE_BASE + f + VOICE_BUST),
+                    ...Object.values(SAMPLE_FILES).map(f => SAMPLE_BASE + f + VOICE_BUST)];
+      const ac = (typeof getAudioContext === 'function') ? getAudioContext() : null;
+      let ok = 0, bad = 0;
+      const tick = () => setStatus('loading voice… ' + (ok + bad) + '/' + urls.length
+                                   + (bad ? ' (' + bad + ' FAILED)' : ''));
+      const load1 = (u) => (ac && typeof loadBuffer === 'function') ? loadBuffer(u, ac) : fetch(u);
+      const load = (u, tries) => load1(u).catch(e => tries > 0 ? load(u, tries - 1) : Promise.reject(e));
+      const waits = urls.map(u => load(u, 2).then(() => { ok++; tick(); },
+                                                  () => { bad++; tick(); console.error('clip failed:', u); }));
       for (const v of allVids()) waits.push(new Promise(res => {
         if (v.readyState >= 3) return res();
         v.addEventListener('canplaythrough', res, { once: true });
         setTimeout(res, 8000);   // never hang the gate on a slow clip
       }));
-      Promise.all(waits).then(() => setStatus('ready — hit [ play ]'));
+      Promise.all(waits).then(() => {
+        playBtn.disabled = false;
+        setStatus(bad ? 'ready — but ' + bad + ' clip(s) FAILED (see console; they may start late)'
+                      : 'ready — hit [ play ]');
+        if (ALBUM) { if (ac && ac.state === 'suspended') ac.resume().catch(() => {}); play(); }
+      });
     }
 
     // ── the arrangement eye · TIMELINE generated by tools/song/build.py (markers below) ──
     // TIMELINE-START
-    const TIMELINE = [[4, "intro", 0, 0.11], [4, "", 0, 0.22], [2, "", 0, 0.33], [2, "", 0, 0.44], ["V0", "", 0, 0.56], ["V1", "", 0, 0.78], ["V2", "dialogue — bare", 0, 0.22], ["V3", "", 0, 0.33], ["V4", "swords", 0, 0.78], [3, "slug — mid-drop", 1, 1.0], [2, "slug — mid-drop", 1, 0.11], [3, "slug — mid-drop", 1, 0.56], [2, "breakdown", 0, 0.22], [2, "rise", 0, 0.33], [2, "HARDCORE drop", 1, 0.33], [6, "hardcore", 0, 0.67], [4, "climax", 0, 0.67], ["V6", "club Cuomo", 0, 0.56], [5, "night blurs — mid-drop", 1, 0.78], [4, "night blurs — mid-drop", 1, 0.22], [4, "night blurs — mid-drop", 1, 0.56], ["V8", "waiter", 0, 0.67], [6, "his name — mid-drop", 1, 0.89], [3, "his name — mid-drop", 1, 0.11], [3, "his name — mid-drop", 1, 0.78], ["V10", "Brilliant!", 0, 1.0], [8, "outro", 0, 0.22]];
+    const TIMELINE = [[4, "intro", 0, 0.11, null], [4, "", 0, 0.22, null], [2, "", 0, 0.33, null], [2, "", 0, 0.44, null], ["V0", "", 0, 0.56, 0], ["V1", "", 0, 0.78, 1], ["V2", "dialogue — bare", 0, 0.22, 2], ["V3", "", 0, 0.33, 3], ["V4", "swords", 0, 0.78, 4], [3, "slug — mid-drop", 1, 1.0, 5], [2, "slug — mid-drop", 1, 0.11, null], [3, "slug — mid-drop", 1, 0.56, null], [2, "breakdown", 0, 0.22, null], [2, "rise", 0, 0.33, null], [2, "HARDCORE drop", 1, 0.33, null], [6, "hardcore", 0, 0.67, null], [4, "climax", 0, 0.67, null], ["V6", "club Cuomo", 0, 0.56, 6], [5, "night blurs — mid-drop", 1, 0.78, 7], [4, "night blurs — mid-drop", 1, 0.22, null], [4, "night blurs — mid-drop", 1, 0.56, null], ["V8", "waiter", 0, 0.67, 8], [6, "his name — mid-drop", 1, 0.89, 9], [3, "his name — mid-drop", 1, 0.11, null], [3, "his name — mid-drop", 1, 0.78, null], ["V10", "Brilliant!", 0, 1.0, 10], [8, "outro", 0, 0.22, null]];
     const SONG_BPM = 120;
     // TIMELINE-END
     const strip = document.getElementById('arrstrip');
     const posEl = document.getElementById('arrpos');
     const wordEl = document.getElementById('filmword');
     const subEl = document.getElementById('filmsub');
+    const lyricEl = document.getElementById('lyric');
+    let lineBars = [];                       // set by resolvedTimeline from the score's bars
     if (TIMELINE.length) {
       TIMELINE.forEach(([bars]) => {
         const b = document.createElement('div');
@@ -412,11 +448,46 @@ arrange(
       // "V3" entries are voice sections — their length lives in the score's `bars` array
       const m = editor.value.match(/let bars = \[([^\]]*)\]/);
       const barsArr = m && m[1].trim() ? m[1].split(',').map(Number) : [];
-      return TIMELINE.map(([b, l, p, e]) => [(typeof b === 'string') ? (barsArr[+b.slice(1)] || 4) : b, l, p,
-                                             (e === undefined) ? 0.6 : e]);
+      lineBars = barsArr;                    // the typewriter paces each line by its clip length
+      return TIMELINE.map(([b, l, p, e, vi]) => [(typeof b === 'string') ? (barsArr[+b.slice(1)] || 4) : b, l, p,
+                                                 (e === undefined) ? 0.6 : e,
+                                                 (vi === undefined) ? null : vi]);
     }
+    // ── the voice bus · BULLETPROOF one-shots ──
+    // Voice lines are NOT strudel events (a one-shot event can start late or be skipped when the
+    // main thread is busy rendering — and a line only fires once). Instead, at play we arm EVERY
+    // line directly on the WebAudio clock: buffers come from the same loadBuffer cache the gate
+    // filled, each source gets an absolute sample-accurate start time, and from then on the audio
+    // hardware fires them — main-thread jank can't touch a line again.
+    let voiceNodes = [];
+    function stopVoice() {
+      for (const s of voiceNodes) { try { s.stop(); } catch (e) {} }
+      voiceNodes = [];
+    }
+    async function armVoice(tl) {
+      if (!VOICE_FILES.length || typeof getAudioContext !== 'function' || typeof loadBuffer !== 'function') return;
+      const ac = getAudioContext();
+      const barSec = 240 / SONG_BPM;
+      const t0 = ac.currentTime + 0.1;       // strudel starts ~now; one small shared offset
+      let a = 0;
+      for (const row of tl) {
+        const vi = row[4];
+        if (vi != null && VOICE_FILES[vi]) {
+          try {
+            const buf = await loadBuffer(VOICE_BASE + VOICE_FILES[vi] + VOICE_BUST, ac);
+            const src = ac.createBufferSource(); src.buffer = buf;
+            const g = ac.createGain(); g.gain.value = 1.15;
+            src.connect(g); g.connect(ac.destination);
+            src.start(t0 + a * barSec);
+            voiceNodes.push(src);
+          } catch (e) { console.error('voice arm failed: line', vi + 1, e); }
+        }
+        a += row[0];
+      }
+    }
+    let cachedTl = null;                     // parsed once per play — not 60×/sec off the textarea
     function trackFrame() {
-      const tl = resolvedTimeline();
+      const tl = cachedTl || (cachedTl = resolvedTimeline());
       const total = tl.reduce((a, s) => a + s[0], 0);
       const bar = (performance.now() - trackT0) / 1000 / (240 / SONG_BPM);
       if (bar >= total) { finishLoop(); return; }   // one full pass through the arrangement → stop
@@ -428,6 +499,20 @@ arrange(
       const lbl = tl[idx][1] || '', dash = lbl.indexOf('—');
       wordEl.textContent = dash >= 0 ? lbl.slice(0, dash).trim() : lbl;
       subEl.textContent = dash >= 0 ? lbl.slice(dash + 1).trim() : '';
+      // the typewriter: the ACTIVE line appears WORD BY WORD as it is spoken. The active line is
+      // the last row at-or-before idx that fires a voice (split continuations keep typing through
+      // the music change). Pacing: uniform word rate over the clip's bars, finishing a touch early
+      // (~92%) since renders end in silence. The finished line stays up until the next one speaks.
+      if (lyricEl && VOICE_TEXTS.length) {
+        let li = null, liStart = 0, a2 = 0;
+        for (let i = 0; i <= idx; i++) { if (tl[i][4] != null) { li = tl[i][4]; liStart = a2; } a2 += tl[i][0]; }
+        if (li != null && VOICE_TEXTS[li] !== undefined) {
+          const words = VOICE_TEXTS[li].split(' ');
+          const prog = (bar - liStart) / (lineBars[li] || 4) / 0.92;
+          const nw = Math.max(0, Math.min(words.length, Math.floor(words.length * prog)));
+          lyricEl.textContent = nw < words.length ? words.slice(0, nw).join(' ') + ' ▍' : words.join(' ');
+        } else lyricEl.textContent = '';
+      }
       // the bounce is saved for the drop — a beat-phase scale pulse on the VIDEOS only (--punch);
       // the back-wall sea never bounces
       if (hasFilm) {
@@ -439,6 +524,7 @@ arrange(
     }
     function trackStart() {
       if (!TIMELINE.length) return;
+      cachedTl = resolvedTimeline();
       trackT0 = performance.now();
       if (rafId) cancelAnimationFrame(rafId);
       if (hasFilm || hasViz) filmReset();
@@ -447,16 +533,22 @@ arrange(
     function trackStop() {
       if (rafId) cancelAnimationFrame(rafId);
       rafId = null; posEl.textContent = '';
+      if (lyricEl) lyricEl.textContent = '';
       [...strip.children].forEach(el => el.classList.remove('active'));
       if (hasFilm || hasViz) filmReset();
     }
 
     async function play() {
-      try { hush(); await evaluate(editor.value); setStatus('playing…'); trackStart(); }
+      try {
+        hush(); stopVoice();
+        await evaluate(editor.value);
+        armVoice(resolvedTimeline());        // every line scheduled on the audio clock, up front
+        setStatus('playing…'); trackStart();
+      }
       catch (e) { setStatus('error: ' + (e && e.message ? e.message : e), true); }
     }
-    function stop() { hush(); setStatus('stopped'); trackStop(); }
-    function finishLoop() { hush(); trackStop(); setStatus('done · one loop — hit [ play ] again'); }
+    function stop() { hush(); stopVoice(); setStatus('stopped'); trackStop(); }
+    function finishLoop() { hush(); stopVoice(); trackStop(); setStatus('done · one loop — hit [ play ] again'); if (ALBUM) parent.postMessage({ cyb: 'song-done' }, '*'); }
     document.getElementById('play').addEventListener('click', play);
     document.getElementById('stop').addEventListener('click', stop);
     editor.addEventListener('keydown', (e) => {

@@ -49,10 +49,10 @@ The violin stopped. The priestess looked up at Kramer's eyes, and he had this fe
 “Kramer, do you remember me?”
 [desperate]Kramer wanted to say yes. That his body remembered hers. That his fingers had walked the animal trails of her wavy hair, that it had made those tracks in the snow. But he didn’t. She deserved to be remembered.[sad] She deserved more than being a beautiful stranger. 
 
-[sad]“No.”
+[sad]“No.” he said. [crying]"I don't"
 
 He watched the priestess break. Her eyes grew red and swollen and in a burst of something that had grown for years, she stood and swung the violin against the wall. The holy artifact snapped. She walked over to him and paused briefly then kissed his lips. He could feel her tears cool his cheek. 
-“Goodbye, Kramer,” she said.
+[sad]“Goodbye, Kramer,” she said.
 
 Kramer stood in the warm sun and wondered how his goddess would punish him. He shuffled to the broken violin that lay across the floor. 
 He ran his fingers across the crack in the wall. A perfect crack, he thought, for the goddess’s new home.  

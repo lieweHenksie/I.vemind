@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tough times ever last, tough people never do — I'vemind</title>
+  <style>
+    :root { --bg:#0a0d08; --stone:#8b8680; --moss:#4a7c59; --amber:#d4a843; --rust:#8b4a2a; }
+    * { box-sizing: border-box; }
+    body {
+      margin:0; height:100vh; background:var(--bg); color:var(--stone);
+      font-family:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+      display:flex; flex-direction:column; gap:.9rem; padding:clamp(.8rem,2.5vw,2rem); line-height:1.5;
+    }
+    header { display:flex; align-items:baseline; gap:1.2rem; flex-wrap:wrap; }
+    header .band { font-size:.8rem; letter-spacing:.18em; opacity:.6; }
+    header h1 {
+      margin:0; font-family:"Libre Baskerville", Georgia, serif; font-weight:400;
+      font-size:clamp(1.05rem,2.6vw,1.6rem); color:var(--amber); font-style:italic;
+    }
+    #tracks { display:flex; gap:.5rem; flex-wrap:wrap; }
+    .track {
+      background:transparent; border:1px solid #23281c; border-radius:6px; color:var(--stone);
+      font:inherit; font-size:.78rem; padding:.45rem .7rem; cursor:pointer; text-align:left;
+    }
+    .track small { display:block; opacity:.55; font-size:.68rem; }
+    .track:hover { border-color:var(--moss); }
+    .track.now { border-color:var(--amber); color:var(--amber); }
+    .track.done { opacity:.45; }
+    #playalbum {
+      align-self:flex-start; background:transparent; color:var(--amber);
+      border:1px solid var(--amber); border-radius:6px; font:inherit; font-size:.9rem;
+      padding:.5rem 1.1rem; cursor:pointer;
+    }
+    #playalbum:hover { background:var(--amber); color:var(--bg); }
+    #albumstatus { font-size:.78rem; opacity:.7; }
+    #stage {
+      flex:1; width:100%; min-height:0; border:1px solid #23281c; border-radius:8px;
+      background:var(--bg);
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="band">I'VEMIND</span>
+    <h1>tough times ever last, tough people never do</h1>
+  </header>
+
+  <div id="tracks"></div>
+  <button id="playalbum">[ play the album ]</button>
+  <span id="albumstatus">five songs · each plays once, then the next loads and begins</span>
+  <iframe id="stage" allow="autoplay" title="now playing" hidden></iframe>
+
+  <script>
+    // The album is a hallway; the songs are the rooms. Each track is a finished song page,
+    // loaded into the frame with ?album=1: the page auto-plays once its load gate opens and
+    // posts { cyb:'song-done' } after its one loop — the frame's allow="autoplay" carries the
+    // listener's single click across every track.
+    const TRACKS = [
+      { src: '../demi_demi/',      name: 'demi demi',      sub: 'trance · crate jam' },
+      { src: '../theGodInUrhead/', name: 'theGodInUrhead', sub: 'cinematic downtempo' },
+      { src: '../nice_ron/',       name: 'nice ron',       sub: '8-bit melodic techno' },
+      { src: '../agar-lab/',       name: 'essay-1',        sub: 'the agar lab · techno' },
+      { src: '../oh_dear/',        name: 'oh dear',        sub: 'dub techno requiem' },
+    ];
+    const stage = document.getElementById('stage');
+    const list = document.getElementById('tracks');
+    const status = document.getElementById('albumstatus');
+    const playBtn = document.getElementById('playalbum');
+    let cur = -1;
+
+    TRACKS.forEach((t, i) => {
+      const b = document.createElement('button');
+      b.className = 'track';
+      b.innerHTML = (i + 1) + ' · ' + t.name + '<small>' + t.sub + '</small>';
+      b.addEventListener('click', () => playTrack(i));
+      list.appendChild(b);
+    });
+    const paint = () => [...list.children].forEach((el, i) => {
+      el.classList.toggle('now', i === cur);
+      el.classList.toggle('done', cur >= 0 && i < cur);
+    });
+
+    function playTrack(i) {
+      cur = i; paint();
+      playBtn.hidden = true; stage.hidden = false;
+      status.textContent = 'now playing ' + (i + 1) + '/' + TRACKS.length + ' — ' + TRACKS[i].name
+                         + ' (loads, then begins on its own)';
+      stage.src = TRACKS[i].src + '?album=1';
+    }
+    window.addEventListener('message', (e) => {
+      if (!e.data || e.data.cyb !== 'song-done') return;
+      if (cur + 1 < TRACKS.length) playTrack(cur + 1);
+      else {
+        cur = -1; paint();
+        status.textContent = 'the album rests. tough times ever last — play it again?';
+        playBtn.hidden = false; playBtn.textContent = '[ play it again ]';
+      }
+    });
+    playBtn.addEventListener('click', () => playTrack(0));
+  </script>
+</body>
+</html>

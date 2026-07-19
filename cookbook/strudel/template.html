@@ -371,6 +371,11 @@ arrange(
       if (tc) window.arrange = (...secs) => tc(...secs).slow(secs.reduce((a,s)=>a+s[0],0));
     }
 
+    // ── album mode · framed by an album page (?album=1): auto-play when the gate opens, and
+    // report the one-loop finish so the album advances. The album's <iframe allow="autoplay">
+    // delegates the listener's single click to every track.
+    const ALBUM = new URLSearchParams(location.search).has('album') && window.parent !== window;
+
     // Preload voice clips + crate samples + the film clips BEFORE enabling play. This must go
     // through Strudel's OWN loadBuffer (not a bare fetch): Strudel decodes lazily at first
     // trigger, and a long clip that isn't decoded in time misses its one scheduled chance —
@@ -399,6 +404,7 @@ arrange(
         playBtn.disabled = false;
         setStatus(bad ? 'ready — but ' + bad + ' clip(s) FAILED (see console; they may start late)'
                       : 'ready — hit [ play ]');
+        if (ALBUM) { if (ac && ac.state === 'suspended') ac.resume().catch(() => {}); play(); }
       });
     }
 
@@ -526,7 +532,7 @@ arrange(
       catch (e) { setStatus('error: ' + (e && e.message ? e.message : e), true); }
     }
     function stop() { hush(); stopVoice(); setStatus('stopped'); trackStop(); }
-    function finishLoop() { hush(); stopVoice(); trackStop(); setStatus('done · one loop — hit [ play ] again'); }
+    function finishLoop() { hush(); stopVoice(); trackStop(); setStatus('done · one loop — hit [ play ] again'); if (ALBUM) parent.postMessage({ cyb: 'song-done' }, '*'); }
     document.getElementById('play').addEventListener('click', play);
     document.getElementById('stop').addEventListener('click', stop);
     editor.addEventListener('keydown', (e) => {
