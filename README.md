@@ -9,6 +9,19 @@ A toolkit for making two kinds of self-contained pieces:
 The value is the *machinery*: copy-me recipe **cookbooks** and **pipelines of slash commands** that
 carry raw text to a finished piece. `CLAUDE.md` is the full project bible; this is the quick start.
 
+## Just here to listen?
+
+The album — ***tough times ever last, tough people never do*** — plays straight from the repo.
+No build, no accounts, no installs beyond python:
+
+```bash
+python3 -m http.server 8000
+```
+
+Open **http://localhost:8000/id/album/** and click `[ play the album ]`. One click plays all
+five songs in order, gaplessly. (It must be a *served* page — don't open the file directly —
+and the first play fetches the Strudel engine from a CDN, so be online.)
+
 ## Prerequisites
 
 - **python3**, **ffmpeg**, **sox** (used by the render/build tools; no npm, no build step).
