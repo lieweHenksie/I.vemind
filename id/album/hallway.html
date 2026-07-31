@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tough times ever last, tough people never do — I'vemind</title>
+  <style>
+    :root { --bg:#0a0d08; --stone:#8b8680; --moss:#4a7c59; --amber:#d4a843; --rust:#8b4a2a; }
+    * { box-sizing: border-box; }
+    body {
+      margin:0; height:100vh; background:var(--bg); color:var(--stone);
+      font-family:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+      display:flex; flex-direction:column; gap:.9rem; padding:clamp(.8rem,2.5vw,2rem); line-height:1.5;
+    }
+    header { display:flex; align-items:baseline; gap:1.2rem; flex-wrap:wrap; }
+    header .band { font-size:.8rem; letter-spacing:.18em; opacity:.6; }
+    header h1 {
+      margin:0; font-family:"Libre Baskerville", Georgia, serif; font-weight:400;
+      font-size:clamp(1.05rem,2.6vw,1.6rem); color:var(--amber); font-style:italic;
+    }
+    #tracks { display:flex; gap:.5rem; flex-wrap:wrap; }
+    .track {
+      display:flex; align-items:stretch; border:1px solid #23281c; border-radius:6px;
+      color:var(--stone); overflow:hidden;
+    }
+    .track .play {
+      background:transparent; border:0; color:inherit; font:inherit; font-size:.78rem;
+      padding:.45rem .7rem; cursor:pointer; text-align:left;
+    }
+    .track .play small { display:block; opacity:.55; font-size:.68rem; }
+    .track .read {
+      display:flex; align-items:center; padding:0 .55rem; border-left:1px solid #23281c;
+      color:var(--moss); text-decoration:none; font-size:.66rem; letter-spacing:.06em;
+    }
+    .track .read:hover { background:var(--moss); color:var(--bg); }
+    .track:hover { border-color:var(--moss); }
+    .track.now { border-color:var(--amber); color:var(--amber); }
+    .track.done { opacity:.45; }
+    .row { display:flex; align-items:center; gap:.8rem; flex-wrap:wrap; }
+    #playalbum {
+      background:transparent; color:var(--amber);
+      border:1px solid var(--amber); border-radius:6px; font:inherit; font-size:.9rem;
+      padding:.5rem 1.1rem; cursor:pointer;
+    }
+    #playalbum:hover { background:var(--amber); color:var(--bg); }
+    #readalbum {
+      color:var(--moss); border:1px solid #23281c; border-radius:6px; text-decoration:none;
+      font-size:.78rem; padding:.5rem .9rem;
+    }
+    #readalbum:hover { border-color:var(--moss); color:var(--amber); }
+    #albumstatus { font-size:.78rem; opacity:.7; }
+    #stagewrap { flex:1; position:relative; min-height:0; }
+    #stagewrap iframe {
+      position:absolute; inset:0; width:100%; height:100%;
+      border:1px solid #23281c; border-radius:8px; background:var(--bg);
+    }
+    #stagewrap iframe.standby { visibility:hidden; pointer-events:none; }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="band">I'VEMIND</span>
+    <h1>tough times ever last, tough people never do</h1>
+  </header>
+
+  <div id="tracks"></div>
+  <div class="row">
+    <button id="playalbum">[ play the album ]</button>
+    <a id="readalbum" href="essay.html" target="_blank" rel="noopener">[ read the writing ↗ ]</a>
+  </div>
+  <span id="albumstatus">five songs, three intermezzos · while one plays, the next loads in the wings — no gap</span>
+  <div id="stagewrap"></div>
+
+  <script src="tracks.js"></script>
+  <script>
+    // The album is a hallway; the songs are the rooms. DOUBLE-BUFFERED: the visible frame plays
+    // (?album=1 → auto-play at gate-open, {cyb:'song-done'} after its loop); meanwhile the NEXT
+    // track loads in a hidden frame with ?album=1&hold=1 — it fills its load gate, posts
+    // {cyb:'song-ready'}, and waits. On song-done we promote the hidden frame and post
+    // {cyb:'go'}: the next song starts in milliseconds. allow="autoplay" carries the listener's
+    // single click into every frame.
+    // The order lives in tracks.js — shared with the reading room (essay.html), so the
+    // hallway and the writing can never fall out of step.
+    const TRACKS = window.ALBUM.tracks;
+    const wrap = document.getElementById('stagewrap');
+    const list = document.getElementById('tracks');
+    const status = document.getElementById('albumstatus');
+    const playBtn = document.getElementById('playalbum');
+    const readBtn = document.getElementById('readalbum');
+    const essayHref = (i) => 'essay.html?t=' + encodeURIComponent(TRACKS[i].essay);
+    let cur = -1, live = null, next = null, nextIdx = -1, nextReady = false, waiting = false;
+    // Cache-bust the track iframes. The browser caches by full URL incl. query string, so a track's
+    // `?album=1` entry is separate from its standalone entry — without this, an edited song can play
+    // stale in the album while the standalone page is fresh. One stamp per album load = always current.
+    const BUST = '&v=' + Date.now();
+
+    // Each chip is TWO doors: the button plays the room, the link reads what's said in it.
+    // The essay opens in a new tab on purpose — leaving this page would kill the music.
+    TRACKS.forEach((t, i) => {
+      const row = document.createElement('div');
+      row.className = 'track';
+      const b = document.createElement('button');
+      b.className = 'play';
+      b.innerHTML = (i + 1) + ' · ' + t.name + '<small>' + t.sub + '</small>';
+      b.addEventListener('click', () => playTrack(i));
+      const a = document.createElement('a');
+      a.className = 'read'; a.textContent = 'essay';
+      a.href = essayHref(i); a.target = '_blank'; a.rel = 'noopener';
+      a.title = 'read the writing behind ' + t.name;
+      row.append(b, a);
+      list.appendChild(row);
+    });
+    readBtn.href = essayHref(0);
+    const paint = () => [...list.children].forEach((el, i) => {
+      el.classList.toggle('now', i === cur);
+      el.classList.toggle('done', cur >= 0 && i < cur);
+    });
+    const mkFrame = (standby) => {
+      const f = document.createElement('iframe');
+      f.allow = 'autoplay'; f.title = 'now playing';
+      if (standby) f.className = 'standby';
+      wrap.appendChild(f);
+      return f;
+    };
+    const drop = (f) => { if (f) f.remove(); };
+    function preload(i) {
+      drop(next); next = null; nextIdx = -1; nextReady = false;
+      if (i >= TRACKS.length) return;
+      next = mkFrame(true); nextIdx = i;
+      next.src = TRACKS[i].src + '?album=1&hold=1' + BUST;
+    }
+    function playTrack(i) {
+      waiting = false; playBtn.hidden = true;
+      const old = live;                      // keep the outgoing alive a beat longer, so its
+                                             // (near-silent) fade-out tail overlaps the new intro
+                                             // instead of cutting to dead air — fills the record-gap
+      if (next && nextIdx === i) {           // the wings had it ready (or nearly)
+        live = next; next = null;
+        live.classList.remove('standby');
+        if (nextReady) live.contentWindow.postMessage({ cyb: 'go' }, '*');
+        else waiting = true;                 // its song-ready will fire the go
+      } else {                               // cold start (first track, or a jump)
+        drop(next); next = null;
+        live = mkFrame(false);
+        live.src = TRACKS[i].src + '?album=1' + BUST;
+      }
+      if (old && old !== live) setTimeout(() => drop(old), 800);   // then remove it — a dead page
+                                                                   // must not keep an AudioContext
+      cur = i; paint();
+      readBtn.href = essayHref(i);          // the header link follows whatever room you're in
+      status.textContent = 'now playing ' + (i + 1) + '/' + TRACKS.length + ' — ' + TRACKS[i].name;
+      preload(i + 1);
+    }
+    window.addEventListener('message', (e) => {
+      const d = e.data; if (!d || !d.cyb) return;
+      if (d.cyb === 'song-done' && live && e.source === live.contentWindow) {
+        if (cur + 1 < TRACKS.length) playTrack(cur + 1);
+        else {
+          const old = live; cur = -1; paint(); drop(next); live = next = null; readBtn.href = essayHref(0);
+          if (old) setTimeout(() => drop(old), 800);   // let the final fade-out ring out
+          status.textContent = 'the album rests. tough times ever last — play it again?';
+          playBtn.hidden = false; playBtn.textContent = '[ play it again ]';
+        }
+      }
+      if (d.cyb === 'song-ready') {
+        if (next && e.source === next.contentWindow) nextReady = true;
+        if (live && e.source === live.contentWindow && waiting) {
+          waiting = false;
+          live.contentWindow.postMessage({ cyb: 'go' }, '*');
+        }
+      }
+    });
+    playBtn.addEventListener('click', () => playTrack(0));
+  </script>
+</body>
+</html>

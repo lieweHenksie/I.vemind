@@ -4,135 +4,556 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>tough times ever last, tough people never do — I'vemind</title>
+  <script src="https://unpkg.com/@strudel/web@1.0.3"></script>
   <style>
     :root { --bg:#0a0d08; --stone:#8b8680; --moss:#4a7c59; --amber:#d4a843; --rust:#8b4a2a; }
-    * { box-sizing: border-box; }
+    * { box-sizing:border-box; }
     body {
-      margin:0; height:100vh; background:var(--bg); color:var(--stone);
+      margin:0; min-height:100vh; background:var(--bg); color:var(--stone);
       font-family:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
       display:flex; flex-direction:column; gap:.9rem; padding:clamp(.8rem,2.5vw,2rem); line-height:1.5;
     }
     header { display:flex; align-items:baseline; gap:1.2rem; flex-wrap:wrap; }
     header .band { font-size:.8rem; letter-spacing:.18em; opacity:.6; }
-    header h1 {
-      margin:0; font-family:"Libre Baskerville", Georgia, serif; font-weight:400;
-      font-size:clamp(1.05rem,2.6vw,1.6rem); color:var(--amber); font-style:italic;
-    }
+    header h1 { margin:0; font-family:"Libre Baskerville", Georgia, serif; font-weight:400;
+      font-size:clamp(1.05rem,2.6vw,1.6rem); color:var(--amber); font-style:italic; }
     #tracks { display:flex; gap:.5rem; flex-wrap:wrap; }
-    .track {
-      background:transparent; border:1px solid #23281c; border-radius:6px; color:var(--stone);
-      font:inherit; font-size:.78rem; padding:.45rem .7rem; cursor:pointer; text-align:left;
-    }
-    .track small { display:block; opacity:.55; font-size:.68rem; }
+    .track { display:flex; align-items:stretch; border:1px solid #23281c; border-radius:6px;
+      color:var(--stone); overflow:hidden; }
+    .track .play { background:transparent; border:0; color:inherit; font:inherit; font-size:.78rem;
+      padding:.45rem .7rem; cursor:pointer; text-align:left; }
+    .track .play small { display:block; opacity:.55; font-size:.68rem; }
+    .track .read { display:flex; align-items:center; padding:0 .55rem; border-left:1px solid #23281c;
+      color:var(--moss); text-decoration:none; font-size:.66rem; letter-spacing:.06em; }
+    .track .read:hover { background:var(--moss); color:var(--bg); }
     .track:hover { border-color:var(--moss); }
     .track.now { border-color:var(--amber); color:var(--amber); }
     .track.done { opacity:.45; }
-    #playalbum {
-      align-self:flex-start; background:transparent; color:var(--amber);
-      border:1px solid var(--amber); border-radius:6px; font:inherit; font-size:.9rem;
-      padding:.5rem 1.1rem; cursor:pointer;
-    }
-    #playalbum:hover { background:var(--amber); color:var(--bg); }
-    #albumstatus { font-size:.78rem; opacity:.7; }
-    #stagewrap { flex:1; position:relative; min-height:0; }
-    #stagewrap iframe {
-      position:absolute; inset:0; width:100%; height:100%;
-      border:1px solid #23281c; border-radius:8px; background:var(--bg);
-    }
-    #stagewrap iframe.standby { visibility:hidden; pointer-events:none; }
+    .row { display:flex; align-items:center; gap:.8rem; flex-wrap:wrap; }
+    button.big { background:transparent; color:var(--amber); border:1px solid var(--amber);
+      border-radius:6px; font:inherit; font-size:.9rem; padding:.5rem 1.1rem; cursor:pointer; }
+    button.big:hover { background:var(--amber); color:var(--bg); }
+    button.big:disabled { opacity:.35; cursor:default; }
+    button.big:disabled:hover { background:transparent; color:var(--amber); }
+    button.big.stop { color:var(--rust); border-color:var(--rust); }
+    button.big.stop:hover { background:var(--rust); color:var(--bg); }
+    #readalbum { color:var(--moss); border:1px solid #23281c; border-radius:6px; text-decoration:none;
+      font-size:.78rem; padding:.5rem .9rem; }
+    #readalbum:hover { border-color:var(--moss); color:var(--amber); }
+    #status { font-size:.78rem; opacity:.75; }
+    #status.err { color:var(--rust); opacity:1; }
+    #word { align-self:center; text-align:center; color:var(--amber); font-weight:600;
+      font-size:clamp(1.3rem,4.2vw,2.1rem); line-height:1.15; min-height:1.2em; max-width:92%; text-wrap:balance; }
+    #sub { align-self:center; text-align:center; color:var(--stone); opacity:.7; font-size:.9rem;
+      min-height:1.2em; max-width:80%; margin-top:-.15rem; text-wrap:balance; }
+    #stage { position:relative; width:100%; flex:1; min-height:46vh; }
+    #stage #viz { position:absolute; inset:0; width:100%; height:100%; background:var(--bg);
+      border:0; opacity:0; transition:opacity .4s; }
+    #stage #viz.live { opacity:1; }
+    #stage video { position:absolute; top:0; height:100%; left:50%; translate:-50% 0;
+      aspect-ratio:9/16; max-width:100%; object-fit:contain; background:#000;
+      border:1px solid #23281c; border-radius:6px; transform:scale(var(--punch,1));
+      opacity:0; transition:opacity .15s; }
+    #stage video.dim { opacity:.12; }
+    #stage video.live { opacity:1; border-color:var(--amber); }
+    #strip { display:flex; gap:2px; height:14px; }
+    #strip .sec { background:#141a10; border:1px solid #23281c; border-radius:2px; min-width:4px; }
+    #strip .sec.active { background:var(--moss); border-color:var(--amber); }
+    #pos { font-size:.78rem; opacity:.75; min-height:1.2em; color:var(--amber); }
   </style>
 </head>
 <body>
   <header>
-    <span class="band">I'VEMIND</span>
-    <h1>tough times ever last, tough people never do</h1>
+    <span class="band"></span>
+    <h1></h1>
   </header>
 
   <div id="tracks"></div>
-  <button id="playalbum">[ play the album ]</button>
-  <span id="albumstatus">five songs · while one plays, the next loads in the wings — no gap</span>
-  <div id="stagewrap"></div>
+  <div class="row">
+    <button id="playalbum" class="big">[ play the album ]</button>
+    <button id="stopalbum" class="big stop" hidden>[ stop ]</button>
+    <a id="readalbum" href="essay.html" target="_blank" rel="noopener">[ read the writing ↗ ]</a>
+    <span id="status">booting strudel…</span>
+  </div>
 
+  <div id="word"></div>
+  <div id="sub"></div>
+  <div id="stage"><canvas id="viz" width="1280" height="720"></canvas></div>
+  <div id="strip"></div>
+  <div id="pos"></div>
+
+  <script src="tracks.js"></script>
   <script>
-    // The album is a hallway; the songs are the rooms. DOUBLE-BUFFERED: the visible frame plays
-    // (?album=1 → auto-play at gate-open, {cyb:'song-done'} after its loop); meanwhile the NEXT
-    // track loads in a hidden frame with ?album=1&hold=1 — it fills its load gate, posts
-    // {cyb:'song-ready'}, and waits. On song-done we promote the hidden frame and post
-    // {cyb:'go'}: the next song starts in milliseconds. allow="autoplay" carries the listener's
-    // single click into every frame.
-    const TRACKS = [
-      { src: '../demi_demi/',      name: 'demi demi',      sub: 'trance · crate jam' },
-      { src: '../theGodInUrhead/', name: 'theGodInUrhead', sub: 'cinematic downtempo' },
-      { src: '../nice_ron/',       name: 'nice ron',       sub: '8-bit melodic techno' },
-      { src: '../agar-lab/',       name: 'essay-1',        sub: 'the agar lab · techno' },
-      { src: '../oh_dear/',        name: 'oh dear',        sub: 'dub techno requiem' },
-    ];
-    const wrap = document.getElementById('stagewrap');
-    const list = document.getElementById('tracks');
-    const status = document.getElementById('albumstatus');
-    const playBtn = document.getElementById('playalbum');
-    let cur = -1, live = null, next = null, nextIdx = -1, nextReady = false, waiting = false;
+  // ════════════════════════════════════════════════════════════════════════════════════════
+  // THE PLAYER — one engine, one room.
+  //
+  // The old hallway gave every track its own <iframe>, which meant its own Strudel engine, its
+  // own AudioContext, its own sample cache, its own canvas loop — and, while preloading, TWO of
+  // all of that at once. Measured against the same song played on its own page, a track inside
+  // that hallway ran ~4x quieter with a third of the bass, and its rAF was throttled so the sea
+  // crawled. Songs were fine; the hallway was the defect.
+  //
+  // So: no iframes. This page owns ONE engine and swaps SCORES. A song page is a build artifact
+  // that already contains everything a player needs, so we read it as data — the score out of its
+  // <textarea>, the timeline and asset lists out of the consts the tools generate. Nothing new to
+  // build, no second source of truth: edit a song, rebuild it, and this plays the new one.
+  // ════════════════════════════════════════════════════════════════════════════════════════
+  const TRACKS = window.ALBUM.tracks;
+  const $ = (id) => document.getElementById(id);
+  const statusEl = $('status'), wordEl = $('word'), subEl = $('sub');
+  const stripEl = $('strip'), posEl = $('pos'), stage = $('stage');
+  const playBtn = $('playalbum'), stopBtn = $('stopalbum'), readBtn = $('readalbum');
+  document.querySelector('header .band').textContent = window.ALBUM.band;
+  document.querySelector('header h1').textContent = window.ALBUM.title;
+  const setStatus = (m, err) => { statusEl.textContent = m; statusEl.classList.toggle('err', !!err); };
+  const BUST = '?v=' + Date.now();
 
-    TRACKS.forEach((t, i) => {
-      const b = document.createElement('button');
-      b.className = 'track';
-      b.innerHTML = (i + 1) + ' · ' + t.name + '<small>' + t.sub + '</small>';
-      b.addEventListener('click', () => playTrack(i));
-      list.appendChild(b);
-    });
-    const paint = () => [...list.children].forEach((el, i) => {
-      el.classList.toggle('now', i === cur);
-      el.classList.toggle('done', cur >= 0 && i < cur);
-    });
-    const mkFrame = (standby) => {
-      const f = document.createElement('iframe');
-      f.allow = 'autoplay'; f.title = 'now playing';
-      if (standby) f.className = 'standby';
-      wrap.appendChild(f);
-      return f;
+  // ── reading a song page as data ──────────────────────────────────────────────────────────
+  // Regexes against the tools' own generated lines. They are stable by contract: build.py and
+  // eleven.py write these exact forms, and reshell.py keeps them intact across template changes.
+  const one = (html, re, fallback) => { const m = html.match(re); return m ? m[1] : fallback; };
+  // Parse STRICTLY first. Only fall back to swapping ' for " — which is how the generated
+  // VOICE_FILES / SAMPLE_FILES literals are quoted — if real JSON fails. Never the other way
+  // round: TIMELINE labels are full of apostrophes ("he's wrong of course", "god's people"), and
+  // blind-swapping quotes shreds them, the parse throws, the timeline comes back empty, its total
+  // is zero, and the track "ends" the instant it starts. That skipped tracks 1-3 of the album.
+  const jsonish = (s, fallback) => {
+    try { return JSON.parse(s); } catch (e) {}
+    try { return JSON.parse(s.replace(/'/g, '"')); } catch (e) {}
+    console.error('could not parse:', s.slice(0, 80));
+    return fallback;
+  };
+
+  async function readTrack(t) {
+    const html = await (await fetch(t.src + 'index.html' + BUST, { cache: 'no-store' })).text();
+    const score = one(html, /<textarea id="code"[^>]*>([\s\S]*?)<\/textarea>/, '');
+    return {
+      name: t.name, base: t.src, score,
+      bpm: +one(html, /const SONG_BPM = (\d+)/, '120'),
+      timeline: jsonish(one(html, /const TIMELINE = (\[[\s\S]*?\]);/, '[]'), []),
+      voiceFiles: jsonish(one(html, /const VOICE_FILES = (\[[^\]]*\]);/, '[]'), []),
+      sampleFiles: jsonish(one(html, /const SAMPLE_FILES = (\{[^}]*\});/, '{}'), {}),
+      vizImage: jsonish(one(html, /const VIZ_IMAGE = ("[^"]*"|null);/, 'null'), null),
+      fillerClips: jsonish(one(html, /const FILLER_CLIPS = (\[[^\]]*\]);/, '[]'), []),
+      videoClips: jsonish(one(html, /const VIDEO_CLIPS = (\{[^}]*\});/, '{}'), {}),
+      videoCues: jsonish(one(html, /const VIDEO_CUES = (\[[\s\S]*?\]);/, '[]'), []),
+      bars: (one(html, /let bars = \[([^\]]*)\]/, '').trim()
+             ? one(html, /let bars = \[([^\]]*)\]/, '').split(',').map(Number) : []),
     };
-    const drop = (f) => { if (f) f.remove(); };
-    function preload(i) {
-      drop(next); next = null; nextIdx = -1; nextReady = false;
-      if (i >= TRACKS.length) return;
-      next = mkFrame(true); nextIdx = i;
-      next.src = TRACKS[i].src + '?album=1&hold=1';
-    }
-    function playTrack(i) {
-      waiting = false; playBtn.hidden = true;
-      if (next && nextIdx === i) {           // the wings had it ready (or nearly)
-        drop(live); live = next; next = null;
-        live.classList.remove('standby');
-        if (nextReady) live.contentWindow.postMessage({ cyb: 'go' }, '*');
-        else waiting = true;                 // its song-ready will fire the go
-      } else {                               // cold start (first track, or a jump)
-        drop(live); drop(next); next = null;
-        live = mkFrame(false);
-        live.src = TRACKS[i].src + '?album=1';
-      }
-      cur = i; paint();
-      status.textContent = 'now playing ' + (i + 1) + '/' + TRACKS.length + ' — ' + TRACKS[i].name;
-      preload(i + 1);
-    }
-    window.addEventListener('message', (e) => {
-      const d = e.data; if (!d || !d.cyb) return;
-      if (d.cyb === 'song-done' && live && e.source === live.contentWindow) {
-        if (cur + 1 < TRACKS.length) playTrack(cur + 1);
-        else {
-          cur = -1; paint(); drop(live); drop(next); live = next = null;
-          status.textContent = 'the album rests. tough times ever last — play it again?';
-          playBtn.hidden = false; playBtn.textContent = '[ play it again ]';
+  }
+
+  // ── THE EAR (identical to the song template: mirror every connection to the destination into
+  //    one analyser, never in the signal path, kept alive by a silent gain) ──────────────────
+  let ear = null, earFreq = null, earWave = null, earRate = 44100;
+  (function openEar() {
+    if (typeof AudioNode === 'undefined' || typeof AudioDestinationNode === 'undefined') return;
+    const connect = AudioNode.prototype.connect;
+    AudioNode.prototype.connect = function (to, ...rest) {
+      const out = connect.apply(this, [to, ...rest]);
+      try {
+        if (to instanceof AudioDestinationNode && this !== ear) {
+          const ac = to.context;
+          if (!ear) {
+            ear = ac.createAnalyser(); ear.fftSize = 2048; ear.smoothingTimeConstant = 0.5;
+            earFreq = new Uint8Array(ear.frequencyBinCount);
+            earWave = new Uint8Array(ear.fftSize); earRate = ac.sampleRate;
+            const mute = ac.createGain(); mute.gain.value = 0;
+            connect.call(ear, mute); connect.call(mute, to);
+          }
+          if (ear.context === ac) connect.call(this, ear);
         }
+      } catch (e) {}
+      return out;
+    };
+  })();
+  const BANDS = [[25, 110], [110, 420], [420, 2200], [2200, 9000]];
+  const heard = { level: 0, slow: 0, hit: 0, band: [0, 0, 0, 0], spec: new Float32Array(96) };
+  let lastLow = 0;
+  function listen() {
+    if (!ear) return false;
+    ear.getByteFrequencyData(earFreq); ear.getByteTimeDomainData(earWave);
+    const n = earFreq.length, hz = earRate / 2 / n;
+    for (let b = 0; b < BANDS.length; b++) {
+      const lo = Math.max(1, Math.floor(BANDS[b][0] / hz));
+      const hi = Math.max(lo, Math.min(n - 1, Math.ceil(BANDS[b][1] / hz)));
+      let s = 0; for (let i = lo; i <= hi; i++) s += earFreq[i];
+      heard.band[b] = s / (hi - lo + 1) / 255;
+    }
+    let sq = 0;
+    for (let i = 0; i < earWave.length; i++) { const v = (earWave[i] - 128) / 128; sq += v * v; }
+    heard.level = Math.min(1, Math.sqrt(sq / earWave.length) * 3.4);
+    heard.slow += (heard.level - heard.slow) * 0.06;
+    const low = heard.band[0] * 0.7 + heard.band[1] * 0.3;
+    heard.hit = Math.max(heard.hit * 0.86, Math.min(1, Math.max(0, low - lastLow) * 6));
+    lastLow = low;
+    const M = heard.spec.length;
+    for (let i = 0; i < M; i++) {
+      const lo = Math.max(1, Math.floor(30 * Math.pow(320, i / M) / hz));
+      const hi = Math.max(lo, Math.min(n - 1, Math.ceil(30 * Math.pow(320, (i + 1) / M) / hz)));
+      let s = 0; for (let j = lo; j <= hi; j++) s += earFreq[j];
+      heard.spec[i] += (s / (hi - lo + 1) / 255 - heard.spec[i]) * 0.35;
+    }
+    return true;
+  }
+
+  // ── the sea (one canvas for the whole album; the picture is re-masked per track) ──────────
+  const vizEl = $('viz'), vizCtx = vizEl.getContext('2d');
+  let seaLevel = 0, logoMask = null, revCanvas = null, revCtx = null, vizImg = null, rafId = null;
+  revCanvas = document.createElement('canvas'); revCtx = revCanvas.getContext('2d');
+  function buildMask() {
+    const W = vizEl.width, H = vizEl.height;
+    const off = document.createElement('canvas'); off.width = W; off.height = H;
+    const octx = off.getContext('2d');
+    const s = Math.min(W / vizImg.width, H / vizImg.height) * 0.92;
+    const dw = vizImg.width * s, dh = vizImg.height * s;
+    octx.drawImage(vizImg, (W - dw) / 2 + W * 0.07, (H - dh) / 2, dw, dh);
+    const id = octx.getImageData(0, 0, W, H), d = id.data;
+    for (let p = 0; p < d.length; p += 4) {
+      const lum = 0.299 * d[p] + 0.587 * d[p + 1] + 0.114 * d[p + 2];
+      const m = d[p + 3] > 40 ? Math.max(0, Math.min(1, (150 - lum) / 70)) : 0;
+      d[p] = d[p + 1] = d[p + 2] = 255; d[p + 3] = Math.round(255 * m);
+    }
+    octx.putImageData(id, 0, 0); logoMask = off;
+  }
+  function sizeViz() {
+    const r = stage.getBoundingClientRect();
+    vizEl.width = Math.max(320, Math.round(r.width));
+    vizEl.height = Math.max(240, Math.round(r.height));
+    revCanvas.width = vizEl.width; revCanvas.height = vizEl.height;
+    if (vizImg) buildMask();
+  }
+  function loadViz(src) {
+    if (!src) { vizImg = null; logoMask = null; sizeViz(); return; }
+    const img = new Image();
+    img.onload = () => { vizImg = img; sizeViz(); };
+    img.src = new URL(src, location.href).href;
+  }
+  addEventListener('resize', () => { sizeViz(); });
+  let vizPeaks = new Array(48).fill(0);
+  function drawBars(ctx, W, H) {
+    const N = vizPeaks.length, bw = W / N, M = heard.spec.length;
+    for (let i = 0; i < N; i++) {
+      const v = Math.max(0.01, Math.min(1, heard.spec[(i / N * M) | 0] * 1.25));
+      vizPeaks[i] = Math.max(v, vizPeaks[i] - 0.015);
+      const x = i * bw + 1, bwid = bw - 2;
+      ctx.fillStyle = i % 3 === 0 ? '#4a7c59' : '#d4a843';
+      ctx.fillRect(x, H - v * H, bwid, v * H);
+      ctx.fillStyle = '#cdbb8f';
+      ctx.fillRect(x, H - vizPeaks[i] * H - 2, bwid, 2);
+    }
+  }
+  function drawSea(ctx, W, H, t) {
+    const target = 0.05 + 0.9 * Math.pow(heard.slow, 0.8) * (0.55 + 0.45 * heard.level);
+    seaLevel += (target - seaLevel) * 0.08;
+    const base = H * (1 - seaLevel) - H * 0.03 * heard.hit;
+    const b = heard.band, M = heard.spec.length;
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath(); ctx.moveTo(0, H);
+    for (let x = 0; x <= W; x += 3) {
+      const u = x / W;
+      const fi = Math.abs(u * 2 - 1) * (M - 1), i0 = fi | 0, fr = fi - i0;
+      const sp = heard.spec[i0] * (1 - fr) + heard.spec[Math.min(M - 1, i0 + 1)] * fr;
+      const y = base
+        + Math.sin(u * 6.0 + t * 0.70) * H * 0.055 * (0.25 + 2.0 * b[0])
+        + Math.sin(u * 17.0 - t * 1.70) * H * 0.030 * (0.20 + 1.8 * b[1])
+        + Math.sin(u * 41.0 + t * 3.30) * H * 0.014 * (0.10 + 2.2 * b[3])
+        - H * 0.13 * sp * (0.35 + 0.65 * heard.level);
+      ctx.lineTo(x, y);
+    }
+    ctx.lineTo(W, H); ctx.closePath(); ctx.fill();
+  }
+  function drawViz() {
+    listen();
+    const W = vizEl.width, H = vizEl.height, t = performance.now() / 1000;
+    vizCtx.clearRect(0, 0, W, H);
+    if (!logoMask) { drawBars(vizCtx, W, H); return; }
+    revCtx.clearRect(0, 0, W, H);
+    drawSea(revCtx, W, H, t);
+    revCtx.globalCompositeOperation = 'destination-out';
+    revCtx.drawImage(logoMask, 0, 0);
+    revCtx.globalCompositeOperation = 'source-over';
+    vizCtx.drawImage(revCanvas, 0, 0);
+  }
+  function vizRest() {
+    vizEl.classList.add('live');
+    vizCtx.clearRect(0, 0, vizEl.width, vizEl.height);
+    seaLevel = 0; heard.level = heard.slow = heard.hit = lastLow = 0;
+    heard.band.fill(0); heard.spec.fill(0);
+  }
+
+  // ── the film (videos are rebuilt per track — they are the only per-track DOM) ─────────────
+  let clipVids = {}, fillerVids = [], activeVid = null, curCue = -1;
+  function buildFilm(tr) {
+    for (const v of [...Object.values(clipVids), ...fillerVids]) { try { v.pause(); } catch (e) {} v.remove(); }
+    clipVids = {}; fillerVids = []; activeVid = null; curCue = -1;
+    const mk = (path) => {
+      const v = document.createElement('video');
+      v.src = new URL(path, new URL(tr.base, location.href)).href;
+      v.muted = true; v.playsInline = true; v.preload = 'auto';
+      stage.appendChild(v); return v;
+    };
+    for (const [n, p] of Object.entries(tr.videoClips)) clipVids[n] = mk(p);
+    fillerVids = tr.fillerClips.map(mk);
+    return [...Object.values(clipVids), ...fillerVids];
+  }
+  const setFilm = (v, cls) => { if (v) { v.classList.toggle('live', cls === 'live'); v.classList.toggle('dim', cls === 'dim'); } };
+  const showVid = (v, off) => {
+    if (activeVid && activeVid !== v) { setFilm(activeVid, 'off'); activeVid.pause(); }
+    activeVid = v; setFilm(v, 'live');
+    try { v.currentTime = off || 0; } catch (e) {}
+    v.play().catch(() => {});
+  };
+  const vidsOff = () => { if (activeVid) { setFilm(activeVid, 'off'); activeVid.pause(); activeVid = null; } curCue = -1; };
+
+  // ── the voice bus (one per track, armed on the audio clock, exactly as the song page does) ─
+  let voiceNodes = [];
+  function stopVoice() { for (const s of voiceNodes) { try { s.stop(); } catch (e) {} } voiceNodes = []; }
+  async function armVoice(tr, tl) {
+    if (!tr.voiceFiles.length || typeof getAudioContext !== 'function' || typeof loadBuffer !== 'function') return;
+    const ac = getAudioContext();
+    const barSec = 240 / tr.bpm, t0 = ac.currentTime + 0.1;
+    let a = 0;
+    for (const row of tl) {
+      const vi = row[4];
+      if (vi != null && tr.voiceFiles[vi]) {
+        try {
+          const buf = await loadBuffer(voiceURL(tr, tr.voiceFiles[vi]), ac);
+          const src = ac.createBufferSource(); src.buffer = buf;
+          const g = ac.createGain(); src.connect(g); g.connect(ac.destination);
+          const at = t0 + a * barSec, dur = buf.duration, G = 1.15;
+          const fin = Math.min(0.012, dur * 0.25), fout = Math.min(0.14, dur * 0.5);
+          g.gain.setValueAtTime(0, at);
+          g.gain.linearRampToValueAtTime(G, at + fin);
+          g.gain.setValueAtTime(G, Math.max(at + fin, at + dur - fout));
+          g.gain.linearRampToValueAtTime(0, at + dur);
+          src.start(at); voiceNodes.push(src);
+        } catch (e) { console.error('voice arm failed: line', vi + 1, e); }
       }
-      if (d.cyb === 'song-ready') {
-        if (next && e.source === next.contentWindow) nextReady = true;
-        if (live && e.source === live.contentWindow && waiting) {
-          waiting = false;
-          live.contentWindow.postMessage({ cyb: 'go' }, '*');
-        }
-      }
+      a += row[0];
+    }
+  }
+  // Register a track's sounds with the sampler: RELATIVE path + base URL, exactly the form the
+  // song template uses. (An absolute URL with an empty base silently registers nothing.)
+  async function registerSamples(tr) {
+    if (!tr || typeof samples !== 'function') return;
+    const folder = new URL(tr.base, location.href).href;
+    if (tr.voiceFiles.length)
+      await samples({ voice: tr.voiceFiles.map(f => f + BUST) }, folder + 'audio/voice/');
+    for (const [name, file] of Object.entries(tr.sampleFiles))
+      await samples({ [name]: file + BUST }, folder);
+  }
+  const voiceURL = (tr, f) => new URL('audio/voice/' + f, new URL(tr.base, location.href)).href + BUST;
+  const sampleURL = (tr, f) => new URL(f, new URL(tr.base, location.href)).href + BUST;
+
+  // ── boot the ONE engine ──────────────────────────────────────────────────────────────────
+  let pending = null;                      // the track whose assets prebake() should register
+  let booted = false;
+  try {
+    // PREBAKE IS NOT OPTIONAL. Strudel re-runs prebake around every evaluation, and if you don't
+    // supply one it reinstates its own default bank — wiping the names this track just registered.
+    // The console said it plainly: "load sample… done", "[cyclist] stop", "[cyclist] start",
+    // then "sound deercalm not found". Registered, then lost on re-evaluation. So prebake must
+    // re-register the CURRENT track every time it runs, which is exactly what the song template
+    // does for its one song; `pending` is that song here, set before evaluate.
+    initStrudel({ prebake: () => registerSamples(pending) });
+    booted = true;
+  } catch (e) { setStatus('strudel failed to boot: ' + (e && e.message ? e.message : e), true); }
+  if (booted && typeof arrange === 'undefined') {
+    const tc = (typeof timeCat === 'function') ? timeCat : (typeof timecat === 'function') ? timecat : null;
+    if (tc) window.arrange = (...secs) => tc(...secs).slow(secs.reduce((a, s) => a + s[0], 0));
+  }
+
+  // ── the running order ────────────────────────────────────────────────────────────────────
+  const list = $('tracks');
+  const essayHref = (i) => 'essay.html?t=' + encodeURIComponent(TRACKS[i].essay);
+  TRACKS.forEach((t, i) => {
+    const row = document.createElement('div'); row.className = 'track';
+    const b = document.createElement('button'); b.className = 'play';
+    b.innerHTML = (i + 1) + ' · ' + t.name + '<small>' + t.sub + '</small>';
+    b.addEventListener('click', () => { resumeNow(); playFrom(i); });
+    const a = document.createElement('a');
+    a.className = 'read'; a.textContent = 'essay'; a.href = essayHref(i);
+    a.target = '_blank'; a.rel = 'noopener'; a.title = 'read the writing behind ' + t.name;
+    row.append(b, a); list.appendChild(row);
+  });
+  readBtn.href = essayHref(0);
+  let cur = -1;
+  const paint = () => [...list.children].forEach((el, i) => {
+    el.classList.toggle('now', i === cur);
+    el.classList.toggle('done', cur >= 0 && i < cur);
+  });
+
+  // ── playing ──────────────────────────────────────────────────────────────────────────────
+  const cache = new Map();
+  const getTrack = async (i) => {
+    if (!cache.has(i)) cache.set(i, await readTrack(TRACKS[i]));
+    return cache.get(i);
+  };
+  // Gate on the real assets, through Strudel's own loadBuffer so the decode is cached where
+  // playback reads it — a voice line fires once and a late decode is a silent line.
+  async function gate(tr) {
+    const ac = (typeof getAudioContext === 'function') ? getAudioContext() : null;
+    const urls = [...tr.voiceFiles.map(f => voiceURL(tr, f)),
+                  ...Object.values(tr.sampleFiles).map(f => sampleURL(tr, f))];
+    let ok = 0, bad = 0;
+    const load1 = (u) => (ac && typeof loadBuffer === 'function') ? loadBuffer(u, ac) : fetch(u);
+    const load = (u, n) => load1(u).catch(e => n > 0 ? load(u, n - 1) : Promise.reject(e));
+    await Promise.all(urls.map(u => load(u, 2).then(() => ok++, () => { bad++; console.error('clip failed:', u); })));
+    // REGISTER THE NAMES, every track, right here. Strudel's prebake runs ONCE at engine boot —
+    // before any track is picked — so a per-track prebake never fires for tracks 2..n, and the
+    // score then asks for a sound the sampler has never heard of: "sound demicall not found".
+    // Decoding a buffer (above) only fills the URL cache; it does not name anything.
+    try { await registerSamples(tr); }
+    catch (e) { console.error('sample registration failed', e); bad++; }
+    const vids = buildFilm(tr);
+    await Promise.all(vids.map(v => new Promise(res => {
+      if (v.readyState >= 3) return res();
+      v.addEventListener('canplaythrough', res, { once: true });
+      setTimeout(res, 8000);
+    })));
+    return bad;
+  }
+
+  let tl = [], total = 0, t0 = 0, playing = false, curTrack = null;
+  // Poll the ear until the output is actually making sound. Bounded, because a genuinely silent
+  // opening bar is legal — we would rather start a beat early than hang the album.
+  function waitForSound(limitMs = 6000) {
+    return new Promise((res) => {
+      const began = performance.now();
+      const probe = () => {
+        if (!ear) return finish();
+        ear.getByteTimeDomainData(earWave);
+        let sq = 0;
+        for (let i = 0; i < earWave.length; i++) { const v = (earWave[i] - 128) / 128; sq += v * v; }
+        if (Math.sqrt(sq / earWave.length) > 0.004) return finish();
+        if (performance.now() - began > limitMs) return finish(true);
+        setTimeout(probe, 40);
+      };
+      const finish = (timedOut) => { if (timedOut) console.warn('waitForSound: timed out'); res(); };
+      probe();
     });
-    playBtn.addEventListener('click', () => playTrack(0));
+  }
+  const resolve = (tr) => tr.timeline.map(([b, l, p, e, vi]) =>
+    [(typeof b === 'string') ? (tr.bars[+b.slice(1)] || 4) : b, l, p, e, (vi === undefined) ? null : vi]);
+
+  async function startTrack(i) {
+    const tr = await getTrack(i);
+    setStatus('loading ' + tr.name + '…');
+    pending = tr;
+    const bad = await gate(tr);
+    hush(); stopVoice();
+    const ac = getAudioContext();
+    if (ac.state !== 'running') { await ac.resume().catch(() => {}); }   // must be RUNNING first
+    await evaluate(tr.score);
+    // AND AGAIN, AFTER. evaluate() resets the sampler's name map, so anything registered before
+    // it is gone by the time the score asks for it ("sound demicall not found"). Registering a
+    // second time here is what actually sticks — verified by hand in the console: the same call
+    // that appeared to do nothing before evaluate registers all seven names after it.
+    await registerSamples(tr).catch((e) => console.error('re-register failed', e));
+    curTrack = tr; tl = resolve(tr); total = tl.reduce((a, s) => a + s[0], 0);
+    armVoice(tr, tl);
+    loadViz(tr.vizImage);
+    stripEl.innerHTML = '';
+    tl.forEach(([bars]) => {
+      const d = document.createElement('div'); d.className = 'sec';
+      d.style.flexGrow = (typeof bars === 'number') ? bars : 4;
+      stripEl.appendChild(d);
+    });
+    cur = i; paint(); readBtn.href = essayHref(i);
+    setStatus((bad > 0 ? bad + ' clip(s) FAILED · ' : '') + 'playing ' + (i + 1) + '/' + TRACKS.length + ' — ' + tr.name);
+    vizEl.classList.add('live');
+    if (!rafId) rafId = requestAnimationFrame(frame);
+    // ── THE ONE THING THAT MATTERS ──────────────────────────────────────────────────────
+    // evaluate() RESOLVES long before a sample is heard — Strudel still has to wake its
+    // worklet and fill its first buffers, and that took up to FOURTEEN SECONDS here. Starting
+    // the section clock on the wall clock at that moment marches the arrangement ahead of the
+    // music: the drop's audio lands while the strip says "outro", and the track is then cut at
+    // its last bar with the drop still playing. Measured: the drop arrived at 39.8s against a
+    // display that said bar 24 of 31, and 12 loud frames survived instead of 101.
+    // So wait for actual SOUND before starting the clock, and anchor it to the audio clock.
+    await waitForSound();
+    t0 = performance.now(); playing = true;
+    getTrack(i + 1).catch(() => {});                        // read the NEXT page while this plays
+  }
+
+  function frame() {
+    rafId = requestAnimationFrame(frame);
+    drawViz();
+    if (!playing || !curTrack) return;
+    const barSec = 240 / curTrack.bpm;
+    const bar = (performance.now() - t0) / 1000 / barSec;
+    if (bar >= total) { next(); return; }
+    let acc = 0, idx = tl.length - 1;
+    for (let i = 0; i < tl.length; i++) { if (bar < acc + tl[i][0]) { idx = i; break; } acc += tl[i][0]; }
+    [...stripEl.children].forEach((el, i) => el.classList.toggle('active', i === idx));
+    posEl.textContent = 'bar ' + (Math.floor(bar) + 1) + '/' + total + ' · ' + (tl[idx][1] || '');
+    const lbl = tl[idx][1] || '', dash = lbl.indexOf('—');
+    wordEl.textContent = dash >= 0 ? lbl.slice(0, dash).trim() : lbl;
+    subEl.textContent = dash >= 0 ? lbl.slice(dash + 1).trim() : '';
+    // the film
+    const punch = !!tl[idx][2];
+    stage.style.setProperty('--punch', punch ? String(1 + 0.16 * Math.pow(1 - (bar * 4) % 1, 3)) : '1');
+    let vidUp = false;
+    if (curTrack.videoCues.length || fillerVids.length) {
+      const starts = []; let a2 = 0;
+      tl.forEach(s => { starts.push(a2); a2 += s[0]; });
+      let hit = -1;
+      for (let i = 0; i < curTrack.videoCues.length; i++) {
+        const [row, off, dur] = curTrack.videoCues[i];
+        if (starts[row] === undefined) continue;
+        const from = starts[row] + off, to = from + Math.min(dur, tl[row][0] - off);
+        if (bar >= from && bar < to) hit = i;
+      }
+      if (hit >= 0) {
+        if (hit !== curCue) { const v = clipVids[curTrack.videoCues[hit][3]]; if (v) showVid(v, curTrack.videoCues[hit][4]); curCue = hit; }
+        vidUp = true;
+      } else if (punch && fillerVids.length) {
+        const n = Math.floor(bar * 4);
+        const v = fillerVids[((n % fillerVids.length) + fillerVids.length) % fillerVids.length];
+        if (v !== activeVid) showVid(v, 0);
+        curCue = -1; vidUp = true;
+      }
+    }
+    if (!vidUp) vidsOff();
+  }
+
+  async function next() {
+    playing = false;
+    if (cur + 1 < TRACKS.length) { await startTrack(cur + 1); }
+    else {
+      hush(); stopVoice(); vidsOff(); vizRest();
+      cur = -1; paint(); curTrack = null;
+      posEl.textContent = ''; wordEl.textContent = ''; subEl.textContent = '';
+      setStatus('the album rests. tough times ever last — play it again?');
+      playBtn.hidden = false; stopBtn.hidden = true; playBtn.textContent = '[ play it again ]';
+    }
+  }
+  // Chrome only lets an AudioContext start inside a real user gesture, and that activation is
+  // TRANSIENT — a few seconds. The old hallway died on exactly this: track 1's frame was born
+  // during your click and played, but every later track's frame was created in the wings, minutes
+  // later, with no activation left. Its context stayed suspended while the display marched on,
+  // so the song "didn't load" until you clicked inside it and the real drop suddenly appeared.
+  // Here there is only ever ONE context, and this resumes it SYNCHRONOUSLY at the top of the
+  // click handler — before any fetch, decode or evaluate can spend the activation.
+  function resumeNow() {
+    try { const ac = getAudioContext(); if (ac.state !== 'running') return ac.resume(); } catch (e) {}
+  }
+  async function playFrom(i) {
+    resumeNow();
+    playBtn.disabled = true; playBtn.hidden = true; stopBtn.hidden = false;
+    try { await startTrack(i); }
+    catch (e) { setStatus('could not start: ' + (e && e.message ? e.message : e), true); playBtn.hidden = false; playBtn.disabled = false; }
+  }
+  playBtn.addEventListener('click', () => playFrom(0));
+  stopBtn.addEventListener('click', () => {
+    playing = false; hush(); stopVoice(); vidsOff(); vizRest();
+    cur = -1; paint(); curTrack = null;
+    posEl.textContent = ''; wordEl.textContent = ''; subEl.textContent = '';
+    setStatus('stopped'); playBtn.hidden = false; playBtn.disabled = false; stopBtn.hidden = true;
+  });
+
+  sizeViz();
+  if (booted) setStatus('ready — ' + TRACKS.length + ' tracks, one engine. hit [ play the album ]');
   </script>
 </body>
 </html>

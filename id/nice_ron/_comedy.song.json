@@ -1,0 +1,161 @@
+{
+  "essay": "none — crate jam, no voice lines",
+  "genre": "melodic techno",
+  "bpm": 140,
+  "_comment": "A/B SCRATCH — the ORIGINAL 16-section comedy shape from cfd1cc6, verbatim.",
+  "sections": [
+    {
+      "bars": 8,
+      "layers": [
+        "deerbed",
+        "softpad",
+        "belltale"
+      ],
+      "label": "stillness — the deer graze, nothing has ever happened"
+    },
+    {
+      "bars": 8,
+      "layers": [
+        "deerbed",
+        "softpad",
+        "belltale",
+        "gentlearp",
+        "shimmerhat"
+      ],
+      "label": "the meadow — one gentle motif, the forest is polite"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "softpad",
+        "gentlearp",
+        "riser",
+        "shimmerhat"
+      ],
+      "label": "the itch — something stirs in the nose of the world"
+    },
+    {
+      "bars": 1,
+      "layers": [
+        "deerbed"
+      ],
+      "label": "the deer look up — nothing moves"
+    },
+    {
+      "bars": 1,
+      "layers": [
+        "thesneeze"
+      ],
+      "label": "THE SNEEZE — the forest holds its breath"
+    },
+    {
+      "bars": 1,
+      "layers": [
+        "ronline",
+        "riser"
+      ],
+      "label": "nice one, ron — the last polite words"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "technobass",
+        "techsub",
+        "dropkick",
+        "dropsnare",
+        "droplead",
+        "sneezestab",
+        "drophats"
+      ],
+      "label": "THE DROP — gesundheit"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "technobass",
+        "dropkick",
+        "droplead",
+        "chiparp",
+        "softpad"
+      ],
+      "label": "the clearing — 8-bit birdsong keeps the pulse"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "technobass2",
+        "techsub2",
+        "dropkick",
+        "dropsnare",
+        "sneezechop",
+        "ronstab",
+        "drophats",
+        "chiparp"
+      ],
+      "label": "DROP II — the sneeze argues, ron answers"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "confess",
+        "softpad",
+        "sub"
+      ],
+      "label": "the confession — i sneezed"
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "confess",
+        "belltale",
+        "sub"
+      ],
+      "label": "the litany — i sneezed…"
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "notline",
+        "belltale",
+        "sub"
+      ],
+      "label": "…the litany — i'm not allowed to sneeze"
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "confess",
+        "belltale",
+        "sub"
+      ],
+      "label": "the litany — i sneezed…"
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "notline",
+        "belltale",
+        "sub"
+      ],
+      "label": "…the litany — i'm not allowed to sneeze"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "apology",
+        "softpad",
+        "belltale"
+      ],
+      "label": "the apology — oh, i'm not allowed to sneeze"
+    },
+    {
+      "bars": 8,
+      "layers": [
+        "softpad",
+        "belltale",
+        "deerbed"
+      ],
+      "label": "stillness again — the deer do not return"
+    }
+  ]
+}

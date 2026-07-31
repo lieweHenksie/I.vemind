@@ -81,8 +81,11 @@ The two fonts coexist without hierarchy. Neither fully wins.
 │       ├── README.md       ← music cookbook catalog + the laws
 │       └── research/       ← THE LISTENING BANK: studies of real artists (/cyborge-research)
 ├── tools/                  ← dev-only build tools (never shipped)
+│   ├── serve.py            ← THE DEV SERVER: http.server + `no-store` (nothing ever plays stale)
 │   ├── tts/eleven.py       ← the VOICE: ElevenLabs v3 render, incremental (+ audio-tags.md)
 │   ├── song/build.py       ← SHAPE+SOUND: compiles song.json + palette.json → Strudel
+│   ├── song/compose.py     ← one pull: eleven.py + build.py for a song
+│   ├── song/reshell.py     ← re-drops a built song onto TODAY's template (shell forward, score kept)
 │   ├── song/transcribe.py  ← the EAR: YouTube auto-captions → timestamped transcript
 │   └── song/sample.py      ← the CRATE: YouTube link → cut wav + `_samples` entry (/cyborge-sample)
 ├── .claude/commands/       ← the pipelines, as slash commands
@@ -93,7 +96,10 @@ The two fonts coexist without hierarchy. Neither fully wins.
 ├── ego/                    ← finished, public-facing pieces (empty — azibo scrapped)
 └── id/                     ← raw experiments (songs)
     ├── agar-lab/           ← reference SONG: essay-1 + song.json (plays the default sound)
-    └── head_god/           ← song.json (SHAPE) + palette.json (its OWN sound) + index.html
+    ├── head_god/           ← song.json (SHAPE) + palette.json (its OWN sound) + index.html
+    └── album/              ← THE HALLWAY: index.html (plays all tracks) + tracks.js (the running
+                              order, shared) + essay.html (THE READING ROOM — the writing behind
+                              each track). Intermezzos are named for their line, never numbered.
 ```
 
 ### Folder meanings
@@ -257,40 +263,63 @@ are what make that migration mechanical instead of a rewrite. Skills first; MCP 
 
 1. Update the `## Last Session
 
-**The stage, the crate jams, and the best song yet (theGodInUrhead).**
+**The stage learns to listen; the album learns to be read.**
 
-- **The stage** — every song now plays on a shared visual apparatus: the **Laughing Man sea**
-  (cookbook-linked negative-space visualizer — a black-on-black picture revealed by a white tide
-  that follows the beat AND the arrangement's energy), a full-width back wall with sample videos
-  appearing over it, hero **titles from labels** (`title — subtitle` on the em-dash), a progress
-  strip, drop-bounce (punch), one-loop stop, and a **word-by-word typewriter** of the spoken
-  lines (amber, Libre Baskerville — the human layer).
-- **Crate jams shipped:** `id/nice_ron/` (Ron sneezes and scares deer — 8-bit melodic techno;
-  lessons: comedy needs silence before the punchline, quiet phone audio needs RMS-norm not
-  peak-norm) and `id/fenton/` (JESUS CHRIST IN RICHMOND PARK — lofi; **the full take plays once**
-  with a through-composed 14-step-walk kit/harmony/melody under it, then the remix answers).
-- **The research eye** — `transcribe.py --frames N` grabs screenshots; caption-less videos are
-  now studyable. First frames-only study banked: **Oazoor** (riff banks + `pick` walks,
-  `inhabit` rhythm/harmony split, `@` drop-holds, `postgain`) — all now **runtime-verified**
-  across three songs.
-- **`id/theGodInUrhead/`** — the biggest voice song (16 lines, cinematic downtempo, D minor):
-  one cell two faces (goddess descends / priestess's violin ascends), themes orchestrated across
-  registers, "No." over literal silence, a twelve-count wound outro. **The human's favourite.**
-- **The voice bus** — voice clips are no longer strudel events (one-shots could start late or be
-  skipped under render jank — nondeterministic missing lines). The page arms every line
-  sample-accurately on the WebAudio clock; the load gate is honest (real button gating, retries,
-  failure counts). eleven.py ships `VOICE_TEXTS` for the typewriter.
-- **Words are load-bearing, now law** — labels-as-lyrics enshrined in `/cyborge-score` +
-  `/cyborge-shape`; `arrangement.md` rewritten for the bus era.
+- **The sea now HEARS.** The visualizer was procedural — sines against the bar clock, driven by
+  `song.json`'s authored `energy`. It is now driven by an **AnalyserNode on the actual output**:
+  `AudioNode.connect` is wrapped so every connection to the destination is *mirrored* into the
+  analyser (never in the signal path), and the analyser feeds a silent gain so it is always
+  pulled. Four bands + RMS + an onset detector shape the water; the spectrum itself displaces the
+  surface, mirrored around the middle. The Strudel bed **and the voice bus** both go through it —
+  a spoken line ripples the sea with no instrument playing. Verified headlessly: nice_ron's drop
+  reads level 0.02 → 1.0 with all four bands lighting.
+- **The typewriter is gone** — the spoken line is no longer printed on the stage. `VOICE_TEXTS`
+  is still shipped by eleven.py as the page's record of its own words; nothing renders it.
+- **The reading room** — `id/album/essay.html`: the album's writing, one click from every track
+  (and from the header, following whatever plays; new tab, so the music never stops). It parses
+  the essays **exactly as `eleven.py` does**, so the margin number beside a paragraph is the clip
+  you hear. Comments and `#` notes render as marginalia (foldable) instead of being stripped.
+  `id/album/tracks.js` now holds the running order for both pages.
+- **`tools/song/reshell.py`** — the missing half of the build. `build.py`/`eleven.py` only ever
+  patch marked regions, so a change to `template.html` never reached songs built before it. This
+  re-drops a page's regions into today's template: shell forward, score byte-identical, no
+  re-render. It refuses a page whose TIMELINE predates the voice bus (4-field rows) rather than
+  silently muting every line. Eight songs are now on one shell (fenton caught up too).
+- **`tools/serve.py`** — the answer to the oldest ghost ("the album plays an old version").
+  `python3 -m http.server` sends no `Cache-Control`, so browsers reuse pages heuristically with
+  no revalidation. This is the same server with `no-store`. Use it, not `http.server`.
+- **Three intermezzos, named not numbered** — `hes-wrong-of-course`, **`nature-was-a-gift`**
+  (new: nice_ron's opening narration, theGodInUrhead's music box walking into nice_ron's E-minor
+  bells), `all-good-things`. **nice_ron is now a pure crate jam** — both its lines have rooms of
+  their own, and every voice in it is a sample.
+
+- **A cast, not a narrator** — a block beginning `name:` renders with `<name>_voice_id` from
+  `.env` (`speaker_of()` in eleven.py). The prefix is direction: it stays in the essay and the
+  manifest, so re-casting a line re-renders exactly that line, and it is stripped from what is
+  spoken, from `VOICE_TEXTS`, and shown as a cue chip in the reading room. **oh_dear now ends as
+  an EAS emergency broadcast in `robot_voice_id`** — synthesized SAME header + the exact 853/960
+  attention tone (measured through the page's own analyser at 861/969, one FFT bin), never
+  sampled and deliberately not a valid header. Its back half is re-scored: nine sections of
+  eruption, including THE BONES LEARN TO SING (the amahubo distorted — the line the essay cut,
+  performed instead of said).
+- **essay-1's tail re-scored** — the album's title line ("Tough times ever last…") now lands in
+  agar-lab, over a bare pad after two bars of near-silence; THE ALTAR takes the full machine.
+- **Strudel gotcha, learned the hard way**: `s("x").freq(…).decay(…).sustain(0)` with no explicit
+  attack/release renders **silent** in 1.0.3. `note(…).s("x")` with the same envelope is fine.
 
 ## Next
 
+- **Listen to oh_dear and agar-lab.** Both were re-scored and verified only mechanically (they
+  play, the tones are at pitch, every block is spoken once) — nobody has heard them.
+- **Lengthen the intermezzos** — the human is doing this pass (they are 4/3/4-bar rooms now).
+- **agar-lab sections 1–2 have no labels at all** — the hero title is blank on screen there.
+- **head_god is retired** (the human deleted its essay: "it was bad, we did it better in
+  theGod"). `id/head_god/` still exists and is the only page left on the old shell; `reshell.py`
+  refuses it correctly. Delete it or leave it as a fossil.
 - **Feedback loops**: theGodInUrhead (split points vs sentences, the bell/music-box gains, v3
-  accent drift over 16 lines), fenton, nice_ron — all await another ear pass.
-- **agar-lab + head_god**: recompose onto the current template (their pages predate the voice
-  bus + typewriter; one `compose.py` each, no re-renders). agar-lab also wants labels written
-  (its titles are mostly blank) and the essay-1 naming reconciled.
-- **head_god punch bug**: labels saying "beat drops" auto-flag punch — add `"punch": false`
-  override in build.py.
+  accent drift over 16 lines), fenton, nice_ron — all await another ear pass. The album wants a
+  full sitting now that the order changed.
+- **agar-lab**: labels are mostly blank (its titles don't sing yet); the essay-1 naming is still
+  unreconciled (folder `agar-lab`, essay `essay-1`).
 - **Standing**: home page (`index.html` gallery), Netlify hookup + secrets, MCP migration,
   v3 accent consistency (higher stability / text-to-dialogue).

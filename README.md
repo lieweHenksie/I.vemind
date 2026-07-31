@@ -15,11 +15,14 @@ The album — ***tough times ever last, tough people never do*** — plays strai
 No build, no accounts, no installs beyond python:
 
 ```bash
-python3 -m http.server 8000
+python3 tools/serve.py
 ```
 
 Open **http://localhost:8000/id/album/** and click `[ play the album ]`. One click plays all
-five songs in order, gaplessly. (It must be a *served* page — don't open the file directly —
+five songs in order, gaplessly. Every track carries an `essay` link to the writing it was made
+from. (Use `tools/serve.py`, not `python3 -m http.server`: it is the same server with caching
+turned off, so an edited song can never play stale. It must be a *served* page — don't open the
+file directly —
 and the first play fetches the Strudel engine from a CDN, so be online.)
 
 ## Prerequisites
@@ -63,7 +66,7 @@ essay (mycelium/essays/<name>.md)
 id/<name>/  song.json + palette.json + index.html   (voice clips rendered per line)
    │  /cyborge-feedback ⇄ /cyborge-shape            ← loop until it sings
    ▼
-play: python3 -m http.server --bind 127.0.0.1 8000  →  localhost:8000/id/<name>/
+play: python3 tools/serve.py                        →  localhost:8000/id/<name>/
 ```
 
 ### Flow — with samples (a crate jam, or voice + crate)

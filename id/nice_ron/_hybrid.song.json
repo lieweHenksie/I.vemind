@@ -1,0 +1,115 @@
+{
+  "essay": "mycelium/essays/nice_ron.md",
+  "genre": "melodic techno",
+  "bpm": 140,
+  "_comment": "A/B SCRATCH — HYBRID: FULL's structure (THE DROP + DROP II) with v10's register (bassline at 82-131Hz instead of rollbass+ronsub, which sat on the kick's own e1=41.2Hz and were masked).",
+  "sections": [
+    {
+      "bars": 4,
+      "layers": [
+        "deerbed",
+        "softpad",
+        "belltale"
+      ],
+      "fade": "in",
+      "label": "stillness — the deer graze, nothing has ever happened"
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "deerbed",
+        "softpad",
+        "belltale"
+      ],
+      "label": "stillness — no one has sneezed yet"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "deerbed",
+        "softpad",
+        "belltale",
+        "gentlearp",
+        "shimmerhat",
+        "meadowanswer"
+      ],
+      "label": "the meadow — the forest answers itself, still polite"
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "softpad",
+        "gentlearp",
+        "shimmerhat"
+      ],
+      "label": "the itch — something stirs in the nose of the world"
+    },
+    {
+      "bars": 1,
+      "layers": [
+        "deerbed"
+      ],
+      "label": "the deer look up — nothing moves"
+    },
+    {
+      "bars": 1,
+      "layers": [
+        "thesneeze"
+      ],
+      "label": "THE SNEEZE — the forest holds its breath"
+    },
+    {
+      "bars": 1,
+      "layers": [
+        "ronline"
+      ],
+      "label": "nice one, ron — the last polite words"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "hardkick",
+        "bassline",
+        "hookchords",
+        "hooklead",
+        "hookrun",
+        "hookdeep",
+        "openhat",
+        "hardclap"
+      ],
+      "label": "THE DROP — the forest goes hardcore"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "hardkick",
+        "bassline",
+        "hookchords",
+        "hooklead",
+        "hookrun",
+        "hookdeep",
+        "openhat",
+        "hardclap",
+        "chiparp",
+        "shimmerhat"
+      ],
+      "label": "DROP II — the hook doubles down"
+    },
+    {
+      "bars": 8,
+      "fade": "out",
+      "layers": [
+        "hardkick",
+        "rollbass",
+        "ronsub",
+        "hookchords",
+        "hooklead",
+        "hookrun",
+        "hookdeep",
+        "openhat",
+        "cadenza"
+      ],
+      "label": "the long exhale — hardcore dissolves onto A, the cadenza leans toward the door"
+    }
+  ]
+}

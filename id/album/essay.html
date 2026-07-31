@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>the writing — I'vemind</title>
+  <style>
+    :root {
+      --bg:#0a0d08; --stone:#8b8680; --moss:#4a7c59; --amber:#d4a843;
+      --amber-dim:#8a6a20; --rust:#8b4a2a; --white:#e8e4d9; --edge:#23281c;
+      --mono:"IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+      --story:"Libre Baskerville", Georgia, "Times New Roman", serif;
+    }
+    * { box-sizing:border-box; }
+    body {
+      margin:0; min-height:100vh; background:var(--bg); color:var(--stone);
+      font-family:var(--mono); line-height:1.5;
+      display:grid; grid-template-columns:minmax(180px,15rem) 1fr;
+    }
+    a { color:inherit; }
+
+    /* ── the rail: the album order, always in reach ───────────────────────── */
+    #rail {
+      border-right:1px solid var(--edge); padding:clamp(.8rem,2vw,1.4rem);
+      display:flex; flex-direction:column; gap:.9rem;
+      position:sticky; top:0; align-self:start; max-height:100vh; overflow:auto;
+    }
+    #rail .band { font-size:.72rem; letter-spacing:.18em; opacity:.6; }
+    #rail .album {
+      font-family:var(--story); font-style:italic; font-size:.82rem; line-height:1.45;
+      color:var(--amber); text-decoration:none; display:block;
+    }
+    #rail .album:hover { text-decoration:underline; }
+    #rail .back { font-size:.68rem; letter-spacing:.08em; opacity:.6; text-decoration:none; }
+    #rail .back:hover { opacity:1; color:var(--amber); }
+    #list { display:flex; flex-direction:column; gap:.3rem; }
+    #list a {
+      display:block; padding:.4rem .5rem; border:1px solid transparent; border-radius:5px;
+      font-size:.74rem; text-decoration:none; color:var(--stone);
+    }
+    #list a small { display:block; font-size:.64rem; opacity:.5; }
+    #list a:hover { border-color:var(--edge); }
+    #list a.on { border-color:var(--amber); color:var(--amber); }
+    #list a.on small { opacity:.6; }
+
+    /* ── the page: the writing itself ─────────────────────────────────────── */
+    main { padding:clamp(1.4rem,5vw,4rem) clamp(1rem,4vw,3rem); max-width:76ch; }
+    #head { border-bottom:1px solid var(--edge); padding-bottom:1.1rem; margin-bottom:2.2rem; }
+    #head h1 {
+      margin:0 0 .35rem; font-family:var(--story); font-weight:400; font-style:italic;
+      color:var(--amber); font-size:clamp(1.3rem,3.4vw,2rem); line-height:1.25;
+    }
+    #head .meta { font-size:.72rem; opacity:.6; letter-spacing:.04em; }
+    #head .meta a, #head .meta button { color:var(--moss); text-decoration:none; }
+    #head .meta button { background:none; border:0; font:inherit; padding:0; cursor:pointer; }
+    #head .meta a:hover, #head .meta button:hover { color:var(--amber); }
+
+    #body { font-family:var(--story); font-size:.95rem; line-height:1.85; color:var(--white); }
+    .line { position:relative; margin:0 0 1.7rem; padding-left:3.4rem; }
+    .line .n {
+      position:absolute; left:0; top:.5rem; font-family:var(--mono); font-size:.6rem;
+      letter-spacing:.06em; opacity:.32; user-select:none;
+    }
+    .line:hover .n { opacity:.75; color:var(--amber); }
+    .cue {
+      font-family:var(--mono); font-size:.62em; letter-spacing:.04em;
+      color:var(--moss); opacity:.8; white-space:nowrap; margin-right:.25em;
+    }
+    /* the machine's own marginalia — comments and # notes, kept, never spoken */
+    .note {
+      font-family:var(--mono); font-size:.7rem; line-height:1.6; color:var(--moss);
+      opacity:.55; white-space:pre-wrap; margin:0 0 1.7rem; padding:.5rem 0 .5rem .9rem;
+      border-left:1px solid var(--edge); overflow-x:auto;
+    }
+    .note:hover { opacity:.8; }
+    body.quiet .note { display:none; }
+    body.quiet.allnotes .note { display:block; }   /* a crate jam's only text IS its margin note */
+
+    #foot {
+      margin-top:3rem; padding-top:1.1rem; border-top:1px solid var(--edge);
+      font-size:.72rem; opacity:.6; display:flex; gap:1.2rem; flex-wrap:wrap; align-items:baseline;
+    }
+    #foot a { color:var(--amber); text-decoration:none; }
+    #foot a:hover { text-decoration:underline; }
+    .err { color:var(--rust); opacity:1; font-family:var(--mono); font-size:.8rem; white-space:pre-wrap; }
+
+    @media (max-width:720px) {
+      body { grid-template-columns:1fr; }
+      #rail { position:static; max-height:none; border-right:0; border-bottom:1px solid var(--edge); }
+      #list { flex-direction:row; overflow-x:auto; padding-bottom:.2rem; }
+      #list a { flex:0 0 auto; }
+      .line { padding-left:0; }
+      .line .n { position:static; display:block; margin-bottom:.2rem; }
+    }
+  </style>
+</head>
+<body>
+  <nav id="rail">
+    <div>
+      <span class="band"></span>
+      <a class="album" href="./"></a>
+    </div>
+    <div id="list"></div>
+    <a class="back" href="./">← back to the hallway</a>
+  </nav>
+
+  <main>
+    <div id="head">
+      <h1>…</h1>
+      <div class="meta"></div>
+    </div>
+    <div id="body"></div>
+    <div id="foot"></div>
+  </main>
+
+  <script src="tracks.js"></script>
+  <script>
+    // THE READING ROOM. The songs are the essays out loud; this is the essays on the page.
+    // It reads the SAME source of truth the voice renderer reads — mycelium/essays/<slug>.md —
+    // and splits it exactly the way tools/tts/eleven.py does (frontmatter out, comments out,
+    // blank line = one block, # lines are notes), so the number beside a paragraph is the
+    // number of the clip you hear: line 03 here is line-03.wav there.
+    // Nothing is stripped, though — the comments and notes render as the machine's marginalia,
+    // because in this project the notes to self ARE part of the writing.
+    const T = window.ALBUM.tracks;
+    const railBand = document.querySelector('#rail .band');
+    const railAlbum = document.querySelector('#rail .album');
+    const list = document.getElementById('list');
+    const headH1 = document.querySelector('#head h1');
+    const headMeta = document.querySelector('#head .meta');
+    const bodyEl = document.getElementById('body');
+    const footEl = document.getElementById('foot');
+
+    railBand.textContent = window.ALBUM.band;
+    railAlbum.textContent = window.ALBUM.title;
+
+    const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    // [sigh] [whispers] [deadpan] — ElevenLabs v3 delivery cues. They're direction, not words:
+    // shown small and green so the eye can skip them the way the ear never hears them.
+    const cues = (s) => s.replace(/\[[^\]\n]{1,40}\]/g, (m) => '<span class="cue">' + m + '</span>')
+      // `robot: …` at the head of a block is a CASTING cue, not a word — eleven.py renders that
+      // line with robot_voice_id and never speaks the prefix. Show who is talking, quietly.
+      .replace(/^([A-Za-z][A-Za-z0-9_]*):[ \t]*/, (m, w) => '<span class="cue">' + w + '</span>');
+    const dedent = (s) => {
+      const ls = s.replace(/\t/g, '  ').split('\n');
+      const pads = ls.filter((l) => l.trim()).map((l) => l.match(/^ */)[0].length);
+      const cut = pads.length ? Math.min(...pads) : 0;
+      return ls.map((l) => l.slice(cut)).join('\n').replace(/^\n+|\n+$/g, '');
+    };
+
+    // Mirrors eleven.py's blocks_from(): same order, same numbering — only here nothing is dropped.
+    function parse(md) {
+      const out = [];
+      let rest = md.replace(/\r\n/g, '\n');
+      const fm = /^---\n[\s\S]*?\n---/.exec(rest);
+      if (fm) { out.push({ kind: 'note', text: fm[0] }); rest = rest.slice(fm[0].length); }
+
+      const parts = [];
+      const re = /<!--[\s\S]*?-->/g;
+      let last = 0, m;
+      while ((m = re.exec(rest)) !== null) {
+        parts.push({ note: false, s: rest.slice(last, m.index) });
+        parts.push({ note: true, s: m[0].replace(/^<!--/, '').replace(/-->$/, '') });
+        last = m.index + m[0].length;
+      }
+      parts.push({ note: false, s: rest.slice(last) });
+
+      let n = 0;
+      for (const p of parts) {
+        if (p.note) { out.push({ kind: 'note', text: p.s }); continue; }
+        for (const chunk of p.s.split(/\n\s*\n/)) {
+          const lines = chunk.split('\n').map((l) => l.trim()).filter(Boolean);
+          const notes = lines.filter((l) => l.startsWith('#'));
+          const said = lines.filter((l) => !l.startsWith('#'));
+          if (notes.length) out.push({ kind: 'note', text: notes.join('\n') });
+          if (said.length) out.push({ kind: 'line', n: ++n, text: said.join('\n') });
+        }
+      }
+      return out;
+    }
+
+    function render(blocks) {
+      return blocks.map((b) => {
+        if (b.kind === 'note') return '<div class="note">' + esc(dedent(b.text)) + '</div>';
+        const pad = String(b.n).padStart(2, '0');
+        return '<p class="line"><span class="n">' + pad + '</span>' +
+               cues(esc(b.text)).replace(/\n/g, '<br>') + '</p>';
+      }).join('\n');
+    }
+
+    // The comments and # notes are the machine talking to itself in the margin. They're kept —
+    // here the notes-to-self are part of the writing — but they shouldn't stand between you and
+    // a first read, so they fold away, and stay folded across tracks and visits.
+    const stash = (k, v) => { try { return v === undefined ? localStorage.getItem(k)
+                                                          : localStorage.setItem(k, v); } catch (e) {} };
+    let notesOn = stash('cyb.essay.notes') !== 'off';
+    function setNotes(on) {
+      notesOn = on;
+      stash('cyb.essay.notes', on ? 'on' : 'off');
+      document.body.classList.toggle('quiet', !on);
+      const b = document.getElementById('notestoggle');
+      if (b) b.textContent = on ? 'margin notes ✓' : 'margin notes';
+    }
+
+    function paintRail(i) {
+      [...list.children].forEach((a, j) => a.classList.toggle('on', j === i));
+    }
+
+    let cur = 0;
+    async function load(i, push) {
+      const t = T[i];
+      if (!t) return;
+      cur = i; paintRail(i);
+      const src = '../../mycelium/essays/' + t.essay + '.md';
+      document.title = t.name + " — the writing · I'vemind";
+      headH1.textContent = t.name;
+      headMeta.innerHTML = esc(t.sub) + ' · <a href="' + t.src + '" target="_blank" rel="noopener">' +
+                           'hear it ↗</a> · <button id="notestoggle"></button>';
+      document.getElementById('notestoggle').addEventListener('click', () => setNotes(!notesOn));
+      setNotes(notesOn);
+      bodyEl.innerHTML = '<div class="note">reading ' + esc(src) + ' …</div>';
+      footEl.textContent = '';
+      if (push) history.pushState({ i }, '', 'essay.html?t=' + encodeURIComponent(t.essay));
+
+      let md;
+      try {
+        const r = await fetch(src, { cache: 'no-cache' });
+        if (!r.ok) throw new Error(r.status + ' ' + r.statusText);
+        md = await r.text();
+      } catch (e) {
+        bodyEl.innerHTML = '<div class="err">the writing did not open — ' + esc(String(e.message || e)) +
+          '\n\nthis page has to be SERVED, not opened as a file:\n' +
+          '  python3 -m http.server 8000\n' +
+          '  → http://localhost:8000/id/album/essay.html</div>';
+        return;
+      }
+      const blocks = parse(md);
+      const spoken = blocks.filter((b) => b.kind === 'line').length;
+      document.body.classList.toggle('allnotes', spoken === 0);
+      bodyEl.innerHTML = render(blocks) ||
+        '<div class="note">nothing written here yet.</div>';
+      footEl.innerHTML =
+        '<span>' + (spoken ? spoken + (spoken === 1 ? ' spoken line' : ' spoken lines') :
+                    'no spoken lines — a pure crate jam; every voice you hear is a sample') + '</span>' +
+        '<span>source · ' + esc(src.replace('../../', '')) + '</span>' +
+        (T[i + 1] ? '<a href="essay.html?t=' + encodeURIComponent(T[i + 1].essay) + '" data-i="' + (i + 1) +
+                    '" class="nav">next · ' + esc(T[i + 1].name) + ' →</a>' : '<span>the last room.</span>');
+      footEl.querySelectorAll('a.nav').forEach((a) =>
+        a.addEventListener('click', (e) => { e.preventDefault(); load(+a.dataset.i, true); }));
+      window.scrollTo({ top: 0 });
+    }
+
+    T.forEach((t, i) => {
+      const a = document.createElement('a');
+      a.href = 'essay.html?t=' + encodeURIComponent(t.essay);
+      a.innerHTML = (i + 1) + ' · ' + t.name + '<small>' + t.sub + '</small>';
+      a.addEventListener('click', (e) => { e.preventDefault(); load(i, true); });
+      list.appendChild(a);
+    });
+
+    const wanted = new URLSearchParams(location.search).get('t');
+    const start = Math.max(0, T.findIndex((t) => t.essay === wanted));
+    load(start, false);
+
+    window.addEventListener('popstate', () => {
+      const w = new URLSearchParams(location.search).get('t');
+      load(Math.max(0, T.findIndex((t) => t.essay === w)), false);
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.target.closest('input,textarea')) return;
+      if (e.key === 'ArrowRight' && cur + 1 < T.length) load(cur + 1, true);
+      if (e.key === 'ArrowLeft' && cur > 0) load(cur - 1, true);
+    });
+  </script>
+</body>
+</html>
