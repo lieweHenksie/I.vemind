@@ -30,7 +30,7 @@ build). The voice is pre-rendered to clips by `tools/tts/eleven.py`. The page gl
    It's **incremental** — after the first run it only re-renders lines you actually edited
    (tracked in `.render-manifest.json`). `--only 3` forces one line; `--all` forces everything.
 4. **Shape** the `arrange(...)` in the score — copy sections from `arrangement.md`, place the
-   voice lines, add breakdowns/bridges/solos. Serve (`python3 -m http.server --bind 127.0.0.1 8000`)
+   voice lines, add breakdowns/bridges/solos. Serve (`python3 tools/serve.py`)
    and play.
 
 ## The laws (don't relearn them)

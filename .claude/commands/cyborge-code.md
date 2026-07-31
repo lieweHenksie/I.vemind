@@ -63,7 +63,7 @@ doesn't fight the words.)
 Tell the human, briefly:
 - which recipes you used and which CUTs each one covers,
 - what you left as a placeholder or a default, and what is still needed,
-- how to see it: serve the repo (`python3 -m http.server`) and open `ego/<name>/`.
+- how to see it: serve the repo (`python3 tools/serve.py`) and open `ego/<name>/`.
 
 If you can, load the page yourself and walk the chain — loader, the opening beat, each CUT in
 order. Fix what's broken before you call it built.

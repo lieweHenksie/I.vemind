@@ -1,0 +1,6 @@
+{
+  "_comment": "intermezzo-2's SOUND — the doorframe into essay-1 / the agar lab (A minor, 120). No groove: nice_ron's forest bells ring on, ghosted into A minor (the same fromforest voicing agar-lab opens with), a soft A-minor pad beneath. towardlab lands on agar's exact opening A ([a2,c3,e3]) and fades. Overrides cookbook default; uses only these three.",
+  "forestbell": "note(\"<a4 c5 e5 b4>\").s(\"triangle\").attack(0.4).release(1.4).lpf(1400).room(0.85).gain(0.28)",
+  "foresthush": "note(\"[a2,c3,e3]\").s(\"sawtooth\").attack(2).release(3).lpf(520).gain(0.2).room(0.9)",
+  "towardlab": "note(\"[a2,c3,e3]\").s(\"sawtooth\").attack(2).release(3).lpf(500).gain(0.22).room(0.92)"
+}

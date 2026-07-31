@@ -1,0 +1,6 @@
+{
+  "_comment": "intermezzo-1's SOUND — the doorframe into theGodInUrhead (D minor, 90). No drum, no groove: just the ward's gauze so the line breathes. wardgauze/wardblip ARE theGodInUrhead's gauze + monitor (the same timbres demi_demi already used to bridge out, now holding the interstitial); gauzeland lands the swell on theGod's exact opening chord [d3,f3,a3] and fades. Overrides cookbook default; uses only these three.",
+  "wardgauze": "note(\"<[d3,f3,a3] [bb2,d3,f3]>\").s(\"sawtooth\").attack(1.8).release(2.5).lpf(550).gain(0.2).room(0.92)",
+  "wardblip": "note(\"d5 ~ ~ ~\").s(\"sine\").decay(0.05).sustain(0).gain(0.1).delay(0.3).delaytime(0.333)",
+  "gauzeland": "note(\"[d3,f3,a3]\").s(\"sawtooth\").attack(2).release(3).lpf(550).gain(0.2).room(0.92)"
+}

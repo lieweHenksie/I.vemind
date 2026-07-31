@@ -2,7 +2,7 @@
   "essay": "mycelium/essays/nice_ron.md",
   "genre": "melodic techno",
   "bpm": 140,
-  "_comment": "The SHAPE v6 — the ALBUM CUT, drop-as-outro. Trimmed front (comedy timing untouched), then the drop IS the rest of the song: two punching rows with techsub back from the shelf for weight, then an 8-bar fading exhale of the same kit with the cadenza drone surfacing beneath it — E E A A E E A A, ending on A as the fader reaches zero, merging straight into essay-1. No clearing, no separate cadence.",
+  "_comment": "The SHAPE v11 — the drop is RESTORED. v10 (never actually heard: it sat in the working tree while the built page was still the older build) tried to fix 'no bass in the drop' by thinning it — one `bassline` in place of rollbass+ronsub, no hookrun, no hookdeep, and DROP II deleted outright. Heard side by side against the older build, the fuller drop wins, so v11 puts back the last committed pair exactly: THE DROP (4 bars, 9 layers) + DROP II — the hook doubles down (4 bars, 11 layers, chiparp + shimmerhat). `bassline` stays in palette.json, unused, if it is ever wanted in place of rollbass+ronsub. Everything else is v10: no narration (both lines now live in id/nature-was-a-gift/ and id/all-good-things/), the 2-bar instrumental where the opening line used to be, and the exhale/cadenza album bridge untouched.",
   "sections": [
     {
       "bars": 4,
@@ -15,13 +15,13 @@
       "label": "stillness — the deer graze, nothing has ever happened"
     },
     {
-      "voice": 0,
+      "bars": 2,
       "layers": [
         "deerbed",
         "softpad",
         "belltale"
       ],
-      "label": "stillness — nature was a gift once"
+      "label": "stillness — no one has sneezed yet"
     },
     {
       "bars": 4,
@@ -30,16 +30,16 @@
         "softpad",
         "belltale",
         "gentlearp",
-        "shimmerhat"
+        "shimmerhat",
+        "meadowanswer"
       ],
-      "label": "the meadow — one gentle motif, the forest is polite"
+      "label": "the meadow — the forest answers itself, still polite"
     },
     {
       "bars": 2,
       "layers": [
         "softpad",
         "gentlearp",
-        "riser",
         "shimmerhat"
       ],
       "label": "the itch — something stirs in the nose of the world"
@@ -61,8 +61,7 @@
     {
       "bars": 1,
       "layers": [
-        "ronline",
-        "riser"
+        "ronline"
       ],
       "label": "nice one, ron — the last polite words"
     },
@@ -99,7 +98,6 @@
       "label": "DROP II — the hook doubles down"
     },
     {
-      "voice": 1,
       "bars": 8,
       "fade": "out",
       "layers": [
@@ -113,7 +111,7 @@
         "openhat",
         "cadenza"
       ],
-      "label": "the long exhale — hardcore dissolves onto A"
+      "label": "the long exhale — hardcore dissolves onto A, the cadenza leans toward the door"
     }
   ]
 }

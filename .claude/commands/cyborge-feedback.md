@@ -7,7 +7,7 @@ Gather feedback on: $ARGUMENTS
 ---
 
 **Step 0 — resolve & play.** Piece: `id/<name>/`. Serve it
-(`python3 -m http.server --bind 127.0.0.1 8000`) and point the human at
+(`python3 tools/serve.py`) and point the human at
 `http://localhost:8000/id/<name>/`. Tell them to hard-reload, wait for `ready`, and play.
 
 **Step 1 — show them the map.** Read `id/<name>/song.json` and list its sections in order with their

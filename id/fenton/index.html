@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>cyBorge — fenton (crate jam)</title>
+  <title>cyBorge — song</title>
 
   <!-- Strudel, no build step. One script tag. Pinned; bump the version freely. -->
   <script src="https://unpkg.com/@strudel/web@1.0.3"></script>
@@ -31,6 +31,8 @@
       font:inherit; font-size:.9rem; padding:.5rem 1.1rem; border-radius:4px; cursor:pointer;
     }
     button:hover { background:var(--amber); color:var(--bg); }
+    button:disabled { opacity:.35; cursor:default; }
+    button:disabled:hover { background:transparent; color:var(--amber); }
     button.stop { color:var(--rust); border-color:var(--rust); }
     button.stop:hover { background:var(--rust); color:var(--bg); }
     #status { font-size:.82rem; opacity:.8; margin-left:.4rem; }
@@ -194,12 +196,86 @@ arrange(
       try { v.currentTime = off || 0; } catch (e) {}
       v.play().catch(() => {});
     };
+    // ── THE EAR · the stage watches the OUTPUT, not the score ─────────────────────────────────
+    // The sea was once procedural: sines against the bar clock — an animation that merely ran
+    // WHILE music played. It now LISTENS. One AnalyserNode is fanned off every node that reaches
+    // the speakers — Strudel's bed and the voice bus both — so the water moves because the air
+    // moved. A thin bar makes a low sea; a drop floods the stage; a spoken line ripples through it
+    // even though no instrument played. Nothing in song.json can lie to it.
+    //
+    // We never sit IN the signal path. AudioNode.connect is wrapped so a connection to a
+    // destination is MIRRORED into the analyser — the original connection is untouched, so
+    // listening can neither break nor colour what you hear. The analyser's own output runs into a
+    // silent gain: an analyser whose output dead-ends isn't guaranteed to be pulled, and a node
+    // that is never pulled never sees a sample. Installed at page load, before Strudel builds its
+    // output chain (a lazy merger → gain → destination), so whoever connects first, we hear it.
+    let ear = null, earFreq = null, earWave = null, earRate = 44100;
+    (function openEar() {
+      if (typeof AudioNode === 'undefined' || typeof AudioDestinationNode === 'undefined') return;
+      const connect = AudioNode.prototype.connect;
+      AudioNode.prototype.connect = function (to, ...rest) {
+        const out = connect.apply(this, [to, ...rest]);
+        try {
+          if (to instanceof AudioDestinationNode && this !== ear) {
+            const ac = to.context;
+            if (!ear) {
+              ear = ac.createAnalyser();
+              ear.fftSize = 2048;
+              ear.smoothingTimeConstant = 0.5;   // enough to stop the flicker, not enough to lag
+              earFreq = new Uint8Array(ear.frequencyBinCount);
+              earWave = new Uint8Array(ear.fftSize);
+              earRate = ac.sampleRate;
+              const mute = ac.createGain(); mute.gain.value = 0;
+              connect.call(ear, mute); connect.call(mute, to);
+            }
+            if (ear.context === ac) connect.call(this, ear);
+          }
+        } catch (e) { /* listening must never cost playback */ }
+        return out;
+      };
+    })();
+    // What the ear hears, once a frame. The bands are chosen by what they MEAN in these songs
+    // rather than by octaves: the kick and sub that drive the tide, the body of the bed, the
+    // register the voice lives in, and the air (hats, tape hiss, the top of a string).
+    const BANDS = [[25, 110], [110, 420], [420, 2200], [2200, 9000]];
+    const heard = { level: 0, slow: 0, hit: 0, band: [0, 0, 0, 0], spec: new Float32Array(96) };
+    let lastLow = 0;
+    function listen() {
+      if (!ear) return false;
+      ear.getByteFrequencyData(earFreq);
+      ear.getByteTimeDomainData(earWave);
+      const n = earFreq.length, hz = earRate / 2 / n;
+      for (let b = 0; b < BANDS.length; b++) {
+        const lo = Math.max(1, Math.floor(BANDS[b][0] / hz));
+        const hi = Math.max(lo, Math.min(n - 1, Math.ceil(BANDS[b][1] / hz)));
+        let s = 0;
+        for (let i = lo; i <= hi; i++) s += earFreq[i];
+        heard.band[b] = s / (hi - lo + 1) / 255;
+      }
+      let sq = 0;                                 // loudness from the waveform: "how loud", not "how bright"
+      for (let i = 0; i < earWave.length; i++) { const v = (earWave[i] - 128) / 128; sq += v * v; }
+      heard.level = Math.min(1, Math.sqrt(sq / earWave.length) * 3.4);
+      heard.slow += (heard.level - heard.slow) * 0.06;   // the tide is now the song's own dynamics
+      // the onset: a jump in low energy — a kick, a downbeat, a stab. Falls fast, so it reads as a hit.
+      const low = heard.band[0] * 0.7 + heard.band[1] * 0.3;
+      heard.hit = Math.max(heard.hit * 0.86, Math.min(1, Math.max(0, low - lastLow) * 6));
+      lastLow = low;
+      // a coarse LOG-spaced spectrum for the surface itself, so the low end isn't one pixel wide
+      const M = heard.spec.length;
+      for (let i = 0; i < M; i++) {
+        const lo = Math.max(1, Math.floor(30 * Math.pow(320, i / M) / hz));
+        const hi = Math.max(lo, Math.min(n - 1, Math.ceil(30 * Math.pow(320, (i + 1) / M) / hz)));
+        let s = 0;
+        for (let j = lo; j <= hi; j++) s += earFreq[j];
+        heard.spec[i] += (s / (hi - lo + 1) / 255 - heard.spec[i]) * 0.35;   // eased: no strobing
+      }
+      return true;
+    }
     // The visualizer is the DEFAULT backdrop of EVERY song — with or without sample clips. It plays
-    // on the "real" filler stretches, and fills the whole song when there's no film. Procedural,
-    // synced to the bar clock (no tap into Strudel's audio graph). VIZ_IMAGE (the cookbook default,
-    // linked) works in NEGATIVE SPACE: the picture is black-on-black — never drawn, truly invisible.
-    // A white sea rises on a slow tide, and the picture is punched OUT of the water, so when a swell
-    // climbs past it the face appears from nowhere — showing it was always there.
+    // on the "real" filler stretches, and fills the whole song when there's no film. VIZ_IMAGE (the
+    // cookbook default, linked) works in NEGATIVE SPACE: the picture is black-on-black — never
+    // drawn, truly invisible. A white sea rises, and the picture is punched OUT of the water, so
+    // when a swell climbs past it the face appears from nowhere — showing it was always there.
     const vizEl = document.getElementById('viz');
     const vizCtx = vizEl ? vizEl.getContext('2d') : null;
     let seaLevel = 0;                                // the white water's eased level (0 = gone)
@@ -241,63 +317,62 @@ arrange(
       img.src = VIZ_IMAGE;
       addEventListener('resize', () => { if (vizImg) { sizeViz(); if (!rafId) vizRest(); } });
     }
-    // Fallback spectrum — only shown until/without a logo image: a plain amber/moss bar meter.
-    let vizPeaks = new Array(32).fill(0);
-    function drawBars(ctx, bar, W, H) {
-      const N = 32, bw = W / N;
-      const pulse = Math.pow(1 - (bar * 4) % 1, 1.6);
+    // Fallback spectrum — only until/without a picture: the REAL bands, with a peak that falls.
+    let vizPeaks = new Array(48).fill(0);
+    function drawBars(ctx, W, H) {
+      const N = vizPeaks.length, bw = W / N, M = heard.spec.length;
       for (let i = 0; i < N; i++) {
-        const bass = 1 - i / N;
-        const shimmer = 0.5 + 0.5 * Math.sin(i * 0.7 + bar * 6.3 + Math.sin(i * 1.3));
-        let hgt = (0.12 + 0.88 * shimmer) * (0.32 + 0.68 * (0.4 + 0.6 * bass) * pulse);
-        hgt = Math.max(0.03, Math.min(1, hgt));
+        const v = Math.max(0.01, Math.min(1, heard.spec[(i / N * M) | 0] * 1.25));
+        vizPeaks[i] = Math.max(v, vizPeaks[i] - 0.015);
         const x = i * bw + 1, bwid = bw - 2;
-        vizPeaks[i] = Math.max(hgt, vizPeaks[i] - 0.02);
         ctx.fillStyle = i % 3 === 0 ? '#4a7c59' : '#d4a843';
-        ctx.fillRect(x, H - hgt * H, bwid, hgt * H);
+        ctx.fillRect(x, H - v * H, bwid, v * H);
         ctx.fillStyle = '#cdbb8f';
         ctx.fillRect(x, H - vizPeaks[i] * H - 2, bwid, 2);
       }
     }
-    // The SLOW tide: two incommensurate low sines → mostly low water, rare aligned swells.
-    // Periods 11 & 6.5 bars → ~11-19s breathing at ~140bpm; the swells never repeat the same way.
-    function vizTide(bar) {
-      const a = 0.5 + 0.5 * Math.sin(bar * Math.PI * 2 / 11);
-      const b = 0.5 + 0.5 * Math.sin(bar * Math.PI * 2 / 6.5 + 1.3);
-      return Math.pow(a * b, 1.4);
-    }
-    // The white sea: a filled wash rising from the bottom, its surface slow drifting sines that
-    // CHOP on the beat. The level EASES toward its target so the water never jumps — but the
-    // target listens to the music: the slow tide × the section's energy, plus a lift on each kick.
-    function drawSea(ctx, bar, W, H, target, beat) {
-      seaLevel += (target - seaLevel) * 0.05;
-      const base = H * (1 - seaLevel) - H * 0.025 * beat;   // the whole surface lifts on the kick
-      const amp = 1 + 1.6 * beat;                           // and the waves chop harder
+    // The white sea: a wash rising from the bottom of the stage, its SURFACE built out of what is
+    // actually playing. The LEVEL is the song's own loudness, eased (the tide is no longer a sine —
+    // it's the arrangement's real dynamics, so a breakdown drains the stage and a drop floods it).
+    // The surface is four voices summed: a long swell carried by the sub, a mid chop from the body
+    // of the bed, a fine glitter off the air — and, on top of those, the SPECTRUM ITSELF pushing
+    // the water up where there is energy, mirrored around the middle so it reads as water and not
+    // as a chart. Onsets lift the whole horizon for an instant: the kick you feel, you see.
+    function drawSea(ctx, W, H, t) {
+      const target = 0.05 + 0.9 * Math.pow(heard.slow, 0.8) * (0.55 + 0.45 * heard.level);
+      seaLevel += (target - seaLevel) * 0.08;
+      const base = H * (1 - seaLevel) - H * 0.03 * heard.hit;
+      const b = heard.band, M = heard.spec.length;
       ctx.fillStyle = '#ffffff';
       ctx.beginPath();
       ctx.moveTo(0, H);
-      for (let x = 0; x <= W; x += 4) {
+      for (let x = 0; x <= W; x += 3) {
+        const u = x / W;
+        // bass in the middle, air at the edges — and READ BETWEEN the bins, so the spectrum
+        // arrives as a coastline instead of a staircase
+        const fi = Math.abs(u * 2 - 1) * (M - 1), i0 = fi | 0, fr = fi - i0;
+        const sp = heard.spec[i0] * (1 - fr) + heard.spec[Math.min(M - 1, i0 + 1)] * fr;
         const y = base
-          + Math.sin(x * 0.022 + bar * 2.6) * H * 0.025 * amp
-          + Math.sin(x * 0.011 - bar * 1.3 + 2) * H * 0.04 * amp;
+          + Math.sin(u * 6.0 + t * 0.70) * H * 0.055 * (0.25 + 2.0 * b[0])
+          + Math.sin(u * 17.0 - t * 1.70) * H * 0.030 * (0.20 + 1.8 * b[1])
+          + Math.sin(u * 41.0 + t * 3.30) * H * 0.014 * (0.10 + 2.2 * b[3])
+          - H * 0.13 * sp * (0.35 + 0.65 * heard.level);
         ctx.lineTo(x, y);
       }
       ctx.lineTo(W, H);
       ctx.closePath();
       ctx.fill();
     }
-    function drawViz(bar, energy) {
+    function drawViz() {
       if (!vizCtx) return;
-      const W = vizEl.width, H = vizEl.height;
+      listen();                                      // one read of the output per frame
+      const W = vizEl.width, H = vizEl.height, t = performance.now() / 1000;
       vizCtx.clearRect(0, 0, W, H);
-      if (!logoMask) { drawBars(vizCtx, bar, W, H); return; }   // plain spectrum until/without a logo
-      const tide = vizTide(bar);
-      const beat = Math.pow(1 - (bar * 4) % 1, 2);              // a fresh kick every beat, fading fast
-      const e = (energy === undefined) ? 0.6 : energy;
+      if (!logoMask) { drawBars(vizCtx, W, H); return; }   // plain spectrum until/without a picture
       revCtx.clearRect(0, 0, W, H);
-      drawSea(revCtx, bar, W, H, (0.06 + 0.92 * tide) * (0.3 + 0.7 * e), beat);
+      drawSea(revCtx, W, H, t);
       revCtx.globalCompositeOperation = 'destination-out';
-      revCtx.drawImage(logoMask, 0, 0);                // the picture is a HOLE in the water
+      revCtx.drawImage(logoMask, 0, 0);              // the picture is a HOLE in the water
       revCtx.globalCompositeOperation = 'source-over';
       vizCtx.drawImage(revCanvas, 0, 0);
     }
@@ -307,10 +382,12 @@ arrange(
       vizEl.classList.add('live');
       vizCtx.clearRect(0, 0, vizEl.width, vizEl.height);
       seaLevel = 0;
+      heard.level = heard.slow = heard.hit = lastLow = 0;
+      heard.band.fill(0); heard.spec.fill(0);
     }
-    function showViz(bar, energy) {                  // the back wall — coexists with videos over it
+    function showViz() {                             // the back wall — coexists with videos over it
       if (vizEl) vizEl.classList.add('live');
-      drawViz(bar, energy);
+      drawViz();
     }
     const vidsOff = () => {                          // a true filler stretch: backdrop alone
       if (activeVid) { setFilm(activeVid, 'off'); activeVid.pause(); activeVid = null; }
@@ -323,7 +400,7 @@ arrange(
       const v = fillerVids[((n % fillerVids.length) + fillerVids.length) % fillerVids.length];
       if (v !== activeVid) showVid(v, 0);
     }
-    function syncVideo(tl, bar, punch, energy) {
+    function syncVideo(tl, bar, punch) {
       let vidUp = false;
       if (hasFilm) {
         const starts = []; let acc = 0;
@@ -346,7 +423,7 @@ arrange(
       }
       if (!vidUp) vidsOff();
       // the back wall runs the WHOLE song (fallback spectrum only fills real gaps, never sits under video)
-      if (hasViz || !vidUp) showViz(bar, energy); else hideViz();
+      if (hasViz || !vidUp) showViz(); else hideViz();
     }
     const filmReset = () => {
       for (const v of allVids()) { try { v.pause(); } catch (e) {} setFilm(v, 'off'); }
@@ -372,19 +449,56 @@ arrange(
       if (tc) window.arrange = (...secs) => tc(...secs).slow(secs.reduce((a,s)=>a+s[0],0));
     }
 
-    // Preload voice clips + crate samples + the film clips BEFORE enabling play — each small clip
-    // must be ready so it plays instantly from frame 1 when its cue fires (no mid-song load hitch).
+    // ── album mode · framed by an album page (?album=1): auto-play when the gate opens, and
+    // report the one-loop finish so the album advances. The album's <iframe allow="autoplay">
+    // delegates the listener's single click to every track.
+    const QS = new URLSearchParams(location.search);
+    const ALBUM = QS.has('album') && window.parent !== window;
+    // &hold = preloaded by the album in a hidden frame: fill the gate, report ready, then WAIT
+    // for {cyb:'go'} — so the next track starts in milliseconds, not a load-gap.
+    const HOLD = ALBUM && QS.has('hold');
+
+    // Preload voice clips + crate samples + the film clips BEFORE enabling play. This must go
+    // through Strudel's OWN loadBuffer (not a bare fetch): Strudel decodes lazily at first
+    // trigger, and a long clip that isn't decoded in time misses its one scheduled chance —
+    // a voice line fires once, so a miss means a silent line. loadBuffer decodes into the same
+    // cache playback reads, keyed by URL, so the busted URL here must match samples() exactly.
     if (booted) {
+      const playBtn = document.getElementById('play');
+      playBtn.disabled = true;               // truly gated — not just a status line
       setStatus('loading voice…');
-      const urls = [...VOICE_FILES.map(f => VOICE_BASE + f),
-                    ...Object.values(SAMPLE_FILES).map(f => SAMPLE_BASE + f)];
-      const waits = urls.map(u => fetch(u + VOICE_BUST).catch(()=>{}));
+      const urls = [...VOICE_FILES.map(f => VOICE_BASE + f + VOICE_BUST),
+                    ...Object.values(SAMPLE_FILES).map(f => SAMPLE_BASE + f + VOICE_BUST)];
+      const ac = (typeof getAudioContext === 'function') ? getAudioContext() : null;
+      let ok = 0, bad = 0;
+      const tick = () => setStatus('loading voice… ' + (ok + bad) + '/' + urls.length
+                                   + (bad ? ' (' + bad + ' FAILED)' : ''));
+      const load1 = (u) => (ac && typeof loadBuffer === 'function') ? loadBuffer(u, ac) : fetch(u);
+      const load = (u, tries) => load1(u).catch(e => tries > 0 ? load(u, tries - 1) : Promise.reject(e));
+      const waits = urls.map(u => load(u, 2).then(() => { ok++; tick(); },
+                                                  () => { bad++; tick(); console.error('clip failed:', u); }));
       for (const v of allVids()) waits.push(new Promise(res => {
         if (v.readyState >= 3) return res();
         v.addEventListener('canplaythrough', res, { once: true });
         setTimeout(res, 8000);   // never hang the gate on a slow clip
       }));
-      Promise.all(waits).then(() => setStatus('ready — hit [ play ]'));
+      Promise.all(waits).then(() => {
+        playBtn.disabled = false;
+        setStatus(bad ? 'ready — but ' + bad + ' clip(s) FAILED (see console; they may start late)'
+                      : 'ready — hit [ play ]');
+        if (ALBUM) {
+          const go = () => { if (ac && ac.state === 'suspended') ac.resume().catch(() => {}); play(); };
+          if (HOLD) {
+            window.addEventListener('message', (e) => { if (e.data && e.data.cyb === 'go') go(); });
+            // Pre-compile the score while we wait in the wings so the hand-off doesn't pay
+            // evaluate()'s cost (part of the "skipped beat"). The AudioContext is still SUSPENDED
+            // here — nothing resumes it until go() — so this makes NO sound; we hush the primed
+            // pattern at once. go() then re-evaluates warm and starts.
+            Promise.resolve(evaluate(editor.value)).then(() => hush()).catch(() => {});
+            parent.postMessage({ cyb: 'song-ready' }, '*');
+          } else go();
+        }
+      });
     }
 
     // ── the arrangement eye · TIMELINE generated by tools/song/build.py (markers below) ──
@@ -404,18 +518,68 @@ arrange(
         strip.appendChild(b);
       });
     } else { strip.style.display = 'none'; }
-    let rafId = null, trackT0 = null;
+    let rafId = null, trackT0 = null, handedOff = false;
     function resolvedTimeline() {
       // "V3" entries are voice sections — their length lives in the score's `bars` array
       const m = editor.value.match(/let bars = \[([^\]]*)\]/);
       const barsArr = m && m[1].trim() ? m[1].split(',').map(Number) : [];
-      return TIMELINE.map(([b, l, p, e]) => [(typeof b === 'string') ? (barsArr[+b.slice(1)] || 4) : b, l, p,
-                                             (e === undefined) ? 0.6 : e]);
+      return TIMELINE.map(([b, l, p, e, vi]) => [(typeof b === 'string') ? (barsArr[+b.slice(1)] || 4) : b, l, p,
+                                                 (e === undefined) ? 0.6 : e,
+                                                 (vi === undefined) ? null : vi]);
     }
+    // ── the voice bus · BULLETPROOF one-shots ──
+    // Voice lines are NOT strudel events (a one-shot event can start late or be skipped when the
+    // main thread is busy rendering — and a line only fires once). Instead, at play we arm EVERY
+    // line directly on the WebAudio clock: buffers come from the same loadBuffer cache the gate
+    // filled, each source gets an absolute sample-accurate start time, and from then on the audio
+    // hardware fires them — main-thread jank can't touch a line again.
+    let voiceNodes = [];
+    function stopVoice() {
+      for (const s of voiceNodes) { try { s.stop(); } catch (e) {} }
+      voiceNodes = [];
+    }
+    async function armVoice(tl) {
+      if (!VOICE_FILES.length || typeof getAudioContext !== 'function' || typeof loadBuffer !== 'function') return;
+      const ac = getAudioContext();
+      const barSec = 240 / SONG_BPM;
+      const t0 = ac.currentTime + 0.1;       // strudel starts ~now; one small shared offset
+      let a = 0;
+      for (const row of tl) {
+        const vi = row[4];
+        if (vi != null && VOICE_FILES[vi]) {
+          try {
+            const buf = await loadBuffer(VOICE_BASE + VOICE_FILES[vi] + VOICE_BUST, ac);
+            const src = ac.createBufferSource(); src.buffer = buf;
+            const g = ac.createGain();
+            src.connect(g); g.connect(ac.destination);
+            // Shape the clip's OWN edges so a line never begins or ends on a hard digital cut: a
+            // quick fade-IN kills the onset click, and a longer fade-OUT tapers through the trailing
+            // breath ElevenLabs leaves on the tail (the "cut on the breath-in"). The body holds at
+            // 1.15 — only the very edges move, so no word ever loses level.
+            const at = t0 + a * barSec, dur = buf.duration, G = 1.15;
+            const fin = Math.min(0.012, dur * 0.25), fout = Math.min(0.14, dur * 0.5);
+            g.gain.setValueAtTime(0, at);
+            g.gain.linearRampToValueAtTime(G, at + fin);
+            g.gain.setValueAtTime(G, Math.max(at + fin, at + dur - fout));
+            g.gain.linearRampToValueAtTime(0, at + dur);
+            src.start(at);
+            voiceNodes.push(src);
+          } catch (e) { console.error('voice arm failed: line', vi + 1, e); }
+        }
+        a += row[0];
+      }
+    }
+    let cachedTl = null;                     // parsed once per play — not 60×/sec off the textarea
     function trackFrame() {
-      const tl = resolvedTimeline();
+      const tl = cachedTl || (cachedTl = resolvedTimeline());
       const total = tl.reduce((a, s) => a + s[0], 0);
       const bar = (performance.now() - trackT0) / 1000 / (240 / SONG_BPM);
+      // Album hand-off, EARLY: tell the album ~0.3s before our true end and keep playing our
+      // (near-silent) fade-out tail — the next track boots DURING that tail, so its first sound
+      // overlaps our last and the record-gap is filled, not skipped.
+      if (ALBUM && !handedOff && bar >= total - 0.3 / (240 / SONG_BPM)) {
+        handedOff = true; parent.postMessage({ cyb: 'song-done' }, '*');
+      }
       if (bar >= total) { finishLoop(); return; }   // one full pass through the arrangement → stop
       let acc = 0, idx = tl.length - 1;
       for (let i = 0; i < tl.length; i++) { if (bar < acc + tl[i][0]) { idx = i; break; } acc += tl[i][0]; }
@@ -431,12 +595,13 @@ arrange(
         const ph = (bar * 4) % 1;
         film.style.setProperty('--punch', tl[idx][2] ? String(1 + 0.16 * Math.pow(1 - ph, 3)) : '1');
       }
-      syncVideo(tl, bar, !!tl[idx][2], tl[idx][3]);
+      syncVideo(tl, bar, !!tl[idx][2]);
       rafId = requestAnimationFrame(trackFrame);
     }
     function trackStart() {
       if (!TIMELINE.length) return;
-      trackT0 = performance.now();
+      cachedTl = resolvedTimeline();
+      trackT0 = performance.now(); handedOff = false;   // fresh loop: not yet handed off
       if (rafId) cancelAnimationFrame(rafId);
       if (hasFilm || hasViz) filmReset();
       trackFrame();
@@ -449,11 +614,16 @@ arrange(
     }
 
     async function play() {
-      try { hush(); await evaluate(editor.value); setStatus('playing…'); trackStart(); }
+      try {
+        hush(); stopVoice();
+        await evaluate(editor.value);
+        armVoice(resolvedTimeline());        // every line scheduled on the audio clock, up front
+        setStatus('playing…'); trackStart();
+      }
       catch (e) { setStatus('error: ' + (e && e.message ? e.message : e), true); }
     }
-    function stop() { hush(); setStatus('stopped'); trackStop(); }
-    function finishLoop() { hush(); trackStop(); setStatus('done · one loop — hit [ play ] again'); }
+    function stop() { hush(); stopVoice(); setStatus('stopped'); trackStop(); }
+    function finishLoop() { hush(); stopVoice(); trackStop(); setStatus('done · one loop — hit [ play ] again'); if (ALBUM && !handedOff) parent.postMessage({ cyb: 'song-done' }, '*'); }
     document.getElementById('play').addEventListener('click', play);
     document.getElementById('stop').addEventListener('click', stop);
     editor.addEventListener('keydown', (e) => {

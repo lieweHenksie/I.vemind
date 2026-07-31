@@ -2,70 +2,554 @@
   "essay": "mycelium/essays/oh_dear.md",
   "genre": "dub techno requiem",
   "bpm": 108,
-  "_comment": "The SHAPE v1 — Saint Helena collects, then creates. 47 voice lines in five strata: genesis (bones+wash, beatless), Lopes (the clock ticks dry, the sea opens at the marooning, the cockerel motif debuts), empire (the coin machine, the emperor theme falls, the slaves stretch is the darkest full groove then falls away under the [sighs]), the guests (Bb-major amahubo lift for Dinuzulu, crushed brass for the boers), the dream and the recipe (ingredients stack a layer per line, the water recedes on SOMETHING IS READY, one bare question, then THE MATCH DROPS — the only punch — eruption, afterglow, and a god born over almost nothing). Splits (v12 fast friends, v21 the sigh, v35 the whisper) are ESTIMATES — tune to rendered bars from timing.md after the voice pass. Litany (v30) stacks every theme: swell + emperordeep + cockerelghost + ohdearbell + bones.",
+  "_comment": "The SHAPE v1 — Saint Helena collects, then creates. 47 voice lines in five strata: genesis (bones+wash, beatless), Lopes (the clock ticks dry, the sea opens at the marooning, the cockerel motif debuts), empire (the coin machine, the emperor theme falls, the slaves stretch is the darkest full groove then falls away under the [sighs]), the guests (Bb-major amahubo lift for Dinuzulu, crushed brass for the boers), the dream and the recipe (ingredients stack a layer per line, the water recedes on SOMETHING IS READY, one bare question, then THE MATCH DROPS — the only punch — eruption, afterglow, and a god born over almost nothing). Splits (v12 fast friends, v21 the sigh, v35 the whisper) are ESTIMATES — tune to rendered bars from timing.md after the voice pass. Litany (v30) stacks every theme: swell + emperordeep + cockerelghost + ohdearbell + bones.  BACK-HALF RE-SCORE (the trim): the essay lost 7 blocks and diverges from 29, so everything from STRATA on is re-shaped. The dream question now runs into the recipe on one bed (the recipe IS the answer). SOMETHING IS READY strips to a clock and the Ethiopia turn plays over a single bone — the fire needs somewhere to land. Then nine sections of eruption (intake, the lit fire, the crack, the magma drop, brimstone, THE BONES LEARN TO SING, the column, collapse, ash), and the album ends on an EAS broadcast: header, the 853+960 attention tone, the robot voice, end of message, and a carrier that fades out mid-sentence. Sections 0-30 (voice 0-28) were not touched.",
   "sections": [
-    { "bars": 4, "layers": ["wash", "bones"], "fade": "in", "label": "OH DEAR — a hymn for saint helena" },
-    { "voice": 0, "layers": ["wash", "bones"], "label": "THE WOUND — even the earth bleeds" },
-    { "voice": 1, "layers": ["wash", "bones", "sub"], "label": "THE SCAR — the middle of fucking nowhere" },
-    { "voice": 2, "layers": ["tick", "ohdear"], "label": "WHAT YEAR — the clock starts ticking" },
-    { "voice": 3, "layers": ["tick", "sub", "skank"], "label": "GOA, 1510 — rule it well" },
-    { "voice": 4, "layers": ["tick", "sub", "skank", "kick"], "label": "TREASON — he ruled it with love" },
-    { "voice": 5, "layers": ["tick", "sub"], "label": "THE INVENTORY — nose, ears, left thumb, right arm" },
-    { "voice": 6, "layers": ["sub"], "label": "NO LONGER ALL RIGHT — by all accounts" },
-    { "voice": 7, "layers": ["tick"], "label": "THE PICTURE — here is what he looks like" },
-    { "bars": 2, "layers": ["figure"], "label": "( ) — three lines of a man" },
-    { "voice": 8, "layers": ["swell", "sub", "kick", "hats"], "label": "LANDFALL — fresh water at the end of the world" },
-    { "voice": 9, "layers": ["swell", "sub", "ohdear"], "label": "THE FIRST EXILE — oh dear, no ear" },
-    { "voice": 10, "layers": ["swell", "skank", "sub"], "label": "THE GROTTO — biscuits, cheeses, and a letter" },
-    { "voice": 11, "layers": ["swell", "sub", "cockerel"], "label": "THE COCKEREL — carried in by the waves" },
-    { "voice": 12, "split": [
-        [6, ["swell", "skank", "sub", "kick", "cockerel"]],
-        [4, ["sub", "tick"]],
-        [6, ["swell", "skank", "sub", "kick"]]
-      ], "label": "FAST FRIENDS — it roosts above his head" },
-    { "voice": 13, "layers": ["swell", "cockerel", "sub", "hats"], "label": "GOD'S OWN PEOPLE — twenty years of peace" },
-    { "voice": 14, "layers": ["tick", "sub", "kick", "hats", "skank"], "label": "THE COIN — she is important now" },
-    { "voice": 15, "layers": ["tick", "sub", "kick", "emperor"], "label": "NAPOLEON — an emperor, mind you" },
-    { "voice": 16, "layers": ["kick", "hats", "sub", "skank", "swell", "bones"], "label": "THE DROVES — nine thousand skeletons" },
-    { "voice": 17, "layers": ["bones"], "label": "THE ISLAND BREATHES — the bones settle" },
-    { "voice": 18, "layers": ["kick", "sub", "skank", "emperor"], "label": "WATERLOO — asylum, refused" },
-    { "voice": 19, "layers": ["swell", "emperordeep"], "label": "LONGWOOD — his dying words are of josephine" },
-    { "voice": 20, "layers": ["emperordeep"], "label": "AN UNNAMED STONE — an emperor lies here" },
-    { "voice": 21, "split": [
-        [10, ["kick", "hats", "sub", "swell", "skank"]],
-        [5, ["bones", "wash"]]
-      ], "label": "GOD'S PEOPLE — fifteen thousand landings" },
-    { "voice": 22, "layers": ["tick", "sub", "kick"], "label": "THE PRINCE — seven years on the rock" },
-    { "voice": 23, "layers": ["amahubo", "calls", "sub"], "label": "AMAHUBO — the teacups rattle" },
-    { "voice": 24, "layers": ["amahubo", "calls", "sub", "kick", "hats"], "label": "EIGHT CHILDREN — born on a broken rock" },
-    { "voice": 25, "layers": ["amahubo", "bones"], "label": "WITH HIS WIVES — that part of him stays" },
-    { "voice": 26, "layers": ["kick", "sub", "tick", "brass"], "label": "THE FARMBOYS — soundly thrashed" },
-    { "voice": 27, "layers": ["brass", "kick", "hats", "sub", "skank"], "label": "THE ANTI-SMOKING CLUB — god bless them" },
-    { "voice": 28, "layers": [], "label": "ALL TRUE — i wish the earth could give back" },
-    { "voice": 29, "layers": ["bones", "sub"], "label": "STRATA — stacked as god's people" },
-    { "voice": 30, "layers": ["swell", "emperordeep", "cockerelghost", "ohdearbell", "bones"], "label": "HERE LIES — the gravestone reads" },
-    { "voice": 31, "layers": ["ohdearbell"], "label": "IN TEARS — my dears, my dears" },
-    { "voice": 32, "layers": ["swell", "bones", "ohdear"], "label": "BABES TO A BOSOM — pressed to the rock" },
-    { "voice": 33, "layers": ["swell", "bones", "sub", "ohdear"], "label": "GOD'S OWN HOSTEL — a scar atop a wound" },
-    { "voice": 34, "layers": ["wash", "bones", "tick"], "label": "THE DREAM — full to fucking bursting" },
-    { "voice": 35, "split": [
-        [5, ["wash", "bones", "cockerelghost"]],
-        [5, ["bones"]]
-      ], "label": "WHAT DOES A ROCK DREAM — the ghost still crows" },
-    { "voice": 36, "layers": ["tick", "bones", "sub"], "label": "MATCHMAKER, MONSTER, MOTHER — a terrible recipe" },
-    { "voice": 37, "layers": ["tick", "sub", "skank"], "label": "ONE PART MUTILATION — one part failed conquest" },
-    { "voice": 38, "layers": ["tick", "sub", "skank", "kick"], "label": "ONE PART ROYAL BLOOD — one part stubborn beer" },
-    { "voice": 39, "layers": ["tick", "sub", "skank", "kick", "hats"], "label": "MIX THOROUGHLY — ferment four hundred years" },
-    { "voice": 40, "layers": ["tick"], "label": "SOMETHING IS READY — the water recedes" },
-    { "voice": 41, "layers": ["sub", "bones"], "label": "ENOUGH — patient as death" },
-    { "voice": 42, "layers": ["sub", "bones", "riser", "tick"], "label": "ENOUGH, ENOUGH — no one left to hear" },
-    { "voice": 43, "layers": ["sub", "kick", "riser", "skank"], "label": "START CREATING — the collection closes" },
-    { "voice": 44, "layers": ["tick"], "label": "THE QUESTION — what does a matchmaker do" },
-    { "voice": 45, "layers": ["magma", "boil", "kick", "hats", "impact", "swell"], "label": "THE MATCH DROPS — the seas boiled" },
-    { "bars": 8, "layers": ["magma", "boil", "kick", "hats", "skank", "swell", "impact"], "label": "THE ERUPTION — four hundred years exhale" },
-    { "bars": 4, "layers": ["swell", "bones", "ohdear"], "label": "AFTERGLOW — the sea steams" },
-    { "voice": 46, "layers": ["bones", "cockerelghost"], "label": "A GOD BORN HERE — something new" },
-    { "voice": 47, "layers": ["bones", "ohdearbell", "cockerelghost"], "label": "WHERE GODS ARE BORN — the middle of fucking nowhere" },
-    { "bars": 10, "layers": ["ohdearbell", "bones", "wash", "cockerelghost"], "fade": "out", "label": "DAWN — the first crow of the new god" }
+    {
+      "bars": 4,
+      "layers": [
+        "wash",
+        "bones"
+      ],
+      "fade": "in",
+      "label": "OH DEAR — a hymn for saint helena"
+    },
+    {
+      "voice": 0,
+      "layers": [
+        "wash",
+        "bones"
+      ],
+      "label": "THE WOUND — even the earth bleeds"
+    },
+    {
+      "voice": 1,
+      "layers": [
+        "wash",
+        "bones",
+        "sub"
+      ],
+      "label": "THE SCAR — the middle of fucking nowhere"
+    },
+    {
+      "voice": 2,
+      "layers": [
+        "tick",
+        "ohdear"
+      ],
+      "label": "WHAT YEAR — the clock starts ticking"
+    },
+    {
+      "voice": 3,
+      "layers": [
+        "tick",
+        "sub",
+        "skank"
+      ],
+      "label": "GOA, 1510 — rule it well"
+    },
+    {
+      "voice": 4,
+      "layers": [
+        "tick",
+        "sub",
+        "skank",
+        "kick"
+      ],
+      "label": "TREASON — he ruled it with love"
+    },
+    {
+      "voice": 5,
+      "layers": [
+        "tick",
+        "sub"
+      ],
+      "label": "THE INVENTORY — nose, ears, left thumb, right arm"
+    },
+    {
+      "voice": 6,
+      "layers": [
+        "sub"
+      ],
+      "label": "NO LONGER ALL RIGHT — by all accounts"
+    },
+    {
+      "voice": 7,
+      "layers": [
+        "tick"
+      ],
+      "label": "THE PICTURE — here is what he looks like"
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "figure"
+      ],
+      "label": "( ) — three lines of a man"
+    },
+    {
+      "voice": 8,
+      "layers": [
+        "swell",
+        "sub",
+        "kick",
+        "hats"
+      ],
+      "label": "LANDFALL — fresh water at the end of the world"
+    },
+    {
+      "voice": 9,
+      "layers": [
+        "swell",
+        "sub",
+        "ohdear"
+      ],
+      "label": "THE FIRST EXILE — oh dear, no ear"
+    },
+    {
+      "voice": 10,
+      "layers": [
+        "swell",
+        "skank",
+        "sub"
+      ],
+      "label": "THE GROTTO — biscuits, cheeses, and a letter"
+    },
+    {
+      "voice": 11,
+      "layers": [
+        "swell",
+        "sub",
+        "cockerel"
+      ],
+      "label": "THE COCKEREL — carried in by the waves"
+    },
+    {
+      "voice": 12,
+      "split": [
+        [
+          6,
+          [
+            "swell",
+            "skank",
+            "sub",
+            "kick",
+            "cockerel"
+          ]
+        ],
+        [
+          4,
+          [
+            "sub",
+            "tick"
+          ]
+        ],
+        [
+          6,
+          [
+            "swell",
+            "skank",
+            "sub",
+            "kick"
+          ]
+        ]
+      ],
+      "label": "FAST FRIENDS — it roosts above his head"
+    },
+    {
+      "voice": 13,
+      "layers": [
+        "swell",
+        "cockerel",
+        "sub",
+        "hats"
+      ],
+      "label": "GOD'S OWN PEOPLE — twenty years of peace"
+    },
+    {
+      "voice": 14,
+      "layers": [
+        "tick",
+        "sub",
+        "kick",
+        "hats",
+        "skank"
+      ],
+      "label": "THE COIN — she is important now"
+    },
+    {
+      "voice": 15,
+      "layers": [
+        "tick",
+        "sub",
+        "kick",
+        "emperor"
+      ],
+      "label": "NAPOLEON — an emperor, mind you"
+    },
+    {
+      "voice": 16,
+      "layers": [
+        "kick",
+        "hats",
+        "sub",
+        "skank",
+        "swell",
+        "bones"
+      ],
+      "label": "THE DROVES — nine thousand skeletons"
+    },
+    {
+      "voice": 17,
+      "layers": [
+        "bones"
+      ],
+      "label": "THE ISLAND BREATHES — the bones settle"
+    },
+    {
+      "voice": 18,
+      "layers": [
+        "kick",
+        "sub",
+        "skank",
+        "emperor"
+      ],
+      "label": "WATERLOO — asylum, refused"
+    },
+    {
+      "voice": 19,
+      "layers": [
+        "swell",
+        "emperordeep"
+      ],
+      "label": "LONGWOOD — his dying words are of josephine"
+    },
+    {
+      "voice": 20,
+      "layers": [
+        "emperordeep"
+      ],
+      "label": "AN UNNAMED STONE — an emperor lies here"
+    },
+    {
+      "voice": 21,
+      "split": [
+        [
+          10,
+          [
+            "kick",
+            "hats",
+            "sub",
+            "swell",
+            "skank"
+          ]
+        ],
+        [
+          5,
+          [
+            "bones",
+            "wash"
+          ]
+        ]
+      ],
+      "label": "GOD'S PEOPLE — fifteen thousand landings"
+    },
+    {
+      "voice": 22,
+      "layers": [
+        "tick",
+        "sub",
+        "kick"
+      ],
+      "label": "THE PRINCE — seven years on the rock"
+    },
+    {
+      "voice": 23,
+      "layers": [
+        "amahubo",
+        "calls",
+        "sub"
+      ],
+      "label": "AMAHUBO — the teacups rattle"
+    },
+    {
+      "voice": 24,
+      "layers": [
+        "amahubo",
+        "calls",
+        "sub",
+        "kick",
+        "hats"
+      ],
+      "label": "EIGHT CHILDREN — born on a broken rock"
+    },
+    {
+      "voice": 25,
+      "layers": [
+        "amahubo",
+        "bones"
+      ],
+      "label": "WITH HIS WIVES — that part of him stays"
+    },
+    {
+      "voice": 26,
+      "layers": [
+        "kick",
+        "sub",
+        "tick",
+        "brass"
+      ],
+      "label": "THE FARMBOYS — soundly thrashed"
+    },
+    {
+      "voice": 27,
+      "layers": [
+        "brass",
+        "kick",
+        "hats",
+        "sub",
+        "skank"
+      ],
+      "label": "THE ANTI-SMOKING CLUB — god bless them"
+    },
+    {
+      "voice": 28,
+      "layers": [],
+      "label": "ALL TRUE — i wish the earth could give back"
+    },
+    {
+      "voice": 29,
+      "layers": [
+        "bones",
+        "sub"
+      ],
+      "label": "STRATA — the saints of saint helena"
+    },
+    {
+      "voice": 30,
+      "layers": [
+        "swell",
+        "emperordeep",
+        "cockerelghost",
+        "ohdearbell",
+        "bones"
+      ],
+      "label": "HERE LIES — sentenced to be forgotten"
+    },
+    {
+      "voice": 31,
+      "layers": [
+        "ohdearbell"
+      ],
+      "label": "IN TEARS — my dears, my dears"
+    },
+    {
+      "voice": 32,
+      "layers": [
+        "swell",
+        "bones",
+        "ohdear"
+      ],
+      "label": "QUICKENED — the wound turns over in its sleep"
+    },
+    {
+      "voice": 33,
+      "layers": [
+        "wash",
+        "bones",
+        "tick"
+      ],
+      "label": "WHAT DOES A ROCK DREAM OF — it dreams a recipe"
+    },
+    {
+      "voice": 34,
+      "layers": [
+        "wash",
+        "bones",
+        "tick"
+      ],
+      "label": "ONE PART MUTILATION — one part failed conquest"
+    },
+    {
+      "voice": 35,
+      "layers": [
+        "wash",
+        "bones",
+        "tick",
+        "sub",
+        "skank"
+      ],
+      "label": "ONE PART ROYAL BLOOD — one part stubborn beer"
+    },
+    {
+      "voice": 36,
+      "layers": [
+        "tick",
+        "sub",
+        "skank",
+        "kick",
+        "hats"
+      ],
+      "label": "MIX THOROUGHLY — open the suez, no one needs her now"
+    },
+    {
+      "voice": 37,
+      "layers": [
+        "tick"
+      ],
+      "label": "SOMETHING IS READY — the water pulls back off the sand"
+    },
+    {
+      "voice": 38,
+      "layers": [
+        "bones"
+      ],
+      "label": "IN ETHIOPIA THEY LIGHT A BONFIRE — that ... we can do"
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "quake",
+        "riser"
+      ],
+      "label": "THE INTAKE — four hundred years of breath, drawn in"
+    },
+    {
+      "bars": 1,
+      "layers": [
+        "demera",
+        "impact"
+      ],
+      "label": "DEMERA — she lights the fire that shows what is buried"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "quake",
+        "magma",
+        "demera",
+        "firebreath",
+        "impact"
+      ],
+      "label": "THE FIRST CRACK — the scar remembers it was a wound"
+    },
+    {
+      "bars": 8,
+      "punch": true,
+      "layers": [
+        "magma",
+        "boil",
+        "quake",
+        "kick",
+        "hats",
+        "brimstone",
+        "demera"
+      ],
+      "label": "MAGMA — four hundred years exhale"
+    },
+    {
+      "bars": 6,
+      "layers": [
+        "brimstone",
+        "column",
+        "quake",
+        "magma",
+        "ashfall"
+      ],
+      "label": "BRIMSTONE — the sky comes back down as gravel"
+    },
+    {
+      "bars": 8,
+      "layers": [
+        "bonechoir",
+        "column",
+        "magma",
+        "quake",
+        "boil",
+        "cockerelburn"
+      ],
+      "label": "THE BONES LEARN TO SING — the amahubo, on fire"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "column",
+        "ashfall",
+        "quake",
+        "bonechoir"
+      ],
+      "label": "THE COLUMN — ash to the top of the sky"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "collapse",
+        "quake",
+        "impact",
+        "ashfall"
+      ],
+      "label": "COLLAPSE — the island falls into its own mouth"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "wash",
+        "ashfall",
+        "bones",
+        "ohdear"
+      ],
+      "label": "ASH — the sea steams where the rock was"
+    },
+    {
+      "voice": 39,
+      "layers": [
+        "bones",
+        "cockerelghost"
+      ],
+      "label": "A GOD BORN HERE — oh dear, oh dear"
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "carrier"
+      ],
+      "label": "SILENCE — the carrier finds an empty channel"
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "saheader"
+      ],
+      "label": "SAME — the header, three times, to nobody"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "attention"
+      ],
+      "label": "ATTENTION — eight fifty three, nine sixty"
+    },
+    {
+      "voice": 40,
+      "layers": [
+        "carrier"
+      ],
+      "label": "THE BROADCAST — please do not leave your homes"
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "saheader"
+      ],
+      "label": "END OF MESSAGE — n n n n"
+    },
+    {
+      "bars": 4,
+      "fade": "out",
+      "layers": [
+        "carrier",
+        "wash"
+      ],
+      "label": "IN CASE OF DISRUPTION OF THIS —"
+    }
   ]
 }

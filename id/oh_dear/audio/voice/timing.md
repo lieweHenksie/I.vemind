@@ -31,22 +31,15 @@
 | 26 | 27.04 | 14 | More prisoners arrive, from Africa too, but  |
 | 27 | 28.56 | 14 | Of these men, some are vulgar, but even here |
 | 28 | 9.84 | 6 | [deadpan] This much, all is true. What comes |
-| 29 | 5.20 | 4 | Like strata are stacked God’s People while S |
+| 29 | 3.76 | 3 | Like strata are stacked God’s People. The Sa |
 | 30 | 17.68 | 9 | Oh dear, here lies the Portuguese Renegade,  |
 | 31 | 3.60 | 3 | “My dears, my dears,” says Saint Helena in t |
-| 32 | 10.56 | 6 | The bones and the harmonies, the clubs and t |
-| 33 | 11.36 | 7 | This rock, a scar in the ocean, sitting atop |
-| 34 | 4.48 | 4 | The island, full to fucking bursting now, be |
-| 35 | 18.72 | 10 | What does a rock dream of? Oh dear. What doe |
-| 36 | 8.40 | 5 | Saint Helena, matchmaker, monster, mother—ha |
-| 37 | 14.48 | 8 | One part mutilation (see: Lopes, Fernão). On |
-| 38 | 15.36 | 8 | One part royal blood in exile, wives singing |
-| 39 | 9.12 | 6 | Mix thoroughly with volcanic soil. Let ferme |
-| 40 | 1.12 | 2 | Something is ready. |
-| 41 | 4.16 | 3 | Saint Helena, patient as death, decides enou |
-| 42 | 13.20 | 7 | Enough lonely men seeking solitude. Enough e |
-| 43 | 6.08 | 4 | The island decides to stop collecting and st |
-| 44 | 3.12 | 3 | What does a matchmaker do when she's gathere |
-| 45 | 9.76 | 6 | She makes a fucking match — and all the worl |
-| 46 | 5.44 | 4 | [whispers] Oh dear, oh dear … something new  |
-| 47 | 9.60 | 6 | [whispers] This is where gods are born: not  |
+| 32 | 7.28 | 5 | This rock, a scar in the ocean, sitting atop |
+| 33 | 1.68 | 2 | What does a rock dream of? |
+| 34 | 16.72 | 9 | One part mutilation (see: Lopes, Fernão). On |
+| 35 | 17.20 | 9 | One part royal blood in exile, wives singing |
+| 36 | 9.60 | 6 | [angry] Mix thoroughly with volcanic soil. L |
+| 37 | 1.60 | 2 | [passionate] Something is ready. |
+| 38 | 8.00 | 5 | [serious] In Ethiopia, the first Saint Helen |
+| 39 | 3.52 | 3 | [whispers] Oh dear, oh dear … a god born her |
+| 40 | 16.80 | 9 | robot: This message is transmitted at the re |

@@ -11,16 +11,21 @@ Build or tend the album: $ARGUMENTS   ·   `<album-name> [track track …]`  or 
 is the album (create or update). Bare name: a **repair/verify pass** on the existing album.
 Read `cookbook/strudel/album.md` first — the hallway anatomy, the hooks, the edge laws.
 
-**Step 1 — the hallway.** Create/update the album page: `TRACKS` list (src `../<track>/`,
-display name, one-line sub like `dub techno requiem`), the album title, the `song-done`
-listener, the `<iframe allow="autoplay">`. Hand-authored, self-contained, cyBorge's palette.
+**Step 1 — the hallway.** Create/update `tracks.js` (the running order, shared by the hallway
+and the reading room: `src` `../<track>/`, `essay` = its file under `mycelium/essays/` — check,
+it isn't always the folder name — display name, one-line sub like `dub techno requiem`) and the
+album page: title, the `song-done` listener, the `<iframe allow="autoplay">`, an `essay` link on
+every chip. Hand-authored, self-contained, cyBorge's palette. Every track needs a row in
+`tracks.js` and an essay that resolves — a track in one page and not the other is the one bug
+this file exists to prevent.
 
 **Step 2 — every track album-ready.** For each track, confirm its page carries the template's
-album hooks (`const ALBUM`, auto-play at gate-open, `song-done` in finishLoop). A stale page
-gets re-scaffolded: **check `audio/voice/.render-manifest.json` against the essay's blocks
-FIRST** (mismatch = compose re-rolls takes — surface it and ask); then
-`cp cookbook/strudel/template.html id/<track>/index.html` + `compose.py <track>` (voice songs)
-or `build.py` (crate jams, no essay).
+album hooks (`const ALBUM`, auto-play at gate-open, `song-done` in finishLoop). A page on an
+older shell is brought forward with **`python3 tools/song/reshell.py <track>`** — it keeps the
+score byte-identical and re-drops it into today's template, so no voice render is involved. If
+it refuses (a TIMELINE from before the voice bus), recompile with `build.py` first, and
+**check `audio/voice/.render-manifest.json` against the essay's blocks before any `compose.py`**
+(mismatch = re-rolled takes — surface it and ask).
 
 **Step 3 — the edge pass, pair by pair.** For each adjacent pair (and the album's first intro +
 last outro), per the recipe's laws:
@@ -35,9 +40,11 @@ last outro), per the recipe's laws:
 - Labels on edge sections are lyrics like all labels (`"THE DOOR — tough times, walk in"`).
 
 **Step 4 — rebuild + verify.** `build.py` per touched track (edges never need a voice render).
-Grep each page for its two `postgain(saw.range` ramps and the album hooks; HTTP-check every
-page. Report the bridge story pair by pair — what each outro hands over, what each intro
-answers — and what was deliberately left. The human walks the hallway before any push.
+Grep each page for its two `postgain(saw.range` ramps and the album hooks; serve with
+`python3 tools/serve.py` (never `python3 -m http.server` — it lets the browser cache the hallway
+and play you an old song) and HTTP-check every page **and every essay** in `tracks.js`. Report
+the bridge story pair by pair — what each outro hands over, what each intro answers — and what
+was deliberately left. The human walks the hallway before any push.
 
 ---
 The songs are rooms; you only ever touch the doorframes.

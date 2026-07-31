@@ -1,0 +1,7 @@
+{
+  "_comment": "nature-was-a-gift's SOUND — the doorframe into nice_ron (E minor, 140). No drum, no groove: the line gets the whole room. boxforest IS theGodInUrhead's boxtoforest, the music box already walking nice_ron's bell cell out of the ward; meadowhush is nice_ron's softpad held on its first chord. towardmeadow lands on nice_ron's exact opening [e3,g3,b3] and fades, while meadowbell (nice_ron's belltale) takes the box's phrase over — the last thing you hear is the next song's own voice. Overrides cookbook default; uses only these four.",
+  "boxforest": "note(\"<[e4 ~ g4 ~] [b3 ~ e4 ~]>\").s(\"triangle\").decay(0.5).sustain(0).delay(0.3).delaytime(0.444).room(0.8).gain(0.18)",
+  "meadowhush": "note(\"[e3,g3,b3]\").s(\"sawtooth\").attack(2).release(3).lpf(560).gain(0.2).room(0.9)",
+  "towardmeadow": "note(\"[e3,g3,b3]\").s(\"sawtooth\").attack(2).release(3).lpf(520).gain(0.22).room(0.92)",
+  "meadowbell": "note(\"<e4 g4 b4 a4>\").s(\"triangle\").attack(0.4).release(1.4).lpf(1400).room(0.85).gain(0.26)"
+}

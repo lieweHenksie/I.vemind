@@ -2,7 +2,7 @@
   "essay": "mycelium/essays/demi_demi.md",
   "genre": "trance",
   "bpm": 138,
-  "_comment": "The SHAPE v5 — the couplet, in order, vosk-verified. Suspense says TOUGH TIME NEVER LASTS; the payoff ONLY TOUGH PEOPLE LAST lands on the first bar of DROP 1 (stab holds back until the payoff has spoken); resay says the setup again; DROP 2 answers with the solo. One voice at a time everywhere; all else unchanged from v4.",
+  "_comment": "The SHAPE v6 — the couplet, in order, vosk-verified, narrator line moved out. Suspense says TOUGH TIME NEVER LASTS; the payoff ONLY TOUGH PEOPLE LAST lands on the first bar of DROP 1 (stab holds back until the payoff has spoken); resay says the setup again; DROP 2 answers with the solo. One voice at a time everywhere. The deadpan closing line 'He's wrong of course…' now lives in id/intermezzo-1/ (the doorframe into theGodInUrhead), so THE WARD AHEAD is purely instrumental — its D-minor gauze hands straight to the intermezzo, which holds the line over that same gauze. demi_demi is now a pure crate jam (all vocals are samples).",
   "sections": [
     {
       "bars": 4,
@@ -141,7 +141,6 @@
       "label": "outro — murmur into the pad"
     },
     {
-      "voice": 0,
       "bars": 4,
       "fade": "out",
       "layers": [
@@ -149,7 +148,7 @@
         "gauzeahead",
         "monitorghost"
       ],
-      "label": "THE WARD AHEAD — the rave dims to gauze"
+      "label": "THE WARD AHEAD — the rave dims to gauze, the door swings open"
     }
   ]
 }

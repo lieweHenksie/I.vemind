@@ -58,6 +58,11 @@ Research for *ideas*; author with the *safe* toolkit.
   rendered bars at THIS bpm** (a slower song = fewer bars per line). Reserve it for lines that earn it.
 - **Instrumental** sections where the arc asks — breakdown, bridge, solo, climax, outro — shaped by
   the genre (a trance drop ≠ a trip-hop beat-drop).
+- **Make it MOVE — never stack static loops.** A section that holds the same ≤2 layers unchanged
+  for many bars is exactly what reads as *too simple*. Evolve the arrangement, don't just add to it:
+  give a layer a `vary` preset (`["bass","double"]`, `{"l":"arp","vary":"ghost"}` — see the table in
+  `arrangement.md`), put a `fill` on an instrumental section's last bar for the lift into a change,
+  and vary the density across the arc. Build tension by transforming layers, not only by piling them on.
 
 **Step 4 — author the SOUND (`palette.json`), from the mood + the research.** Write
 `id/<name>/palette.json` — a JSON map of instrument **name → Strudel code** overriding the cookbook
@@ -69,6 +74,11 @@ fall back.
   Never delete `_samples` entries; an unused sample just stays shelved.
 - **One coherent key/mode** across all layers. Give it its **own riffs**, not the defaults
   transposed — a fresh bass rhythm, chord voicings, lead contour, the genre's signature textures.
+- **Give layers internal life** — an instrument that plays one identical bar forever is the other
+  half of *too simple*. Author motion INTO the sound: chord/riff alternation (`<[..] [..] [..]>` so
+  each cycle differs), a filter that opens over bars (`lpf(sine.range(..).slow(8))`), the odd
+  `.every(n,…)`/`.sometimesBy(..)` turn. And write **at least one counter-melody or answering
+  phrase** that converses with the lead — a call-and-response, not just a pad holding chords.
 - **Valid Strudel only** — the cookbook's function vocabulary (`note`, `s`, `lpf`, `lpq`, `hpf`,
   `gain`, `sine.range(..).slow(..)`, `attack`/`decay`/`sustain`/`release`, `delay`/`delaytime`/
   `delayfeedback`, `room`, `shape`, `saw.range`). Note names: flats `bb`/`eb`, sharps `f#`.
@@ -84,7 +94,9 @@ fall back.
 
 Shape schema: `{ "essay": "mycelium/essays/<name>.md", "genre": "…", "bpm": 120, "sections": [ … ] }`
 — sections are `{bars, layers, label}` (instrumental) · `{voice, layers, label}` (a line) ·
-`{voice, split:[[bars,layers],…], label}` (a line with a mid-sentence drop). Record `essay` (the
+`{voice, split:[[bars,layers],…], label}` (a line with a mid-sentence drop). A **layer** is a
+name (`"bass"`) or a varied name (`["bass","double"]` / `{"l":"bass","vary":"preset"}`); an
+instrumental section may add `"fill":"inst"` (a lift on its last bar). Record `essay` (the
 words) and `genre` (what type of song this is). Sound schema:
 `{ "_comment": "…", "bass": "<strudel>", "arp": "<strudel>", … }`.
 
@@ -92,10 +104,11 @@ words) and `genre` (what type of song this is). Sound schema:
 before the em-dash = title, after = subtitle — so a label is a full invocation
 (`"THE SNEEZE — the forest holds its breath"`), never a comment. Side effects to wield: a label
 containing **"drop"** flags the section as a punch (the film bounces; use only on real drops —
-beware phrases like "beat drops out"; a wordless drop can set `"punch": true`); each row's
-**layer count vs the song's max** sets the sea's height on screen, so density is also staging —
-thin the layers before a drop and the water visibly recedes. The essay's words themselves reach
-the page automatically (the typewriter); the labels are YOURS to write.
+beware phrases like "beat drops out"; a wordless drop can set `"punch": true`). Density is also
+staging: the sea listens to the actual output, so thinning the layers before a drop makes the
+water recede *because the room got quieter* — and a loud sparse section will flood it anyway.
+The spoken words are read in the album's reading room, never printed on the stage; on screen the
+labels are the only words there are, so write every one.
 
 **Step 6 — report; don't build it.** Name the **genre**, describe the **arc** and the **sound**
 (key/mode, feel, signature moves, how it differs from the default / the previous take). Then hand

@@ -77,43 +77,28 @@ Of these men, some are vulgar, but even here are found God’s people. A coffee 
 
 [deadpan] This much, all is true. What comes next isn't — but I wish it was. [sad] I wish the earth could give back what we have given it.
 
-Like strata are stacked God’s People while Saint Helena sits patient as bones.
+Like strata are stacked God’s People. The Saints of Saint Helena. 
 
 Oh dear, here lies the Portuguese Renegade, blessed by the pope and Islam, an emperor alone, thousands of unnamed slaves with no hope for home, Zulu wives, boer graves, sentenced to be forgotten in the middle of nowhere, the middle of fucking nowhere they’ll tell you.
 
 “My dears, my dears,” says Saint Helena in tears.
 
-The bones and the harmonies, the clubs and the bricks. The coffee and the trees, the goats and one cockerel are all now pressed to the rock as babes to a bosom.
+This rock, a scar in the ocean, sitting atop a wound in the earth is quickened. It dreams.
 
-This rock, a scar in the ocean, sitting atop a wound in the earth. Great figures of history, shipped in and out of their volcanic hostel. God’s own hostel.
-
-The island, full to fucking bursting now, begins to dream.
-
-What does a rock dream of? Oh dear. What does a scar dream when pressed with so much longing, so much loneliness, so much song? [whispers] The bones hum beneath the soil. The harmonies settle in the stone. The cockerel's ghost still crows at dawn.
-
-Saint Helena, matchmaker, monster, mother—has collected her materials.
-The island has become a recipe. A terrible recipe.
+What does a rock dream of? 
 
 One part mutilation (see: Lopes, Fernão). One part failed conquest (see: Bonaparte, Napoleon). Fifteen thousand parts interrupted freedom, half of it staying on as calcium (see: the bones, oh dear, the bones).
 
 One part royal blood in exile, wives singing their babies into the ground (see: Dinuzulu). One part stubborn European offshoot civilization, brewing beer because what else do you do on a rock in the Atlantic (see: the anti-smoking club, God bless them).
 
-Mix thoroughly with volcanic soil. Let ferment for four hundred years. Open the Suez Canal (so no one even needs the island any more).
+[angry] Mix thoroughly with volcanic soil. Let ferment for four hundred years. [wrathful] Open the Suez Canal (so no one even needs the island any more).
 
-Something is ready.
+[passionate] Something is ready.
 
-Saint Helena, patient as death, decides enough.
+[serious] In Ethiopia, the first Saint Helena, whom the island is named after, is celebrated with bonfire. [bitter] That ... we can do. 
 
-Enough lonely men seeking solitude. Enough emperors sent to rot. Enough songs pressed into stone with no one to hear them. Enough coffee houses built by men who will never go home.
+<!-- here we should burn the earth down! fire and brimstone and base and noise. -->
 
-The island decides to stop collecting and start creating.
-Oh dear, oh dear.
+[whispers] Oh dear, oh dear … a god born here.
 
-What does a matchmaker do when she's gathered all she must?
-
-She makes a fucking match — and all the world did tremble as she struck her match.
-The seas boiled where those bones lay.
-
-[whispers] Oh dear, oh dear … something new — a god born here.
-
-[whispers] This is where gods are born: not in heavens, not in temples — in the middle of fucking nowhere, where enough bones learn to sing.
+robot: This message is transmitted at the request of the president in case of emergencies. A supervolcano has erupted off the coast of Africa. Please shelter. Please do not leave your homes for the next two days, minimum. In case of disruption of this message

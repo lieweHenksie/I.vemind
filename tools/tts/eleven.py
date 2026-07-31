@@ -60,6 +60,35 @@ def blocks_from(md):
     return out
 
 
+# A block may name its speaker: `robot: this is an emergency broadcast` renders with
+# `robot_voice_id` from .env instead of the narrator. One token, then a colon, at the very start
+# of the block — so a sentence with a colon in it ("Things scraped off with clam shells:") is
+# never mistaken for a cue. The prefix STAYS in the essay and in the render manifest, so changing
+# who speaks a line is a change like any other and re-renders exactly that line.
+SPEAKER = re.compile(r'^([A-Za-z][A-Za-z0-9_]*):[ \t]*')
+
+
+def speaker_of(block):
+    """(speaker or None, the words actually spoken) — the cue is direction, never read aloud."""
+    m = SPEAKER.match(block)
+    return (None, block) if not m else (m.group(1).lower(), block[m.end():])
+
+
+def resolve_voices(blocks, default_id):
+    """Map every speaker in the essay to a voice_id BEFORE spending anything on renders."""
+    voices = {None: default_id}
+    for b in blocks:
+        who, _ = speaker_of(b)
+        if who is None or who in voices:
+            continue
+        vid = read_env_optional(f"{who}_voice_id")
+        if not vid:
+            sys.exit(f"a line is marked `{who}:` but .env has no `{who}_voice_id`.\n"
+                     f"  add it, or drop the prefix if the narrator should read that line.")
+        voices[who] = vid
+    return voices
+
+
 def clone_voice(key, sample, name="cyBorge"):
     print(f"cloning a voice from {sample} …")
     r = subprocess.run(
@@ -117,8 +146,13 @@ def patch_bars(index_path, bars):
 
 
 def patch_voice_files(index_path, blocks):
-    """Sync VOICE_FILES + VOICE_TEXTS in index.html to the current lines. The texts feed the
-    page's typewriter (words appear as spoken); [tags] are performance notes — stripped."""
+    """Sync VOICE_FILES + VOICE_TEXTS in index.html to the current lines.
+
+    VOICE_FILES is what the page's voice bus arms. VOICE_TEXTS is the spoken words as data,
+    kept beside them so the page carries a record of what it says — nothing on the stage prints
+    them (the writing is read in the album's reading room). [tags] are performance notes and a
+    leading `speaker:` is a casting cue — both are direction, so neither is part of the words.
+    """
     n = len(blocks)
     if not index_path.exists():
         return
@@ -127,7 +161,7 @@ def patch_voice_files(index_path, blocks):
     if S not in txt or E not in txt:
         print("(no VOICE-FILES markers in index.html — skipped)"); return
     files = ", ".join(f"'line-{i:02d}.wav'" for i in range(1, n + 1))
-    texts = ", ".join(json.dumps(re.sub(r"\[[^\]]*\]", "", b).replace("\n", " ").strip(),
+    texts = ", ".join(json.dumps(re.sub(r"\[[^\]]*\]", "", speaker_of(b)[1]).replace("\n", " ").strip(),
                                  ensure_ascii=False) for b in blocks)
     block = f"{S}\n    const VOICE_FILES = [{files}];\n    const VOICE_TEXTS = [{texts}];\n    {E}"
     # lambda replacement: texts hold escapes (\" …) that re.sub would misread as group refs
@@ -172,8 +206,10 @@ def main():
             prev = []
 
     blocks = blocks_from(pathlib.Path(a.essay).read_text())
+    voices = resolve_voices(blocks, voice_id)
     only = {int(x) for x in a.only.split(",")} if a.only else None
-    print(f"{len(blocks)} blocks · model {MODEL} · voice {voice_id}"
+    cast = "".join(f" · {w}:{v}" for w, v in voices.items() if w)
+    print(f"{len(blocks)} blocks · model {MODEL} · voice {voice_id}{cast}"
           + (f" · only {sorted(only)}" if only else "") + (" · --all" if a.all else ""))
     bar_s = 240 / a.bpm
     bars, durs = [], []
@@ -187,16 +223,18 @@ def main():
             do = True
         else:
             do = changed                      # default: only edited / new / missing lines
+        who, said = speaker_of(b)
         if do:
-            prev_ctx = blocks[i - 2] if i >= 2 else None
-            nxt_ctx = blocks[i] if i < len(blocks) else None
-            tts(key, voice_id, b, p, prev_ctx, nxt_ctx)
+            prev_ctx = speaker_of(blocks[i - 2])[1] if i >= 2 else None
+            nxt_ctx = speaker_of(blocks[i])[1] if i < len(blocks) else None
+            tts(key, voices[who], said, p, prev_ctx, nxt_ctx)
             note = "NEW" if is_new else ("changed" if changed else "forced")
         else:
             note = "unchanged"
         d = wav_dur(p); durs.append(d)
         bars.append(math.ceil(d / bar_s) + 1)
-        print(f"  [{i:02d}] {d:5.2f}s  {bars[-1]}b  {(b[:34]):34}  ({note})")
+        tag = f" <{who}>" if who else ""
+        print(f"  [{i:02d}] {d:5.2f}s  {bars[-1]}b  {(said[:34]):34}  ({note}){tag}")
 
     # remember what we rendered from, so the next run only touches edited lines
     manifest_path.write_text(json.dumps({"lines": blocks}))

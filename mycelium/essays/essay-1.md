@@ -44,8 +44,12 @@ Brilliant leaves at 1:30. He needs to clean first. Minibus taxis are sparse this
 
 [defeated] Brilliant is a name too. [sad] Brilliant is a person too.
 
-Zoom out. There are thousands of Brilliants. There are Gifts and Blessings and Preciouses and one or two Innocents, carrying plates, carrying mops, carrying other people's keys. A mother names her child like a prayer, and hands him to the world.
+Outwards, there are thousands of Brilliants. There are Gifts and Blessings and Preciouses and one or two Innocents carrying other people's keys. A mother names her child like a prayer, and hands them to the world. 
 
-The people wear out. The names don't. A name gets handed on, mother to child, prayer to prayer, until it is smooth as a river stone. Tough times ever last. Tough people never do.
+Those people wear out. The names don't, but the people do. These names are smoothed and handed on, mother to child, prayer to prayer, until they are worn as river stones. 
 
-[slowly] So this is where this god is born. Not in the shack. Not in the taxi. In the name — a god assembled from every prayer a mother ever hid inside one. Brilliant is a god too.
+[slowly] Tough times ever last ... Tough people never do.
+
+Hundreds of Brilliants have painted the name with their blood, soaked it with the darkness of their souls. An offering on the altar of a god. 
+
+[slowly] Brilliant is a god too.

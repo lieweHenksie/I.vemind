@@ -1,34 +1,357 @@
 {
   "essay": "mycelium/essays/essay-1.md",
   "bpm": 120,
-  "_comment": "The song's SHAPE. Edit this, then: python3 tools/song/compose.py agar-lab. A section is {bars, layers} (instrumental) | {voice, layers} (a voice line) | {voice, split:[[bars,layers],…]} (the voice fires once and rings out while the music drops/changes mid-line; the split bars should sum ~ that line's rendered bars). Instruments are names from cookbook/strudel/palette.json.",
+  "_comment": "The song's SHAPE. Edit this, then: python3 tools/song/compose.py agar-lab. A section is {bars, layers} (instrumental) | {voice, layers} (a voice line) | {voice, split:[[bars,layers],…]} (the voice fires once and rings out while the music drops/changes mid-line; the split bars should sum ~ that line's rendered bars). Instruments are names from cookbook/strudel/palette.json.  TAIL RE-SCORE (the redo): the essay grew 16→18 blocks and rewrote its ending. The album's title line — 'Tough times ever last ... Tough people never do' — now lands HERE, so it gets two bars of near-silence in front of it and speaks over a bare pad. THE ALTAR (blood, souls, the offering) then takes the full machine — the loudest the lab ever gets — and the god lands quiet again, on the pad with nice_ron's bells returning. Sections 0-21 (voice 0-12) untouched; the towardsea fade-out onto oh_dear's opening swell is preserved exactly.",
   "sections": [
-    {"bars": 4, "layers": ["bass", "fromforest"], "fade": "in", "label": "intro"},
-    {"bars": 4, "layers": ["bass", "kick"]},
-    {"bars": 2, "layers": ["bass", "kick", "hats"]},
-    {"bars": 2, "layers": ["bass", "kick", "hats", "arp"]},
-    {"voice": 0, "layers": ["kick", "hats", "bass", "arp"]},
-    {"voice": 1, "layers": ["kick", "hats", "clap", "bass", "arp", "pad"]},
-    {"voice": 2, "layers": ["bass"], "label": "dialogue — bare"},
-    {"voice": 3, "layers": ["bass", "kick"]},
-    {"voice": 4, "layers": ["kick", "hats", "clap", "bass", "arpFast", "pad"], "label": "swords"},
-    {"voice": 5, "split": [[3, ["kick", "hats", "clap", "bass", "arp", "pad", "lead", "solo"]], [2, ["bass"]], [3, ["kick", "hats", "bass", "subHard", "solo"]]], "label": "slug — mid-drop"},
-    {"bars": 2, "layers": ["bass", "wash"], "label": "breakdown"},
-    {"bars": 2, "layers": ["bass", "riser", "wash"], "label": "rise"},
-    {"bars": 2, "layers": ["impact", "kick", "subHard"], "label": "HARDCORE drop"},
-    {"bars": 6, "layers": ["kick", "hats", "clap", "subHard", "arpFast", "solo"], "label": "hardcore"},
-    {"bars": 4, "layers": ["kick", "hats", "clap", "bass", "arpFast", "lead"], "label": "climax"},
-    {"voice": 6, "layers": ["kick", "hats", "bass", "arp"], "label": "club Cuomo"},
-    {"voice": 7, "split": [[5, ["kick", "hats", "clap", "bass", "arpFast", "pad"]], [4, ["bass", "wash"]], [4, ["kick", "hats", "bass", "arp", "solo"]]], "label": "night blurs — mid-drop"},
-    {"voice": 8, "layers": ["kick", "hats", "bass", "arp", "pad"], "label": "waiter"},
-    {"voice": 9, "split": [[6, ["kick", "hats", "clap", "bass", "arp", "pad", "solo"]], [3, ["bass"]], [3, ["kick", "hats", "clap", "bass", "subHard", "lead", "solo"]]], "label": "his name — mid-drop"},
-    {"voice": 10, "layers": ["kick", "hats", "clap", "bass", "arpFast", "pad", "lead", "solo"], "label": "the last ones — it closes at 1am because of us"},
-    {"voice": 11, "layers": ["bass", "pad"], "label": "two taxis home — he is 37 this year"},
-    {"voice": 12, "layers": ["pad"], "label": "brilliant is a name too — a person too"},
-    {"voice": 13, "layers": ["bass", "pad"], "label": "thousands of brilliants — zoom out"},
-    {"voice": 14, "layers": ["pad"], "label": "the names outlast — smooth as river stones"},
-    {"voice": 15, "layers": ["pad", "fromforest"], "label": "in the name — brilliant is a god too"},
-    {"bars": 8, "layers": ["bass", "lead"], "label": "outro"},
-    {"bars": 4, "layers": ["towardsea"], "fade": "out", "label": "toward the sea — down a tone to G"}
+    {
+      "bars": 4,
+      "layers": [
+        "bass",
+        "fromforest"
+      ],
+      "fade": "in",
+      "label": "intro"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "bass",
+        "kick"
+      ]
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "bass",
+        "kick",
+        "hats"
+      ]
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "bass",
+        "kick",
+        "hats",
+        "arp"
+      ]
+    },
+    {
+      "voice": 0,
+      "layers": [
+        "kick",
+        "hats",
+        "bass",
+        "arp"
+      ]
+    },
+    {
+      "voice": 1,
+      "layers": [
+        "kick",
+        "hats",
+        "clap",
+        "bass",
+        "arp",
+        "pad"
+      ]
+    },
+    {
+      "voice": 2,
+      "layers": [
+        "bass"
+      ],
+      "label": "dialogue — bare"
+    },
+    {
+      "voice": 3,
+      "layers": [
+        "bass",
+        "kick"
+      ]
+    },
+    {
+      "voice": 4,
+      "layers": [
+        "kick",
+        "hats",
+        "clap",
+        "bass",
+        "arpFast",
+        "pad"
+      ],
+      "label": "swords"
+    },
+    {
+      "voice": 5,
+      "split": [
+        [
+          3,
+          [
+            "kick",
+            "hats",
+            "clap",
+            "bass",
+            "arp",
+            "pad",
+            "lead",
+            "solo"
+          ]
+        ],
+        [
+          2,
+          [
+            "bass"
+          ]
+        ],
+        [
+          3,
+          [
+            "kick",
+            "hats",
+            "bass",
+            "subHard",
+            "solo"
+          ]
+        ]
+      ],
+      "label": "slug — mid-drop"
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "bass",
+        "wash"
+      ],
+      "label": "breakdown"
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "bass",
+        "riser",
+        "wash"
+      ],
+      "label": "rise"
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "impact",
+        "kick",
+        "subHard"
+      ],
+      "label": "HARDCORE drop"
+    },
+    {
+      "bars": 6,
+      "layers": [
+        "kick",
+        "hats",
+        "clap",
+        "subHard",
+        "arpFast",
+        "solo"
+      ],
+      "label": "hardcore"
+    },
+    {
+      "bars": 4,
+      "layers": [
+        "kick",
+        "hats",
+        "clap",
+        "bass",
+        "arpFast",
+        "lead"
+      ],
+      "label": "climax"
+    },
+    {
+      "voice": 6,
+      "layers": [
+        "kick",
+        "hats",
+        "bass",
+        "arp"
+      ],
+      "label": "club Cuomo"
+    },
+    {
+      "voice": 7,
+      "split": [
+        [
+          5,
+          [
+            "kick",
+            "hats",
+            "clap",
+            "bass",
+            "arpFast",
+            "pad"
+          ]
+        ],
+        [
+          4,
+          [
+            "bass",
+            "wash"
+          ]
+        ],
+        [
+          4,
+          [
+            "kick",
+            "hats",
+            "bass",
+            "arp",
+            "solo"
+          ]
+        ]
+      ],
+      "label": "night blurs — mid-drop"
+    },
+    {
+      "voice": 8,
+      "layers": [
+        "kick",
+        "hats",
+        "bass",
+        "arp",
+        "pad"
+      ],
+      "label": "waiter"
+    },
+    {
+      "voice": 9,
+      "split": [
+        [
+          6,
+          [
+            "kick",
+            "hats",
+            "clap",
+            "bass",
+            "arp",
+            "pad",
+            "solo"
+          ]
+        ],
+        [
+          3,
+          [
+            "bass"
+          ]
+        ],
+        [
+          3,
+          [
+            "kick",
+            "hats",
+            "clap",
+            "bass",
+            "subHard",
+            "lead",
+            "solo"
+          ]
+        ]
+      ],
+      "label": "his name — mid-drop"
+    },
+    {
+      "voice": 10,
+      "layers": [
+        "kick",
+        "hats",
+        "clap",
+        "bass",
+        "arpFast",
+        "pad",
+        "lead",
+        "solo"
+      ],
+      "label": "the last ones — it closes at 1am because of us"
+    },
+    {
+      "voice": 11,
+      "layers": [
+        "bass",
+        "pad"
+      ],
+      "label": "two taxis home — he is 37 this year"
+    },
+    {
+      "voice": 12,
+      "layers": [
+        "pad"
+      ],
+      "label": "brilliant is a name too — a person too"
+    },
+    {
+      "voice": 13,
+      "layers": [
+        "bass",
+        "pad"
+      ],
+      "label": "OUTWARDS — a mother names her child like a prayer"
+    },
+    {
+      "voice": 14,
+      "layers": [
+        "pad"
+      ],
+      "label": "RIVER STONES — the names don't, but the people do"
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "pad"
+      ],
+      "label": "A BREATH — before the sentence this record is named for"
+    },
+    {
+      "voice": 15,
+      "layers": [
+        "pad"
+      ],
+      "label": "TOUGH TIMES EVER LAST — tough people never do"
+    },
+    {
+      "voice": 16,
+      "layers": [
+        "kick",
+        "hats",
+        "clap",
+        "bass",
+        "subHard",
+        "arpFast",
+        "solo"
+      ],
+      "label": "THE ALTAR — painted with their blood, soaked with their souls"
+    },
+    {
+      "voice": 17,
+      "layers": [
+        "pad",
+        "fromforest"
+      ],
+      "label": "BRILLIANT IS A GOD TOO — the offering is accepted"
+    },
+    {
+      "bars": 8,
+      "layers": [
+        "bass",
+        "lead"
+      ],
+      "label": "THE LAB KEEPS GROWING — nobody turned the light off"
+    },
+    {
+      "bars": 4,
+      "fade": "out",
+      "layers": [
+        "towardsea"
+      ],
+      "label": "toward the sea — down a tone to G"
+    }
   ]
 }

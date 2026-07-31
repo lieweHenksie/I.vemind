@@ -1,0 +1,34 @@
+{
+  "essay": "mycelium/essays/hes-wrong-of-course.md",
+  "genre": "intermezzo",
+  "bpm": 90,
+  "_comment": "INTERMEZZO \u2014 the doorframe between demi_demi and theGodInUrhead. The album-language line that used to close demi_demi, given a room of its own so it stops stepping on the music. A D-minor gauze (theGodInUrhead's ward timbre) rises out of the record's groove-silence, the deadpan line speaks alone over it, then the gauze resolves onto theGod's opening chord [d3,f3,a3] and fades \u2014 the next room is already tuning up. One voice line, sized to its clip (reused from demi_demi, no re-render).",
+  "sections": [
+    {
+      "bars": 2,
+      "layers": [
+        "wardgauze",
+        "wardblip"
+      ],
+      "fade": "in",
+      "label": "the doorframe \u2014 the rave's gauze, still hanging in the air"
+    },
+    {
+      "voice": 0,
+      "layers": [
+        "wardgauze",
+        "wardblip"
+      ],
+      "label": "he's wrong of course \u2014 tough times ever last and no people ever do"
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "gauzeland",
+        "wardblip"
+      ],
+      "fade": "out",
+      "label": "toward the ward \u2014 the gauze settles onto D minor, the goddess is next"
+    }
+  ]
+}

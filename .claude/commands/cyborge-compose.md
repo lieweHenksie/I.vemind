@@ -31,7 +31,7 @@ each song plays its own instruments; anything the song doesn't redefine falls ba
 `--only N` re-rolls a line; `--all` forces all. Needs `.env`: `eleven_labs=<key>` + `eleven_voice_id=<id>`.
 
 **Step 3 — serve, then listen.**
-`python3 -m http.server --bind 127.0.0.1 8000`, open `http://localhost:8000/id/<name>/`. Wait for
+`python3 tools/serve.py`, open `http://localhost:8000/id/<name>/`. Wait for
 `ready`, play, walk the arc. Report what you hear; if the status line is red, read the error and fix.
 
 **The laws** (full list in `cookbook/strudel/README.md`): tempo via `.fast(BPM/120)`; samples only

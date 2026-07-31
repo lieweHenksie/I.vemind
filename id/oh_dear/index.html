@@ -59,12 +59,6 @@
       opacity:0; transition:opacity .15s, border-color .15s; }
     #srcfilm video.dim  { opacity:.12; }
     #srcfilm video.live { opacity:1; border-color:var(--amber); }
-    /* the spoken words, typewritten word by word as they are said — bold amber, like the title,
-       but in the story font (the human layer) */
-    #lyric { align-self:center; text-align:center; max-width:64ch; min-height:2.8em;
-      font-family:"Libre Baskerville", Georgia, "Times New Roman", serif;
-      font-size:1.05rem; font-weight:700; line-height:1.45; color:var(--amber);
-      text-wrap:balance; }
     kbd { border:1px solid #333; border-radius:3px; padding:0 .35em; font-size:.8em; }
   </style>
 </head>
@@ -81,9 +75,6 @@
   <div id="filmword"></div>
   <div id="filmsub"></div>
   <div id="srcfilm" hidden><canvas id="viz" width="1280" height="720"></canvas></div>
-
-  <!-- the spoken line, typed as it is said -->
-  <div id="lyric"></div>
 
   <!-- the progress bar sits below the film -->
   <div id="arrstrip"></div>
@@ -123,11 +114,23 @@ let calls = note("bb3 ~ d4 ~ f4 [g4 f4] d4 ~").s("triangle").attack(0.06).releas
 let brass = note("~ [g3,bb3,d4,g4] ~ [f3,a3,c4,f4]").s("square").attack(0.01).release(0.2).lpf(1300).crush(8).room(0.5).gain(0.26)
 let magma = note("g0 g0 d1 g0 f0 g0 [d1 f0] g0").s("sawtooth").shape(0.45).lpf(650).lpq(5).gain(0.8)
 let boil = note(pick(["[g2 bb2 g2 d3 g2 bb2 f2 d3]*2", "[g2 bb2 c3 d3 eb3 d3 bb2 g2]*2", "[g2 g2 bb2 g2 d3 g2 f2 g2]*2"], "<0 0 1 2>")).s("sawtooth").shape(0.25).lpf(sine.range(500,2600).slow(8)).lpq(6).release(0.12).gain(0.34)
+let quake = note("<g0 g0 f0 g0>").s("sine").attack(0.3).release(1.8).shape(0.35).gain(1.05)
+let demera = s("white*32").decay(0.012).sustain(0).hpf(1800).lpf(9000).gain(0.09).room(0.4)
+let firebreath = s("white").lpf(saw.range(300,7000).slow(4)).gain(0.2).room(0.6)
+let brimstone = note("<[g2 ~ eb2 ~] [d2 ~ c2 ~] [bb1 ~ g1 ~] [f1 ~ eb1 ~]>").s("sawtooth").attack(0.005).decay(0.35).sustain(0).shape(0.5).lpf(1200).gain(0.55).room(0.5)
+let column = s("white").lpf(saw.range(500,9000).slow(16)).hpf(200).gain(0.22).room(0.9)
+let collapse = s("white").lpf(isaw.range(300,7000).slow(8)).gain(0.24).room(0.8)
+let ashfall = s("[white ~ ~ white ~ ~ white ~]*2").decay(0.03).sustain(0).hpf(6500).gain(0.07).room(0.85)
+let bonechoir = note("<[bb2,f3,bb3,d4] [eb3,bb3,eb4,g4] [f3,c4,f4,a4] [bb2,f3,bb3,d4]>").s("sawtooth").attack(0.15).release(1.3).lpf(1500).shape(0.4).crush(6).gain(0.3).room(0.85)
+let cockerelburn = note("<[g4 bb4 d5 g5] ~ ~ ~>").s("square").crush(4).shape(0.35).lpf(2600).decay(0.3).sustain(0).delay(0.4).delaytime(0.417).delayfeedback(0.4).room(0.7).gain(0.28)
+let saheader = s("square").freq("[2083 1563 2083 2083 1563 1563 2083 1563 1563 2083 1563 2083 2083 1563 2083 1563]*16").gain(0.12)
+let attention = stack(s("sine").freq(853), s("sine").freq(960)).attack(0.05).decay(0.1).sustain(1).release(0.2).gain(0.24).slow(4)
+let carrier = s("sine").freq(120).attack(0.4).decay(0.1).sustain(1).release(0.6).gain(0.1).slow(4)
 // INSTRUMENTS-END
 
 // ── voice timing · auto-managed by tools/tts/eleven.py (don't hand-edit) ──
 // BARS-START
-let bars = [4, 8, 2, 10, 13, 10, 3, 3, 9, 7, 12, 7, 16, 8, 10, 5, 11, 3, 10, 10, 3, 15, 8, 8, 11, 6, 14, 14, 6, 4, 9, 3, 6, 7, 4, 10, 5, 8, 8, 6, 2, 3, 7, 4, 3, 6, 4, 6]   // auto-generated per line length — do not hand-edit
+let bars = [4, 8, 2, 10, 13, 10, 3, 3, 9, 7, 12, 7, 16, 8, 10, 5, 11, 3, 10, 10, 3, 15, 8, 8, 11, 6, 14, 14, 6, 3, 9, 3, 5, 2, 9, 9, 6, 2, 5, 3, 9]   // auto-generated per line length — do not hand-edit
 // BARS-END
 let vo = (clip, i) => clip.slow(bars[i]).gain(1.15).room(0.2)
 
@@ -168,29 +171,32 @@ arrange(
   [bars[26], stack(kick, sub, tick, brass)],   // THE FARMBOYS — soundly thrashed
   [bars[27], stack(brass, kick, hats, sub, skank)],   // THE ANTI-SMOKING CLUB — god bless them
   [bars[28], silence],   // ALL TRUE — i wish the earth could give back
-  [bars[29], stack(bones, sub)],   // STRATA — stacked as god's people
-  [bars[30], stack(swell, emperordeep, cockerelghost, ohdearbell, bones)],   // HERE LIES — the gravestone reads
+  [bars[29], stack(bones, sub)],   // STRATA — the saints of saint helena
+  [bars[30], stack(swell, emperordeep, cockerelghost, ohdearbell, bones)],   // HERE LIES — sentenced to be forgotten
   [bars[31], ohdearbell],   // IN TEARS — my dears, my dears
-  [bars[32], stack(swell, bones, ohdear)],   // BABES TO A BOSOM — pressed to the rock
-  [bars[33], stack(swell, bones, sub, ohdear)],   // GOD'S OWN HOSTEL — a scar atop a wound
-  [bars[34], stack(wash, bones, tick)],   // THE DREAM — full to fucking bursting
-  [5, stack(wash, bones, cockerelghost)],   // WHAT DOES A ROCK DREAM — the ghost still crows
-  [5, bones],   // …voice 35 rings on, bars shift
-  [bars[36], stack(tick, bones, sub)],   // MATCHMAKER, MONSTER, MOTHER — a terrible recipe
-  [bars[37], stack(tick, sub, skank)],   // ONE PART MUTILATION — one part failed conquest
-  [bars[38], stack(tick, sub, skank, kick)],   // ONE PART ROYAL BLOOD — one part stubborn beer
-  [bars[39], stack(tick, sub, skank, kick, hats)],   // MIX THOROUGHLY — ferment four hundred years
-  [bars[40], tick],   // SOMETHING IS READY — the water recedes
-  [bars[41], stack(sub, bones)],   // ENOUGH — patient as death
-  [bars[42], stack(sub, bones, riser, tick)],   // ENOUGH, ENOUGH — no one left to hear
-  [bars[43], stack(sub, kick, riser, skank)],   // START CREATING — the collection closes
-  [bars[44], tick],   // THE QUESTION — what does a matchmaker do
-  [bars[45], stack(magma, boil, kick, hats, impact, swell)],   // THE MATCH DROPS — the seas boiled
-  [8, stack(magma, boil, kick, hats, skank, swell, impact)],   // THE ERUPTION — four hundred years exhale
-  [4, stack(swell, bones, ohdear)],   // AFTERGLOW — the sea steams
-  [bars[46], stack(bones, cockerelghost)],   // A GOD BORN HERE — something new
-  [bars[47], stack(bones, ohdearbell, cockerelghost)],   // WHERE GODS ARE BORN — the middle of fucking nowhere
-  [10, stack(ohdearbell, bones, wash, cockerelghost).postgain(saw.range(1,0).slow(10))],   // DAWN — the first crow of the new god
+  [bars[32], stack(swell, bones, ohdear)],   // QUICKENED — the wound turns over in its sleep
+  [bars[33], stack(wash, bones, tick)],   // WHAT DOES A ROCK DREAM OF — it dreams a recipe
+  [bars[34], stack(wash, bones, tick)],   // ONE PART MUTILATION — one part failed conquest
+  [bars[35], stack(wash, bones, tick, sub, skank)],   // ONE PART ROYAL BLOOD — one part stubborn beer
+  [bars[36], stack(tick, sub, skank, kick, hats)],   // MIX THOROUGHLY — open the suez, no one needs her now
+  [bars[37], tick],   // SOMETHING IS READY — the water pulls back off the sand
+  [bars[38], bones],   // IN ETHIOPIA THEY LIGHT A BONFIRE — that ... we can do
+  [2, stack(quake, riser)],   // THE INTAKE — four hundred years of breath, drawn in
+  [1, stack(demera, impact)],   // DEMERA — she lights the fire that shows what is buried
+  [4, stack(quake, magma, demera, firebreath, impact)],   // THE FIRST CRACK — the scar remembers it was a wound
+  [8, stack(magma, boil, quake, kick, hats, brimstone, demera)],   // MAGMA — four hundred years exhale
+  [6, stack(brimstone, column, quake, magma, ashfall)],   // BRIMSTONE — the sky comes back down as gravel
+  [8, stack(bonechoir, column, magma, quake, boil, cockerelburn)],   // THE BONES LEARN TO SING — the amahubo, on fire
+  [4, stack(column, ashfall, quake, bonechoir)],   // THE COLUMN — ash to the top of the sky
+  [4, stack(collapse, quake, impact, ashfall)],   // COLLAPSE — the island falls into its own mouth
+  [4, stack(wash, ashfall, bones, ohdear)],   // ASH — the sea steams where the rock was
+  [bars[39], stack(bones, cockerelghost)],   // A GOD BORN HERE — oh dear, oh dear
+  [2, carrier],   // SILENCE — the carrier finds an empty channel
+  [2, saheader],   // SAME — the header, three times, to nobody
+  [4, attention],   // ATTENTION — eight fifty three, nine sixty
+  [bars[40], carrier],   // THE BROADCAST — please do not leave your homes
+  [2, saheader],   // END OF MESSAGE — n n n n
+  [4, stack(carrier, wash).postgain(saw.range(1,0).slow(4))],   // IN CASE OF DISRUPTION OF THIS —
 ).fast(108/120)
 // ARRANGE-END
 </textarea>
@@ -202,8 +208,8 @@ arrange(
 
     // Voice clips + ONE shared cache-buster (used for BOTH sample registration and the preload).
     // VOICE-FILES-START
-    const VOICE_FILES = ['line-01.wav', 'line-02.wav', 'line-03.wav', 'line-04.wav', 'line-05.wav', 'line-06.wav', 'line-07.wav', 'line-08.wav', 'line-09.wav', 'line-10.wav', 'line-11.wav', 'line-12.wav', 'line-13.wav', 'line-14.wav', 'line-15.wav', 'line-16.wav', 'line-17.wav', 'line-18.wav', 'line-19.wav', 'line-20.wav', 'line-21.wav', 'line-22.wav', 'line-23.wav', 'line-24.wav', 'line-25.wav', 'line-26.wav', 'line-27.wav', 'line-28.wav', 'line-29.wav', 'line-30.wav', 'line-31.wav', 'line-32.wav', 'line-33.wav', 'line-34.wav', 'line-35.wav', 'line-36.wav', 'line-37.wav', 'line-38.wav', 'line-39.wav', 'line-40.wav', 'line-41.wav', 'line-42.wav', 'line-43.wav', 'line-44.wav', 'line-45.wav', 'line-46.wav', 'line-47.wav', 'line-48.wav'];
-    const VOICE_TEXTS = ["Even the earth bleeds. Oh dear, oh dear. It bleeds stone, red and warm.", "The wound scars over, and an ugly black mess now stands in the middle of nowhere. The middle of fucking nowhere I say. Then all the other stuff happens, fish out the ocean. Meteors. Mammals everywhere, religions everywhere.", "Oh dear, what year?", "Somewhere in 1510, Goa (west India) is beset by the Portuguese — in particular by one Afonso de Albuquerque, a busybody. He has a man, Lopes. Goa conquered, Afonso is off to Malacca in Malaysia, but first he says to Lopes: \"Goa is yours, rule it well.\"", "Lopes decides to follow the advice, and rules it with love. He and a Muslim girl are to be married, and so Lopes converts to Islam. Afonso returns, two years hence, and considers this treason: Lopes and his men are 'renegades' now, Portuguese gone Muslim for love. They are surrendered on the condition that they be left alive. Most are promptly tortured to death.", "Lopes is the leader, his torture is the most severe. It goes like this. Things scraped off with clam shells: Hair, Beard. Things severed (in a public square): Nose, Ears, Left thumb, Right Arm.", "By all accounts, he is no longer all right.", "Here is what he looks like afterwards:", "Lopes decides to seek a new employer, and takes to sailing. On a trip around Africa (for spices, read a book). The ship he sails on stops for fresh water on a remote Island called Saint Helena (discovered only a few years before).", "Lopes, oh dear, no ear, decides people ain't shit, and sneaks off the ship where he is marooned, man alone. He would be the Island's first exile — albeit a self-imposed one.", "Later, this is said of him: \"The crew was amazed when they saw the grotto and the straw bed on which he slept...and when they saw the clothing they agreed it must be a Portuguese man. So they took in their water and did not meddle with anything, but left biscuits and cheeses and things to eat and a letter telling him not to hide himself the next time a ship came to the island for no one would harm him.", "Then the ship set off, and as she was spreading her sails a cockerel fell overboard and the waves carried it to the shore and Lopes caught it and fed it with some rice which they had left behind for him.\"", "Lopes and the cockerel become fast friends. It roosts above his head, and comes if called. Years pass and Lopes starts to lose his fear of man. An unfortunate decision that leads to him being persuaded to return home to Portugal. After a short stint in Portugal, he goes to Rome, and sees the pope (who forgives him for apostasy). The pope, impressed by the maimed man's story, asks if he can grant him a wish. Lopes wishes to return to Saint Helena.", "A letter is sent to King João the Third and Lopes returns to his true home, where he lives, in peace, for another twenty years in almost complete solitude. He is the first of \"God's own People\" from Saint Helena.", "Saint Helena passes hands like a coin: Portuguese, English East India, Dutch East India, English again. She is important now — an island for rewatering ships, worth fighting over. It is only England's second ever overseas territory. A precedent is set.", "Oh dear oh dear. England goes to war against the first modern European. An emperor mind you. Napoleon.", "The ships come in droves now. They rewater where the cripple Lopes roamed with his cockerel. A settlement follows and forts rise there. Slaves are needed, and soon there are thousands. Souls are worked to death (approximately nine thousand skeletons are found later), then slavery is abolished when the work is done.", "The island breathes and the bones settle.", "By now, Napoleon has escaped from Elba. He decides to conquer just a little more and does Waterloo. Napoleon is defeated, but surrenders in hope of asylum… instead he is exiled to a remote island in the middle of nowhere, the middle of fucking nowhere he'll tell you. Saint Helena.", "He gardens, and wrestles the neighbour-kid for fun. He hates the place and is not allowed any gifts. The royal navy has ringed the island with ships. His dying words are of Josephine, and being buried next to the Seine. Instead he is buried in Saint Helena and after an argument, his tombstone is unnamed.", "Oh dear, an emperor lies here.", "Slave trade is abolished and now seriously illegal. Britain sees to it that slave ships are lightened of all slaves. But Africa, so far away, seems like too much effort. Rescued slaves, instead, are sent to Saint Helena. About fifteen thousand slaves land there and are sent on to either the Caribbean or homewards. Many though, lend their bones, as God's people, to that there scar over the sea.  Oh dear.", "England, now adept at sending prisoners to islands (see Australia), has conquered the Zulus. A man named Dinuzulu, prince of the Zulus, surrenders after a long battle and is exiled for seven years. Oh dear, a prince now too!", "Dinuzulu arrives with singers and wives. They sing at night and the amahubo rattles the teacups of the British. The island listens well and thrums with harmonies; and notes fall within the stones and bones.", "The gentlemen poets of the island join in, and in turn Dinuzulu learns piano and reading and writing. The zulu become popular among the locals (the prince in particular) and Dinuzulu has eight children there on that broken rock and has to leave two wives behind to its graveyard when he leaves after exile.", "The English describe him as “no longer a savage” because that part of him too, is marked for God’s people. That part of him is with his wives. Oh dears.", "More prisoners arrive, from Africa too, but these are white, so something new. Britain, now with nearly twenty two overseas colonies, has never really lost a war against any native force, but is soundly thrashed by a few farmboys living in the South of Africa. The queen sends reinforcements, and five thousand of these boers are taken prisoner and sent to the island.", "Of these men, some are vulgar, but even here are found God’s people. A coffee house was set up, a brewery, a pawnbroker, a brass band, a male choir, a debating society and even an anti-smoking club. Many a man, with homes destroyed, decided instead to lend their wit and charm to this island. The war passes and most are sent home, but the surnames Piek and Vanguard remain.", "This much, all is true. What comes next isn't — but I wish it was.  I wish the earth could give back what we have given it.", "Like strata are stacked God’s People while Saint Helena sits patient as bones.", "Oh dear, here lies the Portuguese Renegade, blessed by the pope and Islam, an emperor alone, thousands of unnamed slaves with no hope for home, Zulu wives, boer graves, sentenced to be forgotten in the middle of nowhere, the middle of fucking nowhere they’ll tell you.", "“My dears, my dears,” says Saint Helena in tears.", "The bones and the harmonies, the clubs and the bricks. The coffee and the trees, the goats and one cockerel are all now pressed to the rock as babes to a bosom.", "This rock, a scar in the ocean, sitting atop a wound in the earth. Great figures of history, shipped in and out of their volcanic hostel. God’s own hostel.", "The island, full to fucking bursting now, begins to dream.", "What does a rock dream of? Oh dear. What does a scar dream when pressed with so much longing, so much loneliness, so much song?  The bones hum beneath the soil. The harmonies settle in the stone. The cockerel's ghost still crows at dawn.", "Saint Helena, matchmaker, monster, mother—has collected her materials. The island has become a recipe. A terrible recipe.", "One part mutilation (see: Lopes, Fernão). One part failed conquest (see: Bonaparte, Napoleon). Fifteen thousand parts interrupted freedom, half of it staying on as calcium (see: the bones, oh dear, the bones).", "One part royal blood in exile, wives singing their babies into the ground (see: Dinuzulu). One part stubborn European offshoot civilization, brewing beer because what else do you do on a rock in the Atlantic (see: the anti-smoking club, God bless them).", "Mix thoroughly with volcanic soil. Let ferment for four hundred years. Open the Suez Canal (so no one even needs the island any more).", "Something is ready.", "Saint Helena, patient as death, decides enough.", "Enough lonely men seeking solitude. Enough emperors sent to rot. Enough songs pressed into stone with no one to hear them. Enough coffee houses built by men who will never go home.", "The island decides to stop collecting and start creating. Oh dear, oh dear.", "What does a matchmaker do when she's gathered all she must?", "She makes a fucking match — and all the world did tremble as she struck her match. The seas boiled where those bones lay.", "Oh dear, oh dear … something new — a god born here.", "This is where gods are born: not in heavens, not in temples — in the middle of fucking nowhere, where enough bones learn to sing."];
+    const VOICE_FILES = ['line-01.wav', 'line-02.wav', 'line-03.wav', 'line-04.wav', 'line-05.wav', 'line-06.wav', 'line-07.wav', 'line-08.wav', 'line-09.wav', 'line-10.wav', 'line-11.wav', 'line-12.wav', 'line-13.wav', 'line-14.wav', 'line-15.wav', 'line-16.wav', 'line-17.wav', 'line-18.wav', 'line-19.wav', 'line-20.wav', 'line-21.wav', 'line-22.wav', 'line-23.wav', 'line-24.wav', 'line-25.wav', 'line-26.wav', 'line-27.wav', 'line-28.wav', 'line-29.wav', 'line-30.wav', 'line-31.wav', 'line-32.wav', 'line-33.wav', 'line-34.wav', 'line-35.wav', 'line-36.wav', 'line-37.wav', 'line-38.wav', 'line-39.wav', 'line-40.wav', 'line-41.wav'];
+    const VOICE_TEXTS = ["Even the earth bleeds. Oh dear, oh dear. It bleeds stone, red and warm.", "The wound scars over, and an ugly black mess now stands in the middle of nowhere. The middle of fucking nowhere I say. Then all the other stuff happens, fish out the ocean. Meteors. Mammals everywhere, religions everywhere.", "Oh dear, what year?", "Somewhere in 1510, Goa (west India) is beset by the Portuguese — in particular by one Afonso de Albuquerque, a busybody. He has a man, Lopes. Goa conquered, Afonso is off to Malacca in Malaysia, but first he says to Lopes: \"Goa is yours, rule it well.\"", "Lopes decides to follow the advice, and rules it with love. He and a Muslim girl are to be married, and so Lopes converts to Islam. Afonso returns, two years hence, and considers this treason: Lopes and his men are 'renegades' now, Portuguese gone Muslim for love. They are surrendered on the condition that they be left alive. Most are promptly tortured to death.", "Lopes is the leader, his torture is the most severe. It goes like this. Things scraped off with clam shells: Hair, Beard. Things severed (in a public square): Nose, Ears, Left thumb, Right Arm.", "By all accounts, he is no longer all right.", "Here is what he looks like afterwards:", "Lopes decides to seek a new employer, and takes to sailing. On a trip around Africa (for spices, read a book). The ship he sails on stops for fresh water on a remote Island called Saint Helena (discovered only a few years before).", "Lopes, oh dear, no ear, decides people ain't shit, and sneaks off the ship where he is marooned, man alone. He would be the Island's first exile — albeit a self-imposed one.", "Later, this is said of him: \"The crew was amazed when they saw the grotto and the straw bed on which he slept...and when they saw the clothing they agreed it must be a Portuguese man. So they took in their water and did not meddle with anything, but left biscuits and cheeses and things to eat and a letter telling him not to hide himself the next time a ship came to the island for no one would harm him.", "Then the ship set off, and as she was spreading her sails a cockerel fell overboard and the waves carried it to the shore and Lopes caught it and fed it with some rice which they had left behind for him.\"", "Lopes and the cockerel become fast friends. It roosts above his head, and comes if called. Years pass and Lopes starts to lose his fear of man. An unfortunate decision that leads to him being persuaded to return home to Portugal. After a short stint in Portugal, he goes to Rome, and sees the pope (who forgives him for apostasy). The pope, impressed by the maimed man's story, asks if he can grant him a wish. Lopes wishes to return to Saint Helena.", "A letter is sent to King João the Third and Lopes returns to his true home, where he lives, in peace, for another twenty years in almost complete solitude. He is the first of \"God's own People\" from Saint Helena.", "Saint Helena passes hands like a coin: Portuguese, English East India, Dutch East India, English again. She is important now — an island for rewatering ships, worth fighting over. It is only England's second ever overseas territory. A precedent is set.", "Oh dear oh dear. England goes to war against the first modern European. An emperor mind you. Napoleon.", "The ships come in droves now. They rewater where the cripple Lopes roamed with his cockerel. A settlement follows and forts rise there. Slaves are needed, and soon there are thousands. Souls are worked to death (approximately nine thousand skeletons are found later), then slavery is abolished when the work is done.", "The island breathes and the bones settle.", "By now, Napoleon has escaped from Elba. He decides to conquer just a little more and does Waterloo. Napoleon is defeated, but surrenders in hope of asylum… instead he is exiled to a remote island in the middle of nowhere, the middle of fucking nowhere he'll tell you. Saint Helena.", "He gardens, and wrestles the neighbour-kid for fun. He hates the place and is not allowed any gifts. The royal navy has ringed the island with ships. His dying words are of Josephine, and being buried next to the Seine. Instead he is buried in Saint Helena and after an argument, his tombstone is unnamed.", "Oh dear, an emperor lies here.", "Slave trade is abolished and now seriously illegal. Britain sees to it that slave ships are lightened of all slaves. But Africa, so far away, seems like too much effort. Rescued slaves, instead, are sent to Saint Helena. About fifteen thousand slaves land there and are sent on to either the Caribbean or homewards. Many though, lend their bones, as God's people, to that there scar over the sea.  Oh dear.", "England, now adept at sending prisoners to islands (see Australia), has conquered the Zulus. A man named Dinuzulu, prince of the Zulus, surrenders after a long battle and is exiled for seven years. Oh dear, a prince now too!", "Dinuzulu arrives with singers and wives. They sing at night and the amahubo rattles the teacups of the British. The island listens well and thrums with harmonies; and notes fall within the stones and bones.", "The gentlemen poets of the island join in, and in turn Dinuzulu learns piano and reading and writing. The zulu become popular among the locals (the prince in particular) and Dinuzulu has eight children there on that broken rock and has to leave two wives behind to its graveyard when he leaves after exile.", "The English describe him as “no longer a savage” because that part of him too, is marked for God’s people. That part of him is with his wives. Oh dears.", "More prisoners arrive, from Africa too, but these are white, so something new. Britain, now with nearly twenty two overseas colonies, has never really lost a war against any native force, but is soundly thrashed by a few farmboys living in the South of Africa. The queen sends reinforcements, and five thousand of these boers are taken prisoner and sent to the island.", "Of these men, some are vulgar, but even here are found God’s people. A coffee house was set up, a brewery, a pawnbroker, a brass band, a male choir, a debating society and even an anti-smoking club. Many a man, with homes destroyed, decided instead to lend their wit and charm to this island. The war passes and most are sent home, but the surnames Piek and Vanguard remain.", "This much, all is true. What comes next isn't — but I wish it was.  I wish the earth could give back what we have given it.", "Like strata are stacked God’s People. The Saints of Saint Helena.", "Oh dear, here lies the Portuguese Renegade, blessed by the pope and Islam, an emperor alone, thousands of unnamed slaves with no hope for home, Zulu wives, boer graves, sentenced to be forgotten in the middle of nowhere, the middle of fucking nowhere they’ll tell you.", "“My dears, my dears,” says Saint Helena in tears.", "This rock, a scar in the ocean, sitting atop a wound in the earth is quickened. It dreams.", "What does a rock dream of?", "One part mutilation (see: Lopes, Fernão). One part failed conquest (see: Bonaparte, Napoleon). Fifteen thousand parts interrupted freedom, half of it staying on as calcium (see: the bones, oh dear, the bones).", "One part royal blood in exile, wives singing their babies into the ground (see: Dinuzulu). One part stubborn European offshoot civilization, brewing beer because what else do you do on a rock in the Atlantic (see: the anti-smoking club, God bless them).", "Mix thoroughly with volcanic soil. Let ferment for four hundred years.  Open the Suez Canal (so no one even needs the island any more).", "Something is ready.", "In Ethiopia, the first Saint Helena, whom the island is named after, is celebrated with bonfire.  That ... we can do.", "Oh dear, oh dear … a god born here.", "This message is transmitted at the request of the president in case of emergencies. A supervolcano has erupted off the coast of Africa. Please shelter. Please do not leave your homes for the next two days, minimum. In case of disruption of this message"];
     // VOICE-FILES-END
     const VOICE_BASE = new URL('audio/voice/', location.href).href;
     const VOICE_BUST = '?t=' + Date.now();
@@ -248,12 +254,86 @@ arrange(
       try { v.currentTime = off || 0; } catch (e) {}
       v.play().catch(() => {});
     };
+    // ── THE EAR · the stage watches the OUTPUT, not the score ─────────────────────────────────
+    // The sea was once procedural: sines against the bar clock — an animation that merely ran
+    // WHILE music played. It now LISTENS. One AnalyserNode is fanned off every node that reaches
+    // the speakers — Strudel's bed and the voice bus both — so the water moves because the air
+    // moved. A thin bar makes a low sea; a drop floods the stage; a spoken line ripples through it
+    // even though no instrument played. Nothing in song.json can lie to it.
+    //
+    // We never sit IN the signal path. AudioNode.connect is wrapped so a connection to a
+    // destination is MIRRORED into the analyser — the original connection is untouched, so
+    // listening can neither break nor colour what you hear. The analyser's own output runs into a
+    // silent gain: an analyser whose output dead-ends isn't guaranteed to be pulled, and a node
+    // that is never pulled never sees a sample. Installed at page load, before Strudel builds its
+    // output chain (a lazy merger → gain → destination), so whoever connects first, we hear it.
+    let ear = null, earFreq = null, earWave = null, earRate = 44100;
+    (function openEar() {
+      if (typeof AudioNode === 'undefined' || typeof AudioDestinationNode === 'undefined') return;
+      const connect = AudioNode.prototype.connect;
+      AudioNode.prototype.connect = function (to, ...rest) {
+        const out = connect.apply(this, [to, ...rest]);
+        try {
+          if (to instanceof AudioDestinationNode && this !== ear) {
+            const ac = to.context;
+            if (!ear) {
+              ear = ac.createAnalyser();
+              ear.fftSize = 2048;
+              ear.smoothingTimeConstant = 0.5;   // enough to stop the flicker, not enough to lag
+              earFreq = new Uint8Array(ear.frequencyBinCount);
+              earWave = new Uint8Array(ear.fftSize);
+              earRate = ac.sampleRate;
+              const mute = ac.createGain(); mute.gain.value = 0;
+              connect.call(ear, mute); connect.call(mute, to);
+            }
+            if (ear.context === ac) connect.call(this, ear);
+          }
+        } catch (e) { /* listening must never cost playback */ }
+        return out;
+      };
+    })();
+    // What the ear hears, once a frame. The bands are chosen by what they MEAN in these songs
+    // rather than by octaves: the kick and sub that drive the tide, the body of the bed, the
+    // register the voice lives in, and the air (hats, tape hiss, the top of a string).
+    const BANDS = [[25, 110], [110, 420], [420, 2200], [2200, 9000]];
+    const heard = { level: 0, slow: 0, hit: 0, band: [0, 0, 0, 0], spec: new Float32Array(96) };
+    let lastLow = 0;
+    function listen() {
+      if (!ear) return false;
+      ear.getByteFrequencyData(earFreq);
+      ear.getByteTimeDomainData(earWave);
+      const n = earFreq.length, hz = earRate / 2 / n;
+      for (let b = 0; b < BANDS.length; b++) {
+        const lo = Math.max(1, Math.floor(BANDS[b][0] / hz));
+        const hi = Math.max(lo, Math.min(n - 1, Math.ceil(BANDS[b][1] / hz)));
+        let s = 0;
+        for (let i = lo; i <= hi; i++) s += earFreq[i];
+        heard.band[b] = s / (hi - lo + 1) / 255;
+      }
+      let sq = 0;                                 // loudness from the waveform: "how loud", not "how bright"
+      for (let i = 0; i < earWave.length; i++) { const v = (earWave[i] - 128) / 128; sq += v * v; }
+      heard.level = Math.min(1, Math.sqrt(sq / earWave.length) * 3.4);
+      heard.slow += (heard.level - heard.slow) * 0.06;   // the tide is now the song's own dynamics
+      // the onset: a jump in low energy — a kick, a downbeat, a stab. Falls fast, so it reads as a hit.
+      const low = heard.band[0] * 0.7 + heard.band[1] * 0.3;
+      heard.hit = Math.max(heard.hit * 0.86, Math.min(1, Math.max(0, low - lastLow) * 6));
+      lastLow = low;
+      // a coarse LOG-spaced spectrum for the surface itself, so the low end isn't one pixel wide
+      const M = heard.spec.length;
+      for (let i = 0; i < M; i++) {
+        const lo = Math.max(1, Math.floor(30 * Math.pow(320, i / M) / hz));
+        const hi = Math.max(lo, Math.min(n - 1, Math.ceil(30 * Math.pow(320, (i + 1) / M) / hz)));
+        let s = 0;
+        for (let j = lo; j <= hi; j++) s += earFreq[j];
+        heard.spec[i] += (s / (hi - lo + 1) / 255 - heard.spec[i]) * 0.35;   // eased: no strobing
+      }
+      return true;
+    }
     // The visualizer is the DEFAULT backdrop of EVERY song — with or without sample clips. It plays
-    // on the "real" filler stretches, and fills the whole song when there's no film. Procedural,
-    // synced to the bar clock (no tap into Strudel's audio graph). VIZ_IMAGE (the cookbook default,
-    // linked) works in NEGATIVE SPACE: the picture is black-on-black — never drawn, truly invisible.
-    // A white sea rises on a slow tide, and the picture is punched OUT of the water, so when a swell
-    // climbs past it the face appears from nowhere — showing it was always there.
+    // on the "real" filler stretches, and fills the whole song when there's no film. VIZ_IMAGE (the
+    // cookbook default, linked) works in NEGATIVE SPACE: the picture is black-on-black — never
+    // drawn, truly invisible. A white sea rises, and the picture is punched OUT of the water, so
+    // when a swell climbs past it the face appears from nowhere — showing it was always there.
     const vizEl = document.getElementById('viz');
     const vizCtx = vizEl ? vizEl.getContext('2d') : null;
     let seaLevel = 0;                                // the white water's eased level (0 = gone)
@@ -295,63 +375,62 @@ arrange(
       img.src = VIZ_IMAGE;
       addEventListener('resize', () => { if (vizImg) { sizeViz(); if (!rafId) vizRest(); } });
     }
-    // Fallback spectrum — only shown until/without a logo image: a plain amber/moss bar meter.
-    let vizPeaks = new Array(32).fill(0);
-    function drawBars(ctx, bar, W, H) {
-      const N = 32, bw = W / N;
-      const pulse = Math.pow(1 - (bar * 4) % 1, 1.6);
+    // Fallback spectrum — only until/without a picture: the REAL bands, with a peak that falls.
+    let vizPeaks = new Array(48).fill(0);
+    function drawBars(ctx, W, H) {
+      const N = vizPeaks.length, bw = W / N, M = heard.spec.length;
       for (let i = 0; i < N; i++) {
-        const bass = 1 - i / N;
-        const shimmer = 0.5 + 0.5 * Math.sin(i * 0.7 + bar * 6.3 + Math.sin(i * 1.3));
-        let hgt = (0.12 + 0.88 * shimmer) * (0.32 + 0.68 * (0.4 + 0.6 * bass) * pulse);
-        hgt = Math.max(0.03, Math.min(1, hgt));
+        const v = Math.max(0.01, Math.min(1, heard.spec[(i / N * M) | 0] * 1.25));
+        vizPeaks[i] = Math.max(v, vizPeaks[i] - 0.015);
         const x = i * bw + 1, bwid = bw - 2;
-        vizPeaks[i] = Math.max(hgt, vizPeaks[i] - 0.02);
         ctx.fillStyle = i % 3 === 0 ? '#4a7c59' : '#d4a843';
-        ctx.fillRect(x, H - hgt * H, bwid, hgt * H);
+        ctx.fillRect(x, H - v * H, bwid, v * H);
         ctx.fillStyle = '#cdbb8f';
         ctx.fillRect(x, H - vizPeaks[i] * H - 2, bwid, 2);
       }
     }
-    // The SLOW tide: two incommensurate low sines → mostly low water, rare aligned swells.
-    // Periods 11 & 6.5 bars → ~11-19s breathing at ~140bpm; the swells never repeat the same way.
-    function vizTide(bar) {
-      const a = 0.5 + 0.5 * Math.sin(bar * Math.PI * 2 / 11);
-      const b = 0.5 + 0.5 * Math.sin(bar * Math.PI * 2 / 6.5 + 1.3);
-      return Math.pow(a * b, 1.4);
-    }
-    // The white sea: a filled wash rising from the bottom, its surface slow drifting sines that
-    // CHOP on the beat. The level EASES toward its target so the water never jumps — but the
-    // target listens to the music: the slow tide × the section's energy, plus a lift on each kick.
-    function drawSea(ctx, bar, W, H, target, beat) {
-      seaLevel += (target - seaLevel) * 0.05;
-      const base = H * (1 - seaLevel) - H * 0.025 * beat;   // the whole surface lifts on the kick
-      const amp = 1 + 1.6 * beat;                           // and the waves chop harder
+    // The white sea: a wash rising from the bottom of the stage, its SURFACE built out of what is
+    // actually playing. The LEVEL is the song's own loudness, eased (the tide is no longer a sine —
+    // it's the arrangement's real dynamics, so a breakdown drains the stage and a drop floods it).
+    // The surface is four voices summed: a long swell carried by the sub, a mid chop from the body
+    // of the bed, a fine glitter off the air — and, on top of those, the SPECTRUM ITSELF pushing
+    // the water up where there is energy, mirrored around the middle so it reads as water and not
+    // as a chart. Onsets lift the whole horizon for an instant: the kick you feel, you see.
+    function drawSea(ctx, W, H, t) {
+      const target = 0.05 + 0.9 * Math.pow(heard.slow, 0.8) * (0.55 + 0.45 * heard.level);
+      seaLevel += (target - seaLevel) * 0.08;
+      const base = H * (1 - seaLevel) - H * 0.03 * heard.hit;
+      const b = heard.band, M = heard.spec.length;
       ctx.fillStyle = '#ffffff';
       ctx.beginPath();
       ctx.moveTo(0, H);
-      for (let x = 0; x <= W; x += 4) {
+      for (let x = 0; x <= W; x += 3) {
+        const u = x / W;
+        // bass in the middle, air at the edges — and READ BETWEEN the bins, so the spectrum
+        // arrives as a coastline instead of a staircase
+        const fi = Math.abs(u * 2 - 1) * (M - 1), i0 = fi | 0, fr = fi - i0;
+        const sp = heard.spec[i0] * (1 - fr) + heard.spec[Math.min(M - 1, i0 + 1)] * fr;
         const y = base
-          + Math.sin(x * 0.022 + bar * 2.6) * H * 0.025 * amp
-          + Math.sin(x * 0.011 - bar * 1.3 + 2) * H * 0.04 * amp;
+          + Math.sin(u * 6.0 + t * 0.70) * H * 0.055 * (0.25 + 2.0 * b[0])
+          + Math.sin(u * 17.0 - t * 1.70) * H * 0.030 * (0.20 + 1.8 * b[1])
+          + Math.sin(u * 41.0 + t * 3.30) * H * 0.014 * (0.10 + 2.2 * b[3])
+          - H * 0.13 * sp * (0.35 + 0.65 * heard.level);
         ctx.lineTo(x, y);
       }
       ctx.lineTo(W, H);
       ctx.closePath();
       ctx.fill();
     }
-    function drawViz(bar, energy) {
+    function drawViz() {
       if (!vizCtx) return;
-      const W = vizEl.width, H = vizEl.height;
+      listen();                                      // one read of the output per frame
+      const W = vizEl.width, H = vizEl.height, t = performance.now() / 1000;
       vizCtx.clearRect(0, 0, W, H);
-      if (!logoMask) { drawBars(vizCtx, bar, W, H); return; }   // plain spectrum until/without a logo
-      const tide = vizTide(bar);
-      const beat = Math.pow(1 - (bar * 4) % 1, 2);              // a fresh kick every beat, fading fast
-      const e = (energy === undefined) ? 0.6 : energy;
+      if (!logoMask) { drawBars(vizCtx, W, H); return; }   // plain spectrum until/without a picture
       revCtx.clearRect(0, 0, W, H);
-      drawSea(revCtx, bar, W, H, (0.06 + 0.92 * tide) * (0.3 + 0.7 * e), beat);
+      drawSea(revCtx, W, H, t);
       revCtx.globalCompositeOperation = 'destination-out';
-      revCtx.drawImage(logoMask, 0, 0);                // the picture is a HOLE in the water
+      revCtx.drawImage(logoMask, 0, 0);              // the picture is a HOLE in the water
       revCtx.globalCompositeOperation = 'source-over';
       vizCtx.drawImage(revCanvas, 0, 0);
     }
@@ -361,10 +440,12 @@ arrange(
       vizEl.classList.add('live');
       vizCtx.clearRect(0, 0, vizEl.width, vizEl.height);
       seaLevel = 0;
+      heard.level = heard.slow = heard.hit = lastLow = 0;
+      heard.band.fill(0); heard.spec.fill(0);
     }
-    function showViz(bar, energy) {                  // the back wall — coexists with videos over it
+    function showViz() {                             // the back wall — coexists with videos over it
       if (vizEl) vizEl.classList.add('live');
-      drawViz(bar, energy);
+      drawViz();
     }
     const vidsOff = () => {                          // a true filler stretch: backdrop alone
       if (activeVid) { setFilm(activeVid, 'off'); activeVid.pause(); activeVid = null; }
@@ -377,7 +458,7 @@ arrange(
       const v = fillerVids[((n % fillerVids.length) + fillerVids.length) % fillerVids.length];
       if (v !== activeVid) showVid(v, 0);
     }
-    function syncVideo(tl, bar, punch, energy) {
+    function syncVideo(tl, bar, punch) {
       let vidUp = false;
       if (hasFilm) {
         const starts = []; let acc = 0;
@@ -400,7 +481,7 @@ arrange(
       }
       if (!vidUp) vidsOff();
       // the back wall runs the WHOLE song (fallback spectrum only fills real gaps, never sits under video)
-      if (hasViz || !vidUp) showViz(bar, energy); else hideViz();
+      if (hasViz || !vidUp) showViz(); else hideViz();
     }
     const filmReset = () => {
       for (const v of allVids()) { try { v.pause(); } catch (e) {} setFilm(v, 'off'); }
@@ -467,6 +548,11 @@ arrange(
           const go = () => { if (ac && ac.state === 'suspended') ac.resume().catch(() => {}); play(); };
           if (HOLD) {
             window.addEventListener('message', (e) => { if (e.data && e.data.cyb === 'go') go(); });
+            // Pre-compile the score while we wait in the wings so the hand-off doesn't pay
+            // evaluate()'s cost (part of the "skipped beat"). The AudioContext is still SUSPENDED
+            // here — nothing resumes it until go() — so this makes NO sound; we hush the primed
+            // pattern at once. go() then re-evaluates warm and starts.
+            Promise.resolve(evaluate(editor.value)).then(() => hush()).catch(() => {});
             parent.postMessage({ cyb: 'song-ready' }, '*');
           } else go();
         }
@@ -475,15 +561,13 @@ arrange(
 
     // ── the arrangement eye · TIMELINE generated by tools/song/build.py (markers below) ──
     // TIMELINE-START
-    const TIMELINE = [[4, "OH DEAR — a hymn for saint helena", 0, 0.29, null], ["V0", "THE WOUND — even the earth bleeds", 0, 0.43, 0], ["V1", "THE SCAR — the middle of fucking nowhere", 0, 0.57, 1], ["V2", "WHAT YEAR — the clock starts ticking", 0, 0.43, 2], ["V3", "GOA, 1510 — rule it well", 0, 0.57, 3], ["V4", "TREASON — he ruled it with love", 0, 0.71, 4], ["V5", "THE INVENTORY — nose, ears, left thumb, right arm", 0, 0.43, 5], ["V6", "NO LONGER ALL RIGHT — by all accounts", 0, 0.29, 6], ["V7", "THE PICTURE — here is what he looks like", 0, 0.29, 7], [2, "( ) — three lines of a man", 0, 0.14, null], ["V8", "LANDFALL — fresh water at the end of the world", 0, 0.71, 8], ["V9", "THE FIRST EXILE — oh dear, no ear", 0, 0.57, 9], ["V10", "THE GROTTO — biscuits, cheeses, and a letter", 0, 0.57, 10], ["V11", "THE COCKEREL — carried in by the waves", 0, 0.57, 11], [6, "FAST FRIENDS — it roosts above his head", 0, 0.86, 12], [4, "FAST FRIENDS — it roosts above his head", 0, 0.29, null], [6, "FAST FRIENDS — it roosts above his head", 0, 0.57, null], ["V13", "GOD'S OWN PEOPLE — twenty years of peace", 0, 0.71, 13], ["V14", "THE COIN — she is important now", 0, 0.86, 14], ["V15", "NAPOLEON — an emperor, mind you", 0, 0.71, 15], ["V16", "THE DROVES — nine thousand skeletons", 0, 1.0, 16], ["V17", "THE ISLAND BREATHES — the bones settle", 0, 0.29, 17], ["V18", "WATERLOO — asylum, refused", 0, 0.71, 18], ["V19", "LONGWOOD — his dying words are of josephine", 0, 0.43, 19], ["V20", "AN UNNAMED STONE — an emperor lies here", 0, 0.29, 20], [10, "GOD'S PEOPLE — fifteen thousand landings", 0, 0.86, 21], [5, "GOD'S PEOPLE — fifteen thousand landings", 0, 0.29, null], ["V22", "THE PRINCE — seven years on the rock", 0, 0.57, 22], ["V23", "AMAHUBO — the teacups rattle", 0, 0.57, 23], ["V24", "EIGHT CHILDREN — born on a broken rock", 0, 0.86, 24], ["V25", "WITH HIS WIVES — that part of him stays", 0, 0.43, 25], ["V26", "THE FARMBOYS — soundly thrashed", 0, 0.71, 26], ["V27", "THE ANTI-SMOKING CLUB — god bless them", 0, 0.86, 27], ["V28", "ALL TRUE — i wish the earth could give back", 0, 0.14, 28], ["V29", "STRATA — stacked as god's people", 0, 0.43, 29], ["V30", "HERE LIES — the gravestone reads", 0, 0.86, 30], ["V31", "IN TEARS — my dears, my dears", 0, 0.29, 31], ["V32", "BABES TO A BOSOM — pressed to the rock", 0, 0.57, 32], ["V33", "GOD'S OWN HOSTEL — a scar atop a wound", 0, 0.71, 33], ["V34", "THE DREAM — full to fucking bursting", 0, 0.57, 34], [5, "WHAT DOES A ROCK DREAM — the ghost still crows", 0, 0.57, 35], [5, "WHAT DOES A ROCK DREAM — the ghost still crows", 0, 0.14, null], ["V36", "MATCHMAKER, MONSTER, MOTHER — a terrible recipe", 0, 0.57, 36], ["V37", "ONE PART MUTILATION — one part failed conquest", 0, 0.57, 37], ["V38", "ONE PART ROYAL BLOOD — one part stubborn beer", 0, 0.71, 38], ["V39", "MIX THOROUGHLY — ferment four hundred years", 0, 0.86, 39], ["V40", "SOMETHING IS READY — the water recedes", 0, 0.29, 40], ["V41", "ENOUGH — patient as death", 0, 0.43, 41], ["V42", "ENOUGH, ENOUGH — no one left to hear", 0, 0.71, 42], ["V43", "START CREATING — the collection closes", 0, 0.71, 43], ["V44", "THE QUESTION — what does a matchmaker do", 0, 0.29, 44], ["V45", "THE MATCH DROPS — the seas boiled", 1, 1.0, 45], [8, "THE ERUPTION — four hundred years exhale", 0, 1.0, null], [4, "AFTERGLOW — the sea steams", 0, 0.43, null], ["V46", "A GOD BORN HERE — something new", 0, 0.43, 46], ["V47", "WHERE GODS ARE BORN — the middle of fucking nowhere", 0, 0.57, 47], [10, "DAWN — the first crow of the new god", 0, 0.57, null]];
+    const TIMELINE = [[4, "OH DEAR — a hymn for saint helena", 0, 0.29, null], ["V0", "THE WOUND — even the earth bleeds", 0, 0.43, 0], ["V1", "THE SCAR — the middle of fucking nowhere", 0, 0.57, 1], ["V2", "WHAT YEAR — the clock starts ticking", 0, 0.43, 2], ["V3", "GOA, 1510 — rule it well", 0, 0.57, 3], ["V4", "TREASON — he ruled it with love", 0, 0.71, 4], ["V5", "THE INVENTORY — nose, ears, left thumb, right arm", 0, 0.43, 5], ["V6", "NO LONGER ALL RIGHT — by all accounts", 0, 0.29, 6], ["V7", "THE PICTURE — here is what he looks like", 0, 0.29, 7], [2, "( ) — three lines of a man", 0, 0.14, null], ["V8", "LANDFALL — fresh water at the end of the world", 0, 0.71, 8], ["V9", "THE FIRST EXILE — oh dear, no ear", 0, 0.57, 9], ["V10", "THE GROTTO — biscuits, cheeses, and a letter", 0, 0.57, 10], ["V11", "THE COCKEREL — carried in by the waves", 0, 0.57, 11], [6, "FAST FRIENDS — it roosts above his head", 0, 0.86, 12], [4, "FAST FRIENDS — it roosts above his head", 0, 0.29, null], [6, "FAST FRIENDS — it roosts above his head", 0, 0.57, null], ["V13", "GOD'S OWN PEOPLE — twenty years of peace", 0, 0.71, 13], ["V14", "THE COIN — she is important now", 0, 0.86, 14], ["V15", "NAPOLEON — an emperor, mind you", 0, 0.71, 15], ["V16", "THE DROVES — nine thousand skeletons", 0, 1.0, 16], ["V17", "THE ISLAND BREATHES — the bones settle", 0, 0.29, 17], ["V18", "WATERLOO — asylum, refused", 0, 0.71, 18], ["V19", "LONGWOOD — his dying words are of josephine", 0, 0.43, 19], ["V20", "AN UNNAMED STONE — an emperor lies here", 0, 0.29, 20], [10, "GOD'S PEOPLE — fifteen thousand landings", 0, 0.86, 21], [5, "GOD'S PEOPLE — fifteen thousand landings", 0, 0.29, null], ["V22", "THE PRINCE — seven years on the rock", 0, 0.57, 22], ["V23", "AMAHUBO — the teacups rattle", 0, 0.57, 23], ["V24", "EIGHT CHILDREN — born on a broken rock", 0, 0.86, 24], ["V25", "WITH HIS WIVES — that part of him stays", 0, 0.43, 25], ["V26", "THE FARMBOYS — soundly thrashed", 0, 0.71, 26], ["V27", "THE ANTI-SMOKING CLUB — god bless them", 0, 0.86, 27], ["V28", "ALL TRUE — i wish the earth could give back", 0, 0.14, 28], ["V29", "STRATA — the saints of saint helena", 0, 0.43, 29], ["V30", "HERE LIES — sentenced to be forgotten", 0, 0.86, 30], ["V31", "IN TEARS — my dears, my dears", 0, 0.29, 31], ["V32", "QUICKENED — the wound turns over in its sleep", 0, 0.57, 32], ["V33", "WHAT DOES A ROCK DREAM OF — it dreams a recipe", 0, 0.57, 33], ["V34", "ONE PART MUTILATION — one part failed conquest", 0, 0.57, 34], ["V35", "ONE PART ROYAL BLOOD — one part stubborn beer", 0, 0.86, 35], ["V36", "MIX THOROUGHLY — open the suez, no one needs her now", 0, 0.86, 36], ["V37", "SOMETHING IS READY — the water pulls back off the sand", 0, 0.29, 37], ["V38", "IN ETHIOPIA THEY LIGHT A BONFIRE — that ... we can do", 0, 0.29, 38], [2, "THE INTAKE — four hundred years of breath, drawn in", 0, 0.29, null], [1, "DEMERA — she lights the fire that shows what is buried", 0, 0.29, null], [4, "THE FIRST CRACK — the scar remembers it was a wound", 0, 0.71, null], [8, "MAGMA — four hundred years exhale", 1, 1.0, null], [6, "BRIMSTONE — the sky comes back down as gravel", 0, 0.71, null], [8, "THE BONES LEARN TO SING — the amahubo, on fire", 0, 0.86, null], [4, "THE COLUMN — ash to the top of the sky", 0, 0.57, null], [4, "COLLAPSE — the island falls into its own mouth", 0, 0.57, null], [4, "ASH — the sea steams where the rock was", 0, 0.57, null], ["V39", "A GOD BORN HERE — oh dear, oh dear", 0, 0.43, 39], [2, "SILENCE — the carrier finds an empty channel", 0, 0.14, null], [2, "SAME — the header, three times, to nobody", 0, 0.14, null], [4, "ATTENTION — eight fifty three, nine sixty", 0, 0.14, null], ["V40", "THE BROADCAST — please do not leave your homes", 0, 0.29, 40], [2, "END OF MESSAGE — n n n n", 0, 0.14, null], [4, "IN CASE OF DISRUPTION OF THIS —", 0, 0.29, null]];
     const SONG_BPM = 108;
     // TIMELINE-END
     const strip = document.getElementById('arrstrip');
     const posEl = document.getElementById('arrpos');
     const wordEl = document.getElementById('filmword');
     const subEl = document.getElementById('filmsub');
-    const lyricEl = document.getElementById('lyric');
-    let lineBars = [];                       // set by resolvedTimeline from the score's bars
     if (TIMELINE.length) {
       TIMELINE.forEach(([bars]) => {
         const b = document.createElement('div');
@@ -492,12 +576,11 @@ arrange(
         strip.appendChild(b);
       });
     } else { strip.style.display = 'none'; }
-    let rafId = null, trackT0 = null;
+    let rafId = null, trackT0 = null, handedOff = false;
     function resolvedTimeline() {
       // "V3" entries are voice sections — their length lives in the score's `bars` array
       const m = editor.value.match(/let bars = \[([^\]]*)\]/);
       const barsArr = m && m[1].trim() ? m[1].split(',').map(Number) : [];
-      lineBars = barsArr;                    // the typewriter paces each line by its clip length
       return TIMELINE.map(([b, l, p, e, vi]) => [(typeof b === 'string') ? (barsArr[+b.slice(1)] || 4) : b, l, p,
                                                  (e === undefined) ? 0.6 : e,
                                                  (vi === undefined) ? null : vi]);
@@ -525,9 +608,19 @@ arrange(
           try {
             const buf = await loadBuffer(VOICE_BASE + VOICE_FILES[vi] + VOICE_BUST, ac);
             const src = ac.createBufferSource(); src.buffer = buf;
-            const g = ac.createGain(); g.gain.value = 1.15;
+            const g = ac.createGain();
             src.connect(g); g.connect(ac.destination);
-            src.start(t0 + a * barSec);
+            // Shape the clip's OWN edges so a line never begins or ends on a hard digital cut: a
+            // quick fade-IN kills the onset click, and a longer fade-OUT tapers through the trailing
+            // breath ElevenLabs leaves on the tail (the "cut on the breath-in"). The body holds at
+            // 1.15 — only the very edges move, so no word ever loses level.
+            const at = t0 + a * barSec, dur = buf.duration, G = 1.15;
+            const fin = Math.min(0.012, dur * 0.25), fout = Math.min(0.14, dur * 0.5);
+            g.gain.setValueAtTime(0, at);
+            g.gain.linearRampToValueAtTime(G, at + fin);
+            g.gain.setValueAtTime(G, Math.max(at + fin, at + dur - fout));
+            g.gain.linearRampToValueAtTime(0, at + dur);
+            src.start(at);
             voiceNodes.push(src);
           } catch (e) { console.error('voice arm failed: line', vi + 1, e); }
         }
@@ -539,6 +632,12 @@ arrange(
       const tl = cachedTl || (cachedTl = resolvedTimeline());
       const total = tl.reduce((a, s) => a + s[0], 0);
       const bar = (performance.now() - trackT0) / 1000 / (240 / SONG_BPM);
+      // Album hand-off, EARLY: tell the album ~0.3s before our true end and keep playing our
+      // (near-silent) fade-out tail — the next track boots DURING that tail, so its first sound
+      // overlaps our last and the record-gap is filled, not skipped.
+      if (ALBUM && !handedOff && bar >= total - 0.3 / (240 / SONG_BPM)) {
+        handedOff = true; parent.postMessage({ cyb: 'song-done' }, '*');
+      }
       if (bar >= total) { finishLoop(); return; }   // one full pass through the arrangement → stop
       let acc = 0, idx = tl.length - 1;
       for (let i = 0; i < tl.length; i++) { if (bar < acc + tl[i][0]) { idx = i; break; } acc += tl[i][0]; }
@@ -548,33 +647,19 @@ arrange(
       const lbl = tl[idx][1] || '', dash = lbl.indexOf('—');
       wordEl.textContent = dash >= 0 ? lbl.slice(0, dash).trim() : lbl;
       subEl.textContent = dash >= 0 ? lbl.slice(dash + 1).trim() : '';
-      // the typewriter: the ACTIVE line appears WORD BY WORD as it is spoken. The active line is
-      // the last row at-or-before idx that fires a voice (split continuations keep typing through
-      // the music change). Pacing: uniform word rate over the clip's bars, finishing a touch early
-      // (~92%) since renders end in silence. The finished line stays up until the next one speaks.
-      if (lyricEl && VOICE_TEXTS.length) {
-        let li = null, liStart = 0, a2 = 0;
-        for (let i = 0; i <= idx; i++) { if (tl[i][4] != null) { li = tl[i][4]; liStart = a2; } a2 += tl[i][0]; }
-        if (li != null && VOICE_TEXTS[li] !== undefined) {
-          const words = VOICE_TEXTS[li].split(' ');
-          const prog = (bar - liStart) / (lineBars[li] || 4) / 0.92;
-          const nw = Math.max(0, Math.min(words.length, Math.floor(words.length * prog)));
-          lyricEl.textContent = nw < words.length ? words.slice(0, nw).join(' ') + ' ▍' : words.join(' ');
-        } else lyricEl.textContent = '';
-      }
       // the bounce is saved for the drop — a beat-phase scale pulse on the VIDEOS only (--punch);
       // the back-wall sea never bounces
       if (hasFilm) {
         const ph = (bar * 4) % 1;
         film.style.setProperty('--punch', tl[idx][2] ? String(1 + 0.16 * Math.pow(1 - ph, 3)) : '1');
       }
-      syncVideo(tl, bar, !!tl[idx][2], tl[idx][3]);
+      syncVideo(tl, bar, !!tl[idx][2]);
       rafId = requestAnimationFrame(trackFrame);
     }
     function trackStart() {
       if (!TIMELINE.length) return;
       cachedTl = resolvedTimeline();
-      trackT0 = performance.now();
+      trackT0 = performance.now(); handedOff = false;   // fresh loop: not yet handed off
       if (rafId) cancelAnimationFrame(rafId);
       if (hasFilm || hasViz) filmReset();
       trackFrame();
@@ -582,7 +667,6 @@ arrange(
     function trackStop() {
       if (rafId) cancelAnimationFrame(rafId);
       rafId = null; posEl.textContent = '';
-      if (lyricEl) lyricEl.textContent = '';
       [...strip.children].forEach(el => el.classList.remove('active'));
       if (hasFilm || hasViz) filmReset();
     }
@@ -597,7 +681,7 @@ arrange(
       catch (e) { setStatus('error: ' + (e && e.message ? e.message : e), true); }
     }
     function stop() { hush(); stopVoice(); setStatus('stopped'); trackStop(); }
-    function finishLoop() { hush(); stopVoice(); trackStop(); setStatus('done · one loop — hit [ play ] again'); if (ALBUM) parent.postMessage({ cyb: 'song-done' }, '*'); }
+    function finishLoop() { hush(); stopVoice(); trackStop(); setStatus('done · one loop — hit [ play ] again'); if (ALBUM && !handedOff) parent.postMessage({ cyb: 'song-done' }, '*'); }
     document.getElementById('play').addEventListener('click', play);
     document.getElementById('stop').addEventListener('click', stop);
     editor.addEventListener('keydown', (e) => {

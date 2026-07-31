@@ -15,6 +15,8 @@
 | 10 | 6.16 | 5 | We are the last ones in the restaurant. It c |
 | 11 | 40.96 | 22 | Brilliant leaves at 1:30. He needs to clean  |
 | 12 | 3.84 | 3 | [defeated] Brilliant is a name too. [sad] Br |
-| 13 | 17.12 | 10 | Zoom out. There are thousands of Brilliants. |
-| 14 | 14.08 | 9 | The people wear out. The names don't. A name |
-| 15 | 16.08 | 10 | [slowly] So this is where this god is born.  |
+| 13 | 12.32 | 8 | Outwards, there are thousands of Brilliants. |
+| 14 | 11.12 | 7 | Those people wear out. The names don't, but  |
+| 15 | 4.48 | 4 | [slowly] Tough times ever last ... Tough peo |
+| 16 | 7.36 | 5 | Hundreds of Brilliants have painted the name |
+| 17 | 2.24 | 3 | [slowly] Brilliant is a god too. |

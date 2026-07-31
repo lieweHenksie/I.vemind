@@ -1,0 +1,33 @@
+{
+  "essay": "mycelium/essays/all-good-things.md",
+  "genre": "intermezzo",
+  "bpm": 120,
+  "_comment": "INTERMEZZO \u2014 the doorframe between nice_ron and essay-1 (the agar lab). The line that used to ride nice_ron's long exhale, given a room of its own. No drum: nice_ron's belltale rings on in A minor (the forest bells follow you in \u2014 the fromforest shape), the sighing line speaks over it, then a soft A-minor pad resolves onto agar-lab's opening A ([a2,c3,e3]) and fades. One voice line, sized to its clip (reused from nice_ron line-02, no re-render).",
+  "sections": [
+    {
+      "bars": 2,
+      "layers": [
+        "forestbell",
+        "foresthush"
+      ],
+      "fade": "in",
+      "label": "the doorframe \u2014 the forest bells ring on, in A minor now"
+    },
+    {
+      "voice": 0,
+      "layers": [
+        "forestbell",
+        "foresthush"
+      ],
+      "label": "but all good things must come to an end"
+    },
+    {
+      "bars": 2,
+      "layers": [
+        "towardlab"
+      ],
+      "fade": "out",
+      "label": "toward the lab \u2014 the pad settles onto A, the agar is warming"
+    }
+  ]
+}
