@@ -84,6 +84,7 @@
 
   <script src="tracks.js"></script>
   <script>
+  (async () => {
   // ════════════════════════════════════════════════════════════════════════════════════════
   // THE PLAYER — one engine, one room.
   //
@@ -389,9 +390,15 @@
     if (!cache.has(i)) cache.set(i, await readTrack(TRACKS[i]));
     return cache.get(i);
   };
+  // NEVER name anything in this file after a Strudel control. initStrudel() assigns its whole
+  // control vocabulary onto globalThis AFTER this script has run, so a top-level `function
+  // gate(){}` here was silently replaced by Strudel's `gate` control. `await gate(tr)` then
+  // called that control, got a Pattern back, resolved instantly, and buildFilm() was never
+  // reached — the album played with no film at all, and no error anywhere. The IIFE around
+  // this script now keeps these names off globalThis entirely; the rename is belt and braces.
   // Gate on the real assets, through Strudel's own loadBuffer so the decode is cached where
   // playback reads it — a voice line fires once and a late decode is a silent line.
-  async function gate(tr) {
+  async function gateAssets(tr) {
     const ac = (typeof getAudioContext === 'function') ? getAudioContext() : null;
     const urls = [...tr.voiceFiles.map(f => voiceURL(tr, f)),
                   ...Object.values(tr.sampleFiles).map(f => sampleURL(tr, f))];
@@ -440,7 +447,7 @@
     const tr = await getTrack(i);
     setStatus('loading ' + tr.name + '…');
     pending = tr;
-    const bad = await gate(tr);
+    const bad = await gateAssets(tr);
     hush(); stopVoice();
     const ac = getAudioContext();
     if (ac.state !== 'running') { await ac.resume().catch(() => {}); }   // must be RUNNING first
@@ -554,6 +561,7 @@
 
   sizeViz();
   if (booted) setStatus('ready — ' + TRACKS.length + ' tracks, one engine. hit [ play the album ]');
+  })();
   </script>
 </body>
 </html>
