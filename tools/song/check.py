@@ -48,6 +48,11 @@ SILENT_SHAPE = re.compile(r's\("[^"]+"\)(?![^;]*\.note\()(?=[^;]*\.freq\()(?=[^;
 # ── findings ────────────────────────────────────────────────────────────────────────────────
 ERR, WARN, INFO = "ERROR", "WARN", "INFO"
 
+# An instrument can be silent ON PURPOSE. oh_dear's `figure` is s("figure").gain(0).slow(2) — its
+# crate note says "the wav is silence, the film IS the sample": it exists only to carry a video
+# cue. Silence there is the design, not a defect, so an explicit gain(0) downgrades the finding.
+MUTED_ON_PURPOSE = re.compile(r'\.gain\(\s*0(?:\.0+)?\s*\)')
+
 
 class Report:
     def __init__(self):
@@ -192,7 +197,7 @@ let ear = null, wave = null;
       if (to instanceof AudioDestinationNode && this !== ear) {
         const ac = to.context;
         if (!ear) {
-          ear = ac.createAnalyser(); ear.fftSize = 2048; wave = new Uint8Array(ear.fftSize);
+          ear = ac.createAnalyser(); ear.fftSize = 2048; wave = new Float32Array(ear.fftSize);
           const mute = ac.createGain(); mute.gain.value = 0;
           connect.call(ear, mute); connect.call(mute, to);
         }
@@ -202,8 +207,13 @@ let ear = null, wave = null;
     return out;
   };
 })();
-const rms = () => { if (!ear) return 0; ear.getByteTimeDomainData(wave);
-  let q = 0; for (let i = 0; i < wave.length; i++) { const v = (wave[i] - 128) / 128; q += v * v; }
+// FLOAT, not byte. getByteTimeDomainData quantises to 8 bits — one step is 1/128 ≈ 0.0078, so
+// ANY signal quieter than that reads as exactly 0.0000. The stage can use bytes because it only
+// draws water; a checker cannot, because "too quiet for my 8-bit meter" is not "silent". That
+// floor made crush(4) at gain(0.2) — nice_ron's chiparp — look stone dead, while the identical
+// instrument at gain(0.9) measured fine. crush attenuates hard; the arp was always there.
+const rms = () => { if (!ear) return 0; ear.getFloatTimeDomainData(wave);
+  let q = 0; for (let i = 0; i < wave.length; i++) { const v = wave[i]; q += v * v; }
   return Math.sqrt(q / wave.length); };
 
 // Strudel says "sound X not found" on the console and keeps going — capture it per instrument.
@@ -446,10 +456,17 @@ def audio_checks(song_dir, palette, rep, window_ms, thresh, quiet, warmup=600):
     bar = lambda r: max(thresh, r.get("base", 0) * 2)
     silent = [r for r in per if not r.get("err") and r.get("peak", 0) <= bar(r)]
     for r in silent:
-        hint = ""
         code = dict(instr).get(r["name"], "")
+        if MUTED_ON_PURPOSE.search(code):
+            rep.add(INFO, f"'{r['name']}' is silent by design (explicit gain(0))",
+                    "a carrier — it exists to drive a cue, not to be heard")
+            continue
+        hint = ""
         if SILENT_SHAPE.search(code):
             hint = "\nmatches the silent-envelope shape — use note(…).s(\"…\")"
+        elif re.search(r'\.crush\(', code):
+            hint = ("\ncarries .crush() — bit-crushing a quiet signal can quantise it to nothing. "
+                    "The same instrument at a higher gain, or without crush, sounds.")
         rep.add(WARN, f"'{r['name']}' made NO SOUND (peak {r['peak']}"
                       + (f", room still at {r['base']}" if r.get("base", 0) > thresh else "") + ")",
                 (("console: " + " | ".join(r["log"])) if r.get("log") else
@@ -468,9 +485,11 @@ def audio_checks(song_dir, palette, rep, window_ms, thresh, quiet, warmup=600):
                       f"— treat 'sounded' as unproven",
                 ", ".join(f"{r['name']} (peak {r['peak']} vs tail {r['base']})" for r in dirty[:10]))
 
+    bydesign = sum(1 for r in silent if MUTED_ON_PURPOSE.search(dict(instr).get(r["name"], "")))
     heard = len(per) - len(broken) - len(silent)
     rep.add(INFO, f"listened to {len(per)} instrument(s): {heard} sounded, "
-                  f"{len(silent)} silent, {len(broken)} broken")
+                  f"{len(silent) - bydesign} silent, {len(broken)} broken"
+                  + (f" ({bydesign} silent by design)" if bydesign else ""))
 
 
 # ── main ────────────────────────────────────────────────────────────────────────────────────
@@ -496,7 +515,7 @@ def main():
     ap.add_argument("--static", action="store_true", help="skip the browser pass")
     ap.add_argument("--window", type=int, default=2600,
                     help="ms to listen before calling an instrument silent (default 2600)")
-    ap.add_argument("--threshold", type=float, default=0.004, help="RMS floor for 'made a sound'")
+    ap.add_argument("--threshold", type=float, default=0.0006, help="RMS floor for 'made a sound'")
     ap.add_argument("--warmup", type=int, default=600,
                     help="ms to let Strudel settle before the first evaluate")
     ap.add_argument("--quiet", action="store_true")
