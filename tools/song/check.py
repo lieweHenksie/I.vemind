@@ -177,7 +177,7 @@ def region_drift(song_dir, spec, palette, rep):
 # ── the browser pass ────────────────────────────────────────────────────────────────────────
 PAGE = """<!DOCTYPE html><html><head><meta charset="utf-8">
 <script src="%(strudel)s"></script></head><body><div id="s">checking…</div><script>
-const INSTR = %(instr)s, SAMPLES = %(samples)s, WINDOW = %(window)d, THRESH = %(thresh)f;
+const INSTR = %(instr)s, SAMPLES = %(samples)s, WINDOW = %(window)d, THRESH = %(thresh)f, WARMUP = %(warmup)d;
 const send = (o) => new Promise(r => { const i = new Image();
   i.onload = i.onerror = r; i.src = '/__check__?j=' + encodeURIComponent(JSON.stringify(o)) + '&_=' + Math.random(); });
 
@@ -207,9 +207,10 @@ const rms = () => { if (!ear) return 0; ear.getByteTimeDomainData(wave);
   return Math.sqrt(q / wave.length); };
 
 // Strudel says "sound X not found" on the console and keeps going — capture it per instrument.
-let log = [];
+let log = [], workletFails = 0;
 for (const k of ['warn', 'error']) { const o = console[k].bind(console);
-  console[k] = (...a) => { log.push(a.map(x => (x && x.message) || String(x)).join(' ')); o(...a); }; }
+  console[k] = (...a) => { const s = a.map(x => (x && x.message) || String(x)).join(' ');
+    if (/AudioWorkletGlobalScope|addModule/.test(s)) workletFails++; else log.push(s); o(...a); }; }
 
 const reg = async () => { if (typeof samples !== 'function') return;
   const folder = new URL('./', location.href).href;
@@ -248,7 +249,28 @@ async function settle(maxMs) {
 (async () => {
   try { initStrudel({ prebake: reg }); }
   catch (e) { await send({ fatal: 'strudel failed to boot: ' + e.message }); return; }
-  await sleep(600);
+
+  // LOAD THE WORKLETS, EXPLICITLY. initStrudel() only registers initAudioOnFirstClick — a real
+  // page reaches initAudio() when the human clicks play, and that is what calls
+  // audioWorklet.addModule(). A headless checker never clicks, so without this every
+  // worklet-backed effect (shape, crush, coarse) throws "AudioWorklet does not have a valid
+  // AudioWorkletGlobalScope" per event and renders SILENT — while distort, a plain WaveShaper,
+  // works fine. That made the checker accuse every drop instrument in nice_ron of being mute
+  // when the song is perfectly audible. Waiting longer does not help; it is not a race.
+  await sleep(400);                       // let initStrudel finish building its context first
+  let audioInit = 'skipped';
+  try { if (typeof initAudio === 'function') { await initAudio(); audioInit = 'ok'; } }
+  catch (e) { audioInit = 'threw: ' + e.message; }
+  await sleep(WARMUP);
+  // Prove the worklets are actually live before judging anything. If shape() still cannot build
+  // its node, every worklet-backed instrument would read as silent and the whole run is a lie.
+  workletFails = 0;
+  try { await evaluate('note("e3*4").s("sawtooth").gain(0.6).shape(0.4)'); } catch (e) {}
+  const probe = await (async () => { const t = performance.now(); let m = 0;
+    while (performance.now() - t < 1800) { await sleep(25); m = Math.max(m, rms()); } return m; })();
+  try { hush(); } catch (e) {}
+  await send({ worklets: { init: audioInit, fails: workletFails, probePeak: Math.round(probe * 1e4) / 1e4 } });
+  await settle(1500);
 
   // PASS 1 — the real-world condition: every instrument in one block, exactly as the song ships.
   let whole = null;
@@ -315,7 +337,7 @@ def find_chrome():
     return None
 
 
-def audio_checks(song_dir, palette, rep, window_ms, thresh, quiet):
+def audio_checks(song_dir, palette, rep, window_ms, thresh, quiet, warmup=600):
     chrome = find_chrome()
     if not chrome:
         rep.add(WARN, "no Chrome/Chromium found — skipped the listening pass",
@@ -330,7 +352,8 @@ def audio_checks(song_dir, palette, rep, window_ms, thresh, quiet):
 
     page = song_dir / "_check.html"
     page.write_text(PAGE % dict(strudel=STRUDEL, instr=json.dumps(instr),
-                                samples=json.dumps(crate), window=window_ms, thresh=thresh))
+                                samples=json.dumps(crate), window=window_ms, thresh=thresh,
+                                warmup=warmup))
 
     results, done = [], threading.Event()
 
@@ -399,6 +422,13 @@ def audio_checks(song_dir, palette, rep, window_ms, thresh, quiet):
         rep.add(ERR, fatal[0]["fatal"])
         return
 
+    wk = next((r["worklets"] for r in results if "worklets" in r), None)
+    if wk and (wk["fails"] or wk["probePeak"] <= thresh):
+        rep.add(ERR, "AUDIO WORKLETS ARE NOT LOADED — every shape()/crush()/coarse() instrument "
+                     "would read as silent; this run cannot be trusted",
+                f"initAudio: {wk['init']}, worklet failures: {wk['fails']}, "
+                f"shape probe peak: {wk['probePeak']}")
+
     whole = [r for r in results if "whole" in r]
     per = [r for r in results if r.get("name")]
 
@@ -454,7 +484,7 @@ def check_song(song_dir, args):
     static_checks(song_dir, spec, palette, own_keys, rep)
     region_drift(song_dir, spec, palette, rep)
     if not args.static:
-        audio_checks(song_dir, palette, rep, args.window, args.threshold, args.quiet)
+        audio_checks(song_dir, palette, rep, args.window, args.threshold, args.quiet, args.warmup)
     rep.show(song_dir.name)
     return rep.has_errors()
 
@@ -467,6 +497,8 @@ def main():
     ap.add_argument("--window", type=int, default=2600,
                     help="ms to listen before calling an instrument silent (default 2600)")
     ap.add_argument("--threshold", type=float, default=0.004, help="RMS floor for 'made a sound'")
+    ap.add_argument("--warmup", type=int, default=600,
+                    help="ms to let Strudel settle before the first evaluate")
     ap.add_argument("--quiet", action="store_true")
     a = ap.parse_args()
 
