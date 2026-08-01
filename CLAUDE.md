@@ -275,56 +275,59 @@ are what make that migration mechanical instead of a rewrite. Skills first; MCP 
 
 1. Update the `## Last Session
 
-**The stage learns to listen; the album learns to be read.**
+**Nothing was broken that anyone could hear; three things were broken that nobody could.**
 
-- **The sea now HEARS.** The visualizer was procedural — sines against the bar clock, driven by
-  `song.json`'s authored `energy`. It is now driven by an **AnalyserNode on the actual output**:
-  `AudioNode.connect` is wrapped so every connection to the destination is *mirrored* into the
-  analyser (never in the signal path), and the analyser feeds a silent gain so it is always
-  pulled. Four bands + RMS + an onset detector shape the water; the spectrum itself displaces the
-  surface, mirrored around the middle. The Strudel bed **and the voice bus** both go through it —
-  a spoken line ripples the sea with no instrument playing. Verified headlessly: nice_ron's drop
-  reads level 0.02 → 1.0 with all four bands lighting.
-- **The typewriter is gone** — the spoken line is no longer printed on the stage. `VOICE_TEXTS`
-  is still shipped by eleven.py as the page's record of its own words; nothing renders it.
-- **The reading room** — `id/album/essay.html`: the album's writing, one click from every track
-  (and from the header, following whatever plays; new tab, so the music never stops). It parses
-  the essays **exactly as `eleven.py` does**, so the margin number beside a paragraph is the clip
-  you hear. Comments and `#` notes render as marginalia (foldable) instead of being stripped.
-  `id/album/tracks.js` now holds the running order for both pages.
-- **`tools/song/reshell.py`** — the missing half of the build. `build.py`/`eleven.py` only ever
-  patch marked regions, so a change to `template.html` never reached songs built before it. This
-  re-drops a page's regions into today's template: shell forward, score byte-identical, no
-  re-render. It refuses a page whose TIMELINE predates the voice bus (4-field rows) rather than
-  silently muting every line. Eight songs are now on one shell (fenton caught up too).
-- **`tools/serve.py`** — the answer to the oldest ghost ("the album plays an old version").
-  `python3 -m http.server` sends no `Cache-Control`, so browsers reuse pages heuristically with
-  no revalidation. This is the same server with `no-store`. Use it, not `http.server`.
-- **Three intermezzos, named not numbered** — `hes-wrong-of-course`, **`nature-was-a-gift`**
-  (new: nice_ron's opening narration, theGodInUrhead's music box walking into nice_ron's E-minor
-  bells), `all-good-things`. **nice_ron is now a pure crate jam** — both its lines have rooms of
-  their own, and every voice in it is a sample.
+*(The previous session's work — the analyser sea, the reading room, `reshell.py`, `serve.py`, the
+cast, oh_dear's EAS ending, the three intermezzos — sat uncommitted for a week. It is now in
+`fac780a` and `cc4c37c`, with the full account in those commit messages.)*
 
-- **A cast, not a narrator** — a block beginning `name:` renders with `<name>_voice_id` from
-  `.env` (`speaker_of()` in eleven.py). The prefix is direction: it stays in the essay and the
-  manifest, so re-casting a line re-renders exactly that line, and it is stripped from what is
-  spoken, from `VOICE_TEXTS`, and shown as a cue chip in the reading room. **oh_dear now ends as
-  an EAS emergency broadcast in `robot_voice_id`** — synthesized SAME header + the exact 853/960
-  attention tone (measured through the page's own analyser at 861/969, one FFT bin), never
-  sampled and deliberately not a valid header. Its back half is re-scored: nine sections of
-  eruption, including THE BONES LEARN TO SING (the amahubo distorted — the line the essay cut,
-  performed instead of said).
-- **essay-1's tail re-scored** — the album's title line ("Tough times ever last…") now lands in
-  agar-lab, over a bare pad after two bars of near-silence; THE ALTAR takes the full machine.
-- **Strudel gotcha, learned the hard way**: `s("x").freq(…).decay(…).sustain(0)` with no explicit
-  attack/release renders **silent** in 1.0.3. `note(…).s("x")` with the same envelope is fine.
+- **The album played with no film at all** — and with no error anywhere, which is what made it
+  hard to see. The page defined a top-level `async function gate(tr)` to preload a track's assets.
+  `initStrudel()` assigns Strudel's ENTIRE control vocabulary onto `globalThis`, and it runs
+  *after* the page script is evaluated, so `window.gate` was quietly replaced by Strudel's `gate`
+  control. `await gate(tr)` called that control, got a Pattern, awaited a non-promise (resolves
+  instantly) and returned — so the voice/sample preload, the name registration and `buildFilm()`
+  never ran. **The player script is now wrapped in an IIFE** so none of its declarations touch
+  `globalThis`; `gate` is renamed `gateAssets` as belt and braces. **Never name anything in a page
+  that also evaluates Strudel after a Strudel control.**
+- **`tools/song/check.py` — THE BENCH EAR.** Static pass + region-drift pass + a browser pass that
+  evaluates each instrument alone and LISTENS to it. It exists so the palettes can get as rich as
+  they want without the three failure modes the build cannot see. It imports `build.py` rather
+  than restating it. Always `--mute-audio`.
+- **Four bugs it caught in ITSELF**, each of which would have made it lie — worth knowing, because
+  they are all traps for any future audio harness:
+  1. Evaluating each instrument against the full block meant one broken entry poisoned every
+     verdict. It only bisects when the block is broken now.
+  2. `hush()` does not silence what is still ringing, and half this cookbook runs `room(0.9)`. A
+     palette of literal `silence` scored **18/18 sounding**. The verdict is now a DELTA over the
+     residual tail — you cannot wait a reverb out.
+  3. **`initStrudel()` does not load the AudioWorklets.** A real page reaches `initAudio()` when
+     the human clicks play; a headless harness never clicks, so `shape`/`crush`/`coarse` threw
+     "no valid AudioWorkletGlobalScope" per event and rendered silent — **19 false accusations**
+     across nice_ron and oh_dear. `distort` (a WaveShaper) worked throughout, which is what made
+     it legible. The checker now calls `initAudio()` and *proves* it with a `shape()` probe.
+  4. `getByteTimeDomainData` quantises to 8 bits — one step is 1/128 ≈ 0.0078 — so anything
+     quieter read as exactly 0, below the default threshold itself. Now `getFloatTimeDomainData`.
+- **Strudel gotchas, learned the hard way**: `s("x").freq(…).decay(…).sustain(0)` with no explicit
+  attack/release renders **silent** in 1.0.3 (`note(…).s("x")` is fine). And **`crush()` can
+  quantise a quiet signal away to nothing** — see chiparp under Next.
 
 ## Next
 
+- **nice_ron's `chiparp` makes NO SOUND** — verified, and the one real finding the bench ear
+  turned up. Bisected off its own definition: drop `.crush(4)` and it sounds; keep the crush and
+  lift `gain` 0.2 → 0.9 and it sounds; exactly as written it is zero. It is wired into **section 8,
+  "DROP II — the hook doubles down"**, so that section has been playing ten layers, not eleven —
+  the chiptune arp meant to crown the drop has never been in it. Left alone deliberately: which
+  way to fix it is a sound decision, not a code one.
+- **nice_ron has 16 of its own palette entries unwired** (`dropkick`, `droplead`, `technobass`,
+  `dropsnare`, `sneezestab`…) — leftovers from the v10/v11 drop A/B. They cost nothing (unused
+  entries emit no bytes), but check whether any were meant to be in the drop.
 - **Listen to oh_dear and agar-lab.** Both were re-scored and verified only mechanically (they
   play, the tones are at pitch, every block is spoken once) — nobody has heard them.
 - **Lengthen the intermezzos** — the human is doing this pass (they are 4/3/4-bar rooms now).
-- **agar-lab sections 1–2 have no labels at all** — the hero title is blank on screen there.
+- **agar-lab sections 1, 2 and 3 have no labels at all** (verified) — the hero title is blank
+  on screen for the first ~8 bars. Sections 4–29 are all named.
 - **head_god is retired** (the human deleted its essay: "it was bad, we did it better in
   theGod"). `id/head_god/` still exists and is the only page left on the old shell; `reshell.py`
   refuses it correctly. Delete it or leave it as a fossil.
