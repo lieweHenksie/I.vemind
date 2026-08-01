@@ -215,6 +215,18 @@ id/<name>/palette.json (sound)  ┴──build.py──▶  // ARRANGE + // INST
                                                 overrides the cookbook default sound)
 ```
 
+**Before you trust a palette edit, run the bench ear:** `python3 tools/song/check.py id/<name>`
+(add `--all` for the album, `--static` to skip the browser). It exists because raw Strudel has
+three failure modes the build cannot see: **one bad instrument kills the whole score** (all
+instruments share one evaluated block, so a single syntax error means the song plays *nothing*
+— it bisects and names the culprit); **an instrument can render silent with no error at all**
+(`s("x").freq(…).sustain(0)` is silent in 1.0.3 — it listens to each one alone through the same
+analyser the stage uses); and **enriching an instrument can move the film** (`gen_cues` regex-reads
+instrument code, so it shows the region drift before you build). Always muted — a checker that
+plays thirty-five instruments at you is an ambush. **Adding a palette entry is free**:
+`gen_instruments` only emits what a section names, so a staged instrument changes zero bytes
+until you wire it in.
+
 **Everything is incremental & deterministic — the iron rule: *fix where broken, leave what works.***
 Edit one essay line → only that voice clip re-renders. Edit one `song.json` section → only that
 arrange row changes. Edit one `palette.json` instrument → only that instrument changes. Nothing

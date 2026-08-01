@@ -14,6 +14,7 @@ build). The voice is pre-rendered to clips by `tools/tts/eleven.py`. The page gl
 | [`template.html`](template.html) | **Copy this to start a song.** The whole page: Strudel boot, voice-loading, play/stop, and a starter score. |
 | [`palette.md`](palette.md) | The instruments — copy-me synth voices (bass, sub-kick, arps, pad, hats, clap, lead, solo, wash, riser, impact). |
 | [`arrangement.md`](arrangement.md) | How to bind voice + music into one `arrange()` timeline, with section templates (intro / breakdown / bridge / solo / climax). |
+| `../../tools/song/check.py` | **The bench ear** — evaluates every instrument in a palette on its own and *listens* to it. Names the one entry that kills the score, catches instruments that render silent with no error, and shows what a rebuild would change before you run it. |
 | [`research/`](research/README.md) | **The listening bank** — studies of real Strudel artists (via `/cyborge-research`): techniques verified against the docs, caption-garble corrected, flagged against the pinned runtime. |
 | `../../tools/tts/audio-tags.md` | ElevenLabs v3 audio tags (`[sigh]`, `[whispers]`, `[sad]`) — cyBorge's acting notes, dropped inline in the essay. |
 
@@ -32,6 +33,8 @@ build). The voice is pre-rendered to clips by `tools/tts/eleven.py`. The page gl
 4. **Shape** the `arrange(...)` in the score — copy sections from `arrangement.md`, place the
    voice lines, add breakdowns/bridges/solos. Serve (`python3 tools/serve.py`)
    and play.
+5. **Check before you trust it** — `python3 tools/song/check.py id/<name>`. Ten seconds, muted,
+   and it is the only thing that catches an instrument that evaluates fine and makes no sound.
 
 ## The laws (don't relearn them)
 
@@ -53,6 +56,19 @@ build). The voice is pre-rendered to clips by `tools/tts/eleven.py`. The page gl
   `VIDEO-CUES` + a `VIDEO_CLIPS` map, and the page plays each sample's own clip **from frame 1** as
   the arrangement reaches it (dim + held between cues). Small files load fast; playing a fresh clip
   from its start is the one video path that never stalls — no big-file seeking.
+- **One bad instrument kills the WHOLE score.** Every instrument is emitted into one evaluated
+  block, so a syntax error in any single `let` makes `evaluate()` throw and the song plays
+  *nothing* — with no error worth reading. `check.py` bisects it and names the entry.
+- **An instrument can be silent with no error.** The known shape:
+  `s("x").freq(…).decay(…).sustain(0)` with no explicit attack/release renders **silent** in
+  1.0.3; `note(…).s("x")` with the same envelope is fine. Nothing throws. `check.py` listens.
+- **Adding an instrument is free; wiring it costs.** `gen_instruments` only emits what a section
+  actually names, so a new palette entry that nothing references changes not one byte of output.
+  That is the safe way to stage a sound: add it, rebuild, confirm nothing moved, *then* wire it.
+- **Enriching an instrument can move the film.** `gen_cues` reads instrument code with a regex —
+  the **first** `s("…")`, plus `.slow(n)` and `.slice(`. Wrap an instrument in a `stack()` with a
+  second sample, or add a `.slow()`, and the video cues shift under you. `check.py` shows the
+  drift before you build.
 - **Voice is always pre-rendered** — browser speech can't be beat-locked; and v3 audio tags are
   paid-tier ElevenLabs.
 
